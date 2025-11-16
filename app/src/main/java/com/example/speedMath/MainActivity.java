@@ -1,37 +1,83 @@
 package com.example.speedMath;
 
-import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
-import com.example.speedMath.databinding.ActivityMainBinding;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    private TextView textQuestion, textResult;
+    private EditText inputAnswer;
+    private Button buttonValidate;
+
+    private int correctAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        textQuestion = findViewById(R.id.textQuestion);
+        textResult = findViewById(R.id.textResult);
+        inputAnswer = findViewById(R.id.inputAnswer);
+        buttonValidate = findViewById(R.id.buttonValidate);
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navView, navController);
+        generateQuestion();
+
+        buttonValidate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String value = inputAnswer.getText().toString();
+
+                if (value.isEmpty()) {
+                    textResult.setText("?");
+                    return;
+                }
+
+                int answer = Integer.parseInt(value);
+
+                if (answer == correctAnswer) {
+                    textResult.setText("✔️");
+                } else {
+                    textResult.setText("❌");
+                }
+
+                inputAnswer.setText("");
+                generateQuestion();
+            }
+        });
     }
 
+    private void generateQuestion() {
+        Random r = new Random();
+        int a = r.nextInt(20) + 1;
+        int b = r.nextInt(20) + 1;
+
+        String[] ops = {"+", "-", "×", "÷"};
+        String op = ops[r.nextInt(ops.length)];
+
+        switch (op) {
+            case "+":
+                correctAnswer = a + b;
+                break;
+            case "-":
+                correctAnswer = a - b;
+                break;
+            case "×":
+                correctAnswer = a * b;
+                break;
+            case "÷":
+                if (b != 0) correctAnswer = a / b;
+                else correctAnswer = 0;
+                break;
+        }
+
+        textQuestion.setText(a + " " + op + " " + b + " = ?");
+    }
 }
