@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+    width="800" height="800" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet">
+    <defs>
+        <!-- Background gradient -->
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#5AC8FA"/>
+            <stop offset="100%" stop-color="#AF52DE"/>
+        </linearGradient>
+
+        <!-- Frosted blur -->
+        <filter id="frost" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="24" result="blurred"/>
+            <feColorMatrix in="blurred" type="matrix"
+                values="1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 0.55 0" result="faded"/>
+            <feComposite in="faded" in2="SourceGraphic" operator="over"/>
+        </filter>
+
+        <!-- Panel shadow -->
+        <filter id="panelShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="30" stdDeviation="40"
+                flood-color="#000" flood-opacity="0.25"/>
+        </filter>
+
+        <!-- Inner shadow -->
+        <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="blur"/>
+            <feOffset dx="0" dy="6" result="offsetBlur"/>
+            <feComposite in="offsetBlur" in2="SourceAlpha"
+                operator="arithmetic" k2="-1" k3="1" result="inner"/>
+            <feColorMatrix in="inner" type="matrix"
+                values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0.30 0"/>
+            <feComposite in2="SourceGraphic" operator="over"/>
+        </filter>
+
+        <!-- Operators shadow -->
+        <filter id="opShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="36" stdDeviation="20"
+                flood-color="#000" flood-opacity="0.48"/>
+        </filter>
+
+        <!-- Operator fill -->
+        <linearGradient id="opFill" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#EDEDED"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect width="800" height="800" rx="180" fill="url(#bgGrad)"/>
+
+    <!-- Glass panel repositioned (larger) -->
+    <g transform="translate(20,20)">
+        <!-- shadow -->
+        <rect width="760" height="760" rx="180" fill="transparent" filter="url(#panelShadow)"/>
+        <!-- blurred backdrop -->
+        <rect width="760" height="760" rx="180" fill="rgba(255,255,255,0.14)" filter="url(#frost)"/>
+        <!-- translucent front layer -->
+        <rect width="760" height="760" rx="180" fill="rgba(255,255,255,0.10)"/>
+        <!-- top highlight -->
+        <rect x="40" y="40" width="680" height="160" rx="120" fill="white" opacity="0.08"/>
+        <!-- inner shadow -->
+        <rect width="760" height="760" rx="180" fill="none" filter="url(#innerShadow)"/>
+    </g>
+
+    <!-- Operators centered and scaled down so they stay fully inside -->
+    <g transform="translate(20,20)" filter="url(#opShadow)">
+        <g fill="url(#opFill)"
+            font-family="Segoe UI, Roboto, Arial" font-weight="800">
+
+            <!-- + (top center) -->
+            <text x="380" y="280" text-anchor="middle" font-size="360">+</text>
+
+            <!-- × bottom-left -->
+            <text x="160" y="500" text-anchor="middle" font-size="360">×</text>
+
+            <!-- − bottom-right -->
+            <text x="620" y="500" text-anchor="middle" font-size="360">−</text>
+
+            <!-- ÷ center-bottom -->
+            <text x="380" y="720" text-anchor="middle" font-size="360">÷</text>
+        </g>
+    </g>
+
+</svg>
