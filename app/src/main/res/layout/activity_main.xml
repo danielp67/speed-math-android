@@ -4,65 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Contenu principal -->
-    <LinearLayout
-        android:id="@+id/mainContent"
+    <!-- Zone contrôlée par la NavController -->
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomNav"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="32dp">
+        app:navGraph="@navigation/mobile_navigation"
+        app:defaultNavHost="true"
+        android:layout_above="@id/bottomNav" />
 
-        <TextView
-            android:id="@+id/textQuestion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Loading..."
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="32dp" />
-
-        <EditText
-            android:id="@+id/inputAnswer"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:inputType="numberSigned"
-            android:gravity="center"
-            android:hint="?"
-            android:textSize="28sp"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="24dp" />
-
-        <Button
-            android:id="@+id/buttonValidate"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:text="OK"
-            android:textSize="20sp"
-            android:padding="12dp"
-            android:layout_marginBottom="32dp" />
-
-        <TextView
-            android:id="@+id/textResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="48sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <!-- Barre de navigation en bas -->
+    <!-- Barre de navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:background="?android:attr/windowBackground"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
         app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>
