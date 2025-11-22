@@ -8,8 +8,19 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.speedMath.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:label="Menu"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_navigation_home_to_gameFragment"
+            app:destination="@id/gameFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.example.speedMath.ui.game.GameFragment"
+        android:label="Jeu"
+        tools:layout="@layout/fragment_game"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"
