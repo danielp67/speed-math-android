@@ -86,7 +86,6 @@ public class GameFragment extends Fragment {
         textQuestion.setText(q.expression + " ?");
         correctAnswer = q.answer;
         inputAnswer.setText("");
-     //   textResult.setText("");
     }
 
     private void checkAnswer() {

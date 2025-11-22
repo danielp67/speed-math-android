@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.speedMath.R;
+import com.example.speedMath.core.QuestionGenerator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -20,9 +22,8 @@ public class QCMFragment extends Fragment {
     private TextView textQuestion, textResult;
     private CardView card1, card2, card3, card4;
     private TextView t1, t2, t3, t4;
-
     private int correctAnswer;
-    private Random random = new Random();
+    private QuestionGenerator questionGenerator;
 
     public QCMFragment() {
         // Required empty constructor
@@ -63,43 +64,37 @@ public class QCMFragment extends Fragment {
         card3.setOnClickListener(v -> checkAnswer(t3));
         card4.setOnClickListener(v -> checkAnswer(t4));
 
+        questionGenerator = new QuestionGenerator(
+                10,      // difficulty par défaut
+                2,      // nombre d'opérandes
+                true,  // pas de QCM ici
+                true,
+                true,
+                true,
+                true,
+                true
+        );
         generateQuestion();
     }
 
 
-    // Generate question + answers
     private void generateQuestion() {
-
-        // Reset result text
+        resetCardColors();
         textResult.setText("");
 
-        // Reset card colors
-        resetCardColors();
+        // Génération via QuestionGenerator
+        QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 
-        // Simple math question
-        int a = random.nextInt(10) + 1;
-        int b = random.nextInt(10) + 1;
-
-        correctAnswer = a + b;
-        textQuestion.setText(a + " + " + b + " = ?");
-
-        // Generate wrong answers
-        ArrayList<Integer> answers = new ArrayList<>();
-        answers.add(correctAnswer);
-
-        while (answers.size() < 4) {
-            int wrong = random.nextInt(20) + 1;
-            if (wrong != correctAnswer && !answers.contains(wrong))
-                answers.add(wrong);
-        }
+        textQuestion.setText(q.expression + " ?");
+        correctAnswer = q.answer;
 
         // Shuffle display order
-        Collections.shuffle(answers);
+        Collections.shuffle(q.answersChoice);
 
-        t1.setText(String.valueOf(answers.get(0)));
-        t2.setText(String.valueOf(answers.get(1)));
-        t3.setText(String.valueOf(answers.get(2)));
-        t4.setText(String.valueOf(answers.get(3)));
+        t1.setText(String.valueOf(q.answersChoice.get(0)));
+        t2.setText(String.valueOf(q.answersChoice.get(1)));
+        t3.setText(String.valueOf(q.answersChoice.get(2)));
+        t4.setText(String.valueOf(q.answersChoice.get(3)));
     }
 
 

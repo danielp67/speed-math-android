@@ -12,7 +12,7 @@ public class QuestionGenerator {
     private int difficulty;         // ex: 1,2,3
     private int operandCount;       // ex: 2,3,4...
 
-    private boolean choiceMode;     // QCM ou non
+    private boolean qcmMode;     // QCM ou non
     private boolean allowPlus;
     private boolean allowMinus;
     private boolean allowMultiply;
@@ -21,7 +21,7 @@ public class QuestionGenerator {
 
     public QuestionGenerator(int difficulty,
                              int operandCount,
-                             boolean choiceMode,
+                             boolean qcmMode,
                              boolean allowPlus,
                              boolean allowMinus,
                              boolean allowMultiply,
@@ -30,7 +30,7 @@ public class QuestionGenerator {
 
         this.difficulty = Math.max(1, difficulty);
         this.operandCount = Math.max(2, operandCount);
-        this.choiceMode = choiceMode;
+        this.qcmMode = qcmMode;
         this.allowPlus = allowPlus;
         this.allowMinus = allowMinus;
         this.allowMultiply = allowMultiply;
@@ -42,7 +42,7 @@ public class QuestionGenerator {
     public static class MathQuestion {
         public String expression;
         public int answer;
-        public List<Integer> wrongOptions = new ArrayList<>();
+        public List<Integer> answersChoice = new ArrayList<>();
     }
 
     public MathQuestion generateQuestion() {
@@ -111,17 +111,19 @@ public class QuestionGenerator {
         q.answer = currentResult;
 
         // Génération des mauvaises réponses si QCM
-        if (choiceMode) generateWrongAnswers(q);
+        if (qcmMode) generateAnswersChoice(q);
 
         return q;
     }
 
-    private void generateWrongAnswers(MathQuestion q) {
-        while (q.wrongOptions.size() < 3) {
+    private void generateAnswersChoice(MathQuestion q) {
+        while (q.answersChoice.size() < 3) {
             int wrong = q.answer + random.nextInt(11) - 5;
-            if (wrong != q.answer && !q.wrongOptions.contains(wrong)) {
-                q.wrongOptions.add(wrong);
+            if (wrong != q.answer && !q.answersChoice.contains(wrong)) {
+                q.answersChoice.add(wrong);
             }
         }
+        int correctIndex = random.nextInt(4); // 0,1,2,3
+        q.answersChoice.add(correctIndex, q.answer);
     }
 }

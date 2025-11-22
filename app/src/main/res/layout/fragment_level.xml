@@ -16,6 +16,16 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
+        <!-- Timer -->
+        <TextView
+            android:id="@+id/textTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textSize="16sp"
+            android:layout_marginEnd="16dp"
+            android:textStyle="bold"/>
+
         <!-- ProgressBar score -->
         <ProgressBar
             android:id="@+id/progressScore"
@@ -35,16 +45,6 @@
             android:text="0/5"
             android:textSize="16sp"
             android:layout_marginStart="8dp"/>
-
-        <!-- Timer -->
-        <TextView
-            android:id="@+id/textTimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00"
-            android:textSize="16sp"
-            android:layout_marginStart="16dp"
-            android:textStyle="bold"/>
     </LinearLayout>
 
     <!-- Contenu central : question et réponse -->
@@ -93,8 +93,7 @@
 
         <!-- Pavé numérique -->
         <include
-            layout="@layout/layout_pave_numerique"
-            android:layout_marginTop="16dp"/>
+            layout="@layout/layout_pave_numerique" />
     </LinearLayout>
 
 </RelativeLayout>

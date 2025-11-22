@@ -15,6 +15,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
+import com.example.speedMath.core.QuestionGenerator;
 
 import java.util.Random;
 
@@ -32,6 +33,8 @@ public class LevelFragment extends Fragment {
     private int score = 0;
     private long elapsedMillis = 0;
     private boolean timerRunning = false;
+
+    private QuestionGenerator questionGenerator;
 
     private CountUpTimer countUpTimer;
 
@@ -85,53 +88,35 @@ public class LevelFragment extends Fragment {
         // Générer première question et afficher score
         score = 0;
         updateScore();
+        // ----- Initialisation du QuestionGenerator -----
+        boolean allowAdd = gameMode.equals("ADD") || gameMode.equals("ALL");
+        boolean allowSub = gameMode.equals("SUB") || gameMode.equals("ALL");
+        boolean allowMul = gameMode.equals("MUL") || gameMode.equals("ALL");
+        boolean allowDiv = gameMode.equals("DIV") || gameMode.equals("ALL");
+        questionGenerator = new QuestionGenerator(
+                gameDifficulty,      // difficulty par défaut
+                2,      // nombre d'opérandes
+                false,  // pas de QCM ici
+                allowAdd,
+                allowSub,
+                allowMul,
+                allowDiv,
+                true
+        );
         generateQuestion();
 
         return root;
     }
 
     private void generateQuestion() {
-        Random r = new Random();
-        int a = r.nextInt(20)* gameDifficulty + 1;
-        int b = r.nextInt(20)* gameDifficulty + 1;
-        char op;
 
-        switch (gameMode) {
-            case "ADD":
-                op = '+';
-                correctAnswer = a + b;
-                break;
-            case "SUB":
-                op = '-';
-                correctAnswer = a - b;
-                break;
-            case "MUL":
-                op = '×';
-                correctAnswer = a * b;
-                break;
-            case "DIV":
-                b = r.nextInt(19) + 1;
-                correctAnswer = a / b;
-                a = correctAnswer * b;
-                op = '÷';
-                break;
-            default: // ALL
-                int rand = r.nextInt(4);
-                if (rand == 0) { op = '+'; correctAnswer = a + b; }
-                else if (rand == 1) { op = '-'; correctAnswer = a - b; }
-                else if (rand == 2) { op = '×'; correctAnswer = a * b; }
-                else {
-                    b = r.nextInt(19) + 1;
-                    correctAnswer = a / b;
-                    a = correctAnswer * b;
-                    op = '÷';
-                }
-                break;
-        }
+        // Génération via QuestionGenerator
+        QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 
-        textQuestion.setText(a + " " + op + " " + b + " ?");
+        textQuestion.setText(q.expression + " ?");
+        correctAnswer = q.answer;
         inputAnswer.setText("");
-        textResult.setText("");
+        //   textResult.setText("");
     }
 
     private void checkAnswer() {
@@ -153,7 +138,7 @@ public class LevelFragment extends Fragment {
             // Niveau terminé
             buttonValidate.setText("🎉 Niveau terminé !");
             buttonValidate.setEnabled(false);
-            countUpTimer.stop();
+            countUpTimer.stopTimer();
 
             buttonValidate.setEnabled(true);
 
@@ -176,32 +161,34 @@ public class LevelFragment extends Fragment {
 
 
     // Timer simple pour compter le temps écoulé
-    private class CountUpTimer {
-        private boolean running = false;
+    private class CountUpTimer extends Thread {
+        private boolean running = true;
+        private long elapsedMillis = 0;
 
-        public void start() {
-            running = true;
-            timerRunning = true;
-            new Thread(() -> {
-                while (running) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (running) {
-                        elapsedMillis += 1000;
-                        requireActivity().runOnUiThread(() ->
-                                textTimer.setText(LevelFragment.this.formatTime(elapsedMillis))
-                        );
-                    }
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    Thread.sleep(1000);
+                    elapsedMillis += 1000;
+
+                    // Vérification que le fragment est toujours attaché
+                    if (!isAdded() || getActivity() == null) continue;
+
+                    getActivity().runOnUiThread(() -> {
+                        if (textTimer != null) {
+                            textTimer.setText(formatTime(elapsedMillis));
+                        }
+                    });
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }).start();
+            }
         }
 
-        public void stop() {
+        public void stopTimer() {
             running = false;
-            timerRunning = false;
         }
     }
 
