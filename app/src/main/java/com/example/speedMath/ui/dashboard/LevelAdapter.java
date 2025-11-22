@@ -1,24 +1,23 @@
-package com.example.speedMath.adapter;
+package com.example.speedMath.ui.dashboard;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.speedMath.R;
-import com.example.speedMath.model.Level;
 
 import java.util.List;
 
 public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHolder> {
 
-    private List<Level> levels;
+    private List<LevelItem> levels;
     private View.OnClickListener listener;
 
-    public LevelAdapter(List<Level> levels, View.OnClickListener listener) {
+    public LevelAdapter(List<LevelItem> levels, View.OnClickListener listener) {
         this.levels = levels;
         this.listener = listener;
     }
@@ -33,11 +32,11 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
 
     @Override
     public void onBindViewHolder(@NonNull LevelViewHolder holder, int position) {
-        Level level = levels.get(position);
-        holder.button.setText("Niveau " + level.levelNumber);
-        holder.button.setEnabled(level.unlocked);
-        holder.button.setTag(level.levelNumber);
-        holder.button.setOnClickListener(listener);
+        LevelItem item = levels.get(position);
+        holder.levelNumber.setText("Niveau " + item.levelNumber);
+
+        holder.itemView.setTag(item);
+        holder.itemView.setOnClickListener(listener);
     }
 
     @Override
@@ -46,10 +45,11 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
     }
 
     static class LevelViewHolder extends RecyclerView.ViewHolder {
-        Button button;
-        public LevelViewHolder(View itemView) {
+        TextView levelNumber;
+
+        public LevelViewHolder(@NonNull View itemView) {
             super(itemView);
-            button = itemView.findViewById(R.id.buttonLevel);
+            levelNumber = itemView.findViewById(R.id.textLevelNumber);
         }
     }
 }

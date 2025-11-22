@@ -28,10 +28,15 @@
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard">
     <action
-        android:id="@+id/action_navigation_dashboard_to_gameFragment"
-        app:destination="@id/gameFragment" />
+        android:id="@+id/action_navigation_dashboard_to_levelFragment"
+        app:destination="@id/levelFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/levelFragment"
+        android:name="com.example.speedMath.ui.level.LevelFragment"
+        android:label="Jeu"
+        tools:layout="@layout/fragment_level"/>
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.speedMath.ui.notifications.NotificationsFragment"
