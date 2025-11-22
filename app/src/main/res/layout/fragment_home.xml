@@ -47,4 +47,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Mode QCM" />
+
+    <Button
+        android:id="@+id/btnDual"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Mode DUAL" />
 </LinearLayout>

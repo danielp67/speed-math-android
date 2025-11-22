@@ -14,7 +14,7 @@ import com.example.speedMath.R;
 
 public class HomeFragment extends Fragment {
 
-    Button btnAdd, btnSub, btnMul, btnDiv, btnAll, btnQCM;
+    Button btnAdd, btnSub, btnMul, btnDiv, btnAll, btnQCM, btnDual;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -28,6 +28,8 @@ public class HomeFragment extends Fragment {
         btnDiv = root.findViewById(R.id.btnDiv);
         btnAll = root.findViewById(R.id.btnAll);
         btnQCM = root.findViewById(R.id.btnQCM);
+        btnDual = root.findViewById(R.id.btnDual);
+
 
         btnAdd.setOnClickListener(v -> openGame(v, "ADD"));
         btnSub.setOnClickListener(v -> openGame(v, "SUB"));
@@ -37,7 +39,9 @@ public class HomeFragment extends Fragment {
         btnQCM.setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_qcmFragment)
         );
-
+        btnDual.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dualFragment)
+        );
         return root;
     }
 

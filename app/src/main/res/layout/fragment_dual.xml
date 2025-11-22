@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ===================== JOUEUR 2 (ROTATE 180°) ===================== -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:rotation="180">
+
+        <include
+            android:id="@+id/viewPlayer2"
+            layout="@layout/fragment_qcm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
+
+    <!-- ===================== JOUEUR 1 ===================== -->
+    <include
+        android:id="@+id/viewPlayer1"
+        layout="@layout/fragment_qcm"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Ligne séparatrice -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#555"/>
+
+</LinearLayout>
