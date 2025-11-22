@@ -41,4 +41,10 @@
         android:layout_marginTop="16dp"
         android:text="Mode complet" />
 
+    <Button
+        android:id="@+id/btnQCM"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Mode QCM" />
 </LinearLayout>

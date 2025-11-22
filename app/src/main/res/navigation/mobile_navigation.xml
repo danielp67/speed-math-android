@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_navigation_home_to_gameFragment"
             app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_qcmFragment"
+            app:destination="@id/qcmFragment" />
     </fragment>
 
     <fragment
@@ -21,6 +24,12 @@
         android:name="com.example.speedMath.ui.game.GameFragment"
         android:label="Jeu"
         tools:layout="@layout/fragment_game"/>
+
+    <fragment
+        android:id="@+id/qcmFragment"
+        android:name="com.example.speedMath.ui.qcm.QCMFragment"
+        android:label="Jeu"
+        tools:layout="@layout/fragment_qcm"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"
