@@ -9,14 +9,15 @@ public class QuestionGenerator {
     private final Random random = new Random();
 
     // Configuration
-    private int difficulty;         // ex: 1, 2, 3
-    private int operandCount;       // ex: 2, 3, 4...
+    private int difficulty;         // ex: 1,2,3
+    private int operandCount;       // ex: 2,3,4...
 
-    private boolean choiceMode;
+    private boolean choiceMode;     // QCM ou non
     private boolean allowPlus;
     private boolean allowMinus;
     private boolean allowMultiply;
     private boolean allowDivide;
+    private boolean avoidNegative;  // éviter résultats négatifs
 
     public QuestionGenerator(int difficulty,
                              int operandCount,
@@ -24,29 +25,27 @@ public class QuestionGenerator {
                              boolean allowPlus,
                              boolean allowMinus,
                              boolean allowMultiply,
-                             boolean allowDivide) {
+                             boolean allowDivide,
+                             boolean avoidNegative) {
 
-        this.difficulty = difficulty;
-        this.operandCount = Math.max(2, operandCount); // minimum 2 operandes
+        this.difficulty = Math.max(1, difficulty);
+        this.operandCount = Math.max(2, operandCount);
         this.choiceMode = choiceMode;
         this.allowPlus = allowPlus;
         this.allowMinus = allowMinus;
         this.allowMultiply = allowMultiply;
         this.allowDivide = allowDivide;
+        this.avoidNegative = avoidNegative;
     }
 
-
-    // question generated
+    // Classe interne pour la question
     public static class MathQuestion {
         public String expression;
         public int answer;
         public List<Integer> wrongOptions = new ArrayList<>();
     }
 
-
-    // generator principal
     public MathQuestion generateQuestion() {
-
         MathQuestion q = new MathQuestion();
 
         // Liste des opérateurs autorisés
@@ -56,11 +55,9 @@ public class QuestionGenerator {
         if (allowMultiply) ops.add('*');
         if (allowDivide) ops.add('/');
 
-        // fallback si aucun opérateur autorisé
         if (ops.isEmpty()) ops.add('+');
-        difficulty = Math.max(1, difficulty);
 
-        int min = 0;
+        int min = 1;
         int max = 10 * difficulty;
 
         List<Integer> values = new ArrayList<>();
@@ -69,85 +66,57 @@ public class QuestionGenerator {
         // Génération des valeurs et opérateurs
         for (int i = 0; i < operandCount; i++) {
             values.add(random.nextInt(max - min + 1) + min);
-            if (i > 0)
+            if (i > 0) {
                 operations.add(ops.get(random.nextInt(ops.size())));
+            }
         }
 
-        // Calcul du résultat et création de l'expression
-        int result = values.get(0);
-        StringBuilder expr = new StringBuilder("" + values.get(0));
-
-        boolean lastWasMulOrDiv = false;
+        // Construction de l'expression avec priorité et parenthèses
+        StringBuilder expr = new StringBuilder();
+        int currentResult = values.get(0);
+        expr.append(values.get(0));
 
         for (int i = 1; i < values.size(); i++) {
-
             char op = operations.get(i - 1);
-            int v = values.get(i);
+            int nextVal = values.get(i);
 
-            // Correction division par zéro
+            // Gestion spéciale pour la division
             if (op == '/') {
-                if (v == 0) v = 1;
-                result = result / v;
+                // Générer un dividende "propre"
+                int dividend = currentResult * nextVal;
+                expr = new StringBuilder("(" + dividend + " / " + nextVal + ")");
+                currentResult = dividend / nextVal;
             } else if (op == '*') {
-                result = result * v;
+                if (operandCount > 2) expr = new StringBuilder("(" + expr + " * " + nextVal + ")");
+                else expr.append(" * ").append(nextVal);
+                currentResult *= nextVal;
             } else if (op == '-') {
-                if (v > result) {
-                    v = random.nextInt(result + 1);
-                    values.set(i, v);
-                }
-                result = result - v;
-            } else {
-                result = result + v;
-            }
-
-            boolean isMulOrDiv = (op == '*' || op == '/');
-
-            // ----- Construction de l'expression avec parenthèses -----
-            if (operandCount > 2) {
-
-                if (isMulOrDiv) {
-
-                    // début du groupement si nécessaire
-                    if (!lastWasMulOrDiv) {
-                        expr.insert(0, "(");
+                if (avoidNegative) {
+                    // nextVal doit être ≤ currentResult
+                    if (nextVal > currentResult) {
+                        nextVal = random.nextInt(currentResult + 1); // 0 à currentResult
                     }
-
-                    expr.append(" ").append(op).append(" ").append(v);
-                    lastWasMulOrDiv = true;
-
-                    // Si prochain opérateur n’est pas * ou / --> fermer parenthèse
-                    if (i == values.size() - 1 ||
-                            !(operations.get(i) == '*' || operations.get(i) == '/')) {
-                        expr.append(")");
-                        lastWasMulOrDiv = false;
-                    }
-
-                } else {
-                    expr.append(" ").append(op).append(" ").append(v);
-                    lastWasMulOrDiv = false;
                 }
-
-            } else {
-                // Cas simple à deux opérandes → pas de parenthèses
-                expr.append(" ").append(op).append(" ").append(v);
+                if (operandCount > 2) expr = new StringBuilder("(" + expr + " - " + nextVal + ")");
+                else expr.append(" - ").append(nextVal);
+                currentResult -= nextVal;
+            } else { // '+'
+                if (operandCount > 2) expr = new StringBuilder("(" + expr + " + " + nextVal + ")");
+                else expr.append(" + ").append(nextVal);
+                currentResult += nextVal;
             }
         }
 
         q.expression = expr.toString();
-        q.answer = result;
+        q.answer = currentResult;
 
-        // Génération des mauvaises réponses si on est en QCM
-        if (choiceMode) {
-            generateWrongAnswers(q);
-        }
+        // Génération des mauvaises réponses si QCM
+        if (choiceMode) generateWrongAnswers(q);
 
         return q;
     }
 
-
-
     private void generateWrongAnswers(MathQuestion q) {
-
         while (q.wrongOptions.size() < 3) {
             int wrong = q.answer + random.nextInt(11) - 5;
             if (wrong != q.answer && !q.wrongOptions.contains(wrong)) {

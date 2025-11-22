@@ -64,12 +64,13 @@ public class GameFragment extends Fragment {
 
         questionGenerator = new QuestionGenerator(
                 1,      // difficulty par défaut
-                3,      // nombre d'opérandes
+                2,      // nombre d'opérandes
                 false,  // pas de QCM ici
                 allowAdd,
                 allowSub,
                 allowMul,
-                allowDiv
+                allowDiv,
+                true
         );
 
         generateQuestion();
