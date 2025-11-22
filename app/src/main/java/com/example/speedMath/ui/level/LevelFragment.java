@@ -20,16 +20,21 @@ import java.util.Random;
 
 public class LevelFragment extends Fragment {
 
-    private TextView textQuestion, textResult, textScoreRight;
+    private TextView textQuestion, textResult, textScoreRight, textTimer;
     private EditText inputAnswer;
     private Button[] numberButtons = new Button[10];
     private Button buttonCancel, buttonClear, buttonValidate;
     private ProgressBar progressBar;
 
     private String gameMode;
+    private int gameLevel, gameDifficulty, gameRequiredCorrect;
     private int correctAnswer;
     private int score = 0;
-    private int totalQuestions = 5; // Nombre de réponses correctes pour passer le niveau
+    private long elapsedMillis = 0;
+    private boolean timerRunning = false;
+
+    private CountUpTimer countUpTimer;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -37,8 +42,11 @@ public class LevelFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_level, container, false);
 
-        // Récupère le mode choisi
+        // Récupère les params choisis
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
+        gameLevel = getArguments() != null ? getArguments().getInt("LEVEL") : 1;
+        gameRequiredCorrect = getArguments() != null ? getArguments().getInt("REQUIRED_CORRECT") : 5;
+        gameDifficulty = getArguments() != null ? getArguments().getInt("DIFFICULTY") : 1;
 
         // Initialisation des vues
         textQuestion = root.findViewById(R.id.textQuestion);
@@ -46,6 +54,7 @@ public class LevelFragment extends Fragment {
         inputAnswer = root.findViewById(R.id.inputAnswer);
         textScoreRight = root.findViewById(R.id.textScoreRight);
         progressBar = root.findViewById(R.id.progressScore);
+        textTimer = root.findViewById(R.id.textTimer);
 
         buttonValidate = root.findViewById(R.id.btn_validate);
         buttonCancel = root.findViewById(R.id.btn_cancel);
@@ -71,6 +80,8 @@ public class LevelFragment extends Fragment {
         // Bouton Valider
         buttonValidate.setOnClickListener(v -> checkAnswer());
 
+        countUpTimer = new CountUpTimer();
+        countUpTimer.start();
         // Générer première question et afficher score
         score = 0;
         updateScore();
@@ -81,8 +92,8 @@ public class LevelFragment extends Fragment {
 
     private void generateQuestion() {
         Random r = new Random();
-        int a = r.nextInt(20) + 1;
-        int b = r.nextInt(20) + 1;
+        int a = r.nextInt(20)* gameDifficulty + 1;
+        int b = r.nextInt(20)* gameDifficulty + 1;
         char op;
 
         switch (gameMode) {
@@ -129,7 +140,7 @@ public class LevelFragment extends Fragment {
 
         int userAnswer = Integer.parseInt(userInput);
 
-        if (userAnswer == correctAnswer) {
+        if (userAnswer == gameRequiredCorrect) {
             textResult.setText("✔ Correct !");
             score++;
         } else {
@@ -138,10 +149,12 @@ public class LevelFragment extends Fragment {
         }
 
         updateScore();
-        if (score >= totalQuestions) {
+        if (score >= gameRequiredCorrect) {
             // Niveau terminé
             buttonValidate.setText("🎉 Niveau terminé !");
             buttonValidate.setEnabled(false);
+            countUpTimer.stop();
+
             buttonValidate.setEnabled(true);
 
             buttonValidate.setOnClickListener(v -> {
@@ -155,9 +168,48 @@ public class LevelFragment extends Fragment {
 
     private void updateScore() {
         if (textScoreRight != null && progressBar != null) {
-            textScoreRight.setText(score + "/" + totalQuestions);
-            progressBar.setMax(totalQuestions);
+            textScoreRight.setText(score + "/" + gameRequiredCorrect);
+            progressBar.setMax(gameRequiredCorrect);
             progressBar.setProgress(score);
         }
     }
+
+
+    // Timer simple pour compter le temps écoulé
+    private class CountUpTimer {
+        private boolean running = false;
+
+        public void start() {
+            running = true;
+            timerRunning = true;
+            new Thread(() -> {
+                while (running) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (running) {
+                        elapsedMillis += 1000;
+                        requireActivity().runOnUiThread(() ->
+                                textTimer.setText(LevelFragment.this.formatTime(elapsedMillis))
+                        );
+                    }
+                }
+            }).start();
+        }
+
+        public void stop() {
+            running = false;
+            timerRunning = false;
+        }
+    }
+
+
+    private String formatTime(long millis) {
+        int seconds = (int) (millis / 1000) % 60;
+        int minutes = (int) (millis / 1000) / 60;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
 }

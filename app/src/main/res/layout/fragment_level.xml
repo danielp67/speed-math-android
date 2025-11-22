@@ -2,44 +2,62 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.home.HomeFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.level.LevelFragment"
+    android:background="@color/white">
 
-    <!-- Contenu principal -->
+    <!-- Barre supérieure : score + timer -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- ProgressBar score -->
+        <ProgressBar
+            android:id="@+id/progressScore"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/purple_500"/>
+
+        <!-- Score text -->
+        <TextView
+            android:id="@+id/textScoreRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0/5"
+            android:textSize="16sp"
+            android:layout_marginStart="8dp"/>
+
+        <!-- Timer -->
+        <TextView
+            android:id="@+id/textTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Contenu central : question et réponse -->
     <LinearLayout
         android:id="@+id/mainContent"
+        android:layout_below="@id/topBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="16dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
 
-            <ProgressBar
-                android:id="@+id/progressScore"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:max="100"
-                android:progress="0"
-                android:progressTint="@color/purple_500"/>
-
-            <TextView
-                android:id="@+id/textScoreRight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0/5"
-                android:textSize="18sp"
-                android:layout_marginStart="8dp"/>
-        </LinearLayout>
-
+        <!-- Question -->
         <TextView
             android:id="@+id/textQuestion"
             android:layout_width="wrap_content"
@@ -47,8 +65,9 @@
             android:text="Loading..."
             android:textSize="36sp"
             android:textStyle="bold"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="24dp"/>
 
+        <!-- Champ réponse -->
         <EditText
             android:id="@+id/inputAnswer"
             android:layout_width="200dp"
@@ -60,19 +79,22 @@
             android:textSize="28sp"
             android:padding="12dp"
             android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="16dp" />
 
-
+        <!-- Résultat -->
         <TextView
             android:id="@+id/textResult"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Pavé numérique -->
         <include
             layout="@layout/layout_pave_numerique"
-            />
+            android:layout_marginTop="16dp"/>
     </LinearLayout>
+
 </RelativeLayout>

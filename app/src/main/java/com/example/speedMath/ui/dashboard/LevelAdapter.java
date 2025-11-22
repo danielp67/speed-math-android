@@ -33,7 +33,7 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
     @Override
     public void onBindViewHolder(@NonNull LevelViewHolder holder, int position) {
         LevelItem item = levels.get(position);
-        holder.levelNumber.setText("Niveau " + item.levelNumber);
+        holder.levelNumber.setText("Level " + item.levelNumber);
 
         holder.itemView.setTag(item);
         holder.itemView.setOnClickListener(listener);

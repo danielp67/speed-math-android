@@ -5,9 +5,12 @@ public class LevelItem {
     public String mode;
     public int requiredCorrect;
 
-    public LevelItem(int levelNumber, String mode, int requiredCorrect) {
+    public int difficulty;
+
+    public LevelItem(int levelNumber, String mode, int requiredCorrect, int difficulty) {
         this.levelNumber = levelNumber;
         this.mode = mode;
         this.requiredCorrect = requiredCorrect;
+        this.difficulty = difficulty;
     }
 }

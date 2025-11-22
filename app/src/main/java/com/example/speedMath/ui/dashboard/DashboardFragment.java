@@ -32,11 +32,16 @@ public class DashboardFragment extends Fragment {
 
         // Créer les niveaux
         levels = new ArrayList<>();
-        levels.add(new LevelItem(1, "ADD", 5));
-        levels.add(new LevelItem(2, "SUB", 5));
-        levels.add(new LevelItem(3, "MUL", 5));
-        levels.add(new LevelItem(4, "DIV", 5));
-        levels.add(new LevelItem(5, "ALL", 10));
+        levels.add(new LevelItem(1, "ADD", 5, 1));
+        levels.add(new LevelItem(2, "SUB", 5, 1));
+        levels.add(new LevelItem(3, "MUL", 5, 1));
+        levels.add(new LevelItem(4, "DIV", 5, 1));
+        levels.add(new LevelItem(5, "ALL", 5, 1));
+        levels.add(new LevelItem(6, "ADD", 5, 2));
+        levels.add(new LevelItem(7, "SUB", 5, 2));
+        levels.add(new LevelItem(8, "MUL", 5, 2));
+        levels.add(new LevelItem(9, "DIV", 5, 2));
+        levels.add(new LevelItem(10, "ALL", 10, 2));
         // ajouter plus de niveaux si nécessaire
 
         adapter = new LevelAdapter(levels, v -> {
@@ -45,6 +50,7 @@ public class DashboardFragment extends Fragment {
             args.putInt("LEVEL", item.levelNumber);
             args.putString("MODE", item.mode);
             args.putInt("REQUIRED_CORRECT", item.requiredCorrect);
+            args.putInt("DIFFICULTY", item.difficulty);
 
             Navigation.findNavController(v)
                     .navigate(R.id.action_navigation_dashboard_to_levelFragment, args);
