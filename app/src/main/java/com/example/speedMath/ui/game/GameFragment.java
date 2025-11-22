@@ -13,8 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
-
-import java.util.Random;
+import com.example.speedMath.core.QuestionGenerator;
 
 public class GameFragment extends Fragment {
 
@@ -25,6 +24,8 @@ public class GameFragment extends Fragment {
 
     private String gameMode;
     private int correctAnswer;
+
+    private QuestionGenerator questionGenerator;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,42 +56,34 @@ public class GameFragment extends Fragment {
         buttonCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         buttonValidate.setOnClickListener(v -> checkAnswer());
 
+        // ----- Initialisation du QuestionGenerator -----
+        boolean allowAdd = gameMode.equals("ADD") || gameMode.equals("ALL");
+        boolean allowSub = gameMode.equals("SUB") || gameMode.equals("ALL");
+        boolean allowMul = gameMode.equals("MUL") || gameMode.equals("ALL");
+        boolean allowDiv = gameMode.equals("DIV") || gameMode.equals("ALL");
+
+        questionGenerator = new QuestionGenerator(
+                1,      // difficulty par défaut
+                3,      // nombre d'opérandes
+                false,  // pas de QCM ici
+                allowAdd,
+                allowSub,
+                allowMul,
+                allowDiv
+        );
+
         generateQuestion();
 
         return root;
     }
 
     private void generateQuestion() {
-        Random r = new Random();
-        int a = r.nextInt(20) + 1;
-        int b = r.nextInt(20) + 1;
-        char op;
 
-        switch (gameMode) {
-            case "ADD": op = '+'; correctAnswer = a + b; break;
-            case "SUB": op = '-'; correctAnswer = a - b; break;
-            case "MUL": op = '×'; correctAnswer = a * b; break;
-            case "DIV":
-                b = r.nextInt(19) + 1;
-                correctAnswer = a / b;
-                a = correctAnswer * b;
-                op = '÷';
-                break;
-            default: // ALL
-                int rand = r.nextInt(4);
-                if (rand == 0) { op = '+'; correctAnswer = a + b; }
-                else if (rand == 1) { op = '-'; correctAnswer = a - b; }
-                else if (rand == 2) { op = '×'; correctAnswer = a * b; }
-                else {
-                    b = r.nextInt(19) + 1;
-                    correctAnswer = a / b;
-                    a = correctAnswer * b;
-                    op = '÷';
-                }
-                break;
-        }
+        // Génération via QuestionGenerator
+        QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 
-        textQuestion.setText(a + " " + op + " " + b + " ?");
+        textQuestion.setText(q.expression + " ?");
+        correctAnswer = q.answer;
         inputAnswer.setText("");
      //   textResult.setText("");
     }
