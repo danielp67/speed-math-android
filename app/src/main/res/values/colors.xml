@@ -12,10 +12,10 @@
         <color name="grey_dark_1">#0A0A0A</color>
         <color name="grey_dark_2">#1A1A1A</color>
         <color name="grey_dark_3">#2C2C2C</color>
-        <color name="grey_light">#E0E0E0</color>
+        <color name="grey_light">#F1F1F1</color>
 
         <!-- ACCENTS -->
-        <color name="blue_primary">#3F7FD9</color>
+        <color name="blue_primary">#2A5FA9</color>
         <color name="blue_primary_dark">#2A5FA9</color>
 
         <!-- PREMIUM -->

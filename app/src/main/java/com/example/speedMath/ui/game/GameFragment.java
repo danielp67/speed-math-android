@@ -1,6 +1,10 @@
 package com.example.speedMath.ui.game;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +23,6 @@ import com.example.speedMath.core.QuestionGenerator;
 public class GameFragment extends Fragment {
 
     private TextView textQuestion, textResult;
-    private EditText inputAnswer;
     private CardView[] cards = new CardView[10];
     private CardView cardCancel, cardClear, cardValidate;
     private TextView[] texts = new TextView[10];
@@ -39,9 +42,7 @@ public class GameFragment extends Fragment {
 
         textQuestion = root.findViewById(R.id.textQuestion);
         textResult = root.findViewById(R.id.textResult);
-        inputAnswer = root.findViewById(R.id.inputAnswer);
-
-        inputAnswer.setShowSoftInputOnFocus(false);
+        textResult.setText("");
 
         // Boutons numériques 0-9
         for (int i = 0; i <= 9; i++) {
@@ -50,7 +51,7 @@ public class GameFragment extends Fragment {
             texts[i] = cards[i].findViewById(R.id.textButton);
             texts[i].setText(i + "");
             int finalI = i;
-            cards[i].setOnClickListener(v -> inputAnswer.append(String.valueOf(finalI)));
+            cards[i].setOnClickListener(v -> textResult.append(String.valueOf(finalI)));
         }
 
         // Boutons clavier
@@ -66,7 +67,7 @@ public class GameFragment extends Fragment {
         textClear.setText("C");
         textValidate.setText("OK");
 
-        cardClear.setOnClickListener(v -> inputAnswer.setText(""));
+        cardClear.setOnClickListener(v -> textResult.setText(""));
         cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         cardValidate.setOnClickListener(v -> checkAnswer());
 
@@ -99,18 +100,44 @@ public class GameFragment extends Fragment {
 
         textQuestion.setText(q.expression);
         correctAnswer = q.answer;
-        inputAnswer.setText("");
     }
 
     private void checkAnswer() {
-        String userInput = inputAnswer.getText().toString().trim();
+        String userInput = textResult.getText().toString().trim();
         if (userInput.isEmpty()) return;
 
         int userAnswer = Integer.parseInt(userInput);
 
-        if (userAnswer == correctAnswer) textResult.setText("✔ Good !");
-        else textResult.setText("✘ Wrong (" + correctAnswer + ")");
-
+        if (userAnswer == correctAnswer) {
+            flashBorder(textResult, true);
+        } else {
+            flashBorder(textResult, false);
+            //score = 0;
+        }
         generateQuestion();
+    }
+
+    private void flashBorder(TextView view, boolean isCorrect) {
+
+        // Stocke le fond actuel pour restauration
+        Drawable originalBackground = view.getBackground();
+
+        // Couleur de feedback
+        int borderColor = isCorrect
+                ? Color.parseColor("#4CAF50") // Vert
+                : Color.parseColor("#F44336"); // Rouge
+
+        // Crée un drawable dynamique
+        GradientDrawable gd = new GradientDrawable();
+        gd.setStroke(8, borderColor);
+
+        // Applique temporairement
+        view.setBackground(gd);
+
+        // Après 0,5s → retour à la normale
+        new Handler().postDelayed(() -> {
+            view.setBackground(originalBackground);
+            view.setText("");
+        }, 500);
     }
 }
