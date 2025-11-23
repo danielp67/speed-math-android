@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
@@ -14,7 +16,8 @@ import com.example.speedMath.R;
 
 public class HomeFragment extends Fragment {
 
-    Button btnAdd, btnSub, btnMul, btnDiv, btnAll, btnQCM, btnDual;
+    CardView cardAdd, cardSub, cardMul, cardDiv, cardAll, cardQCM, cardDual;
+    TextView tvAdd, tvSub, tvMul, tvDiv, tvAll, tvQCM, tvDual;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -22,24 +25,39 @@ public class HomeFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        btnAdd = root.findViewById(R.id.btnAdd);
-        btnSub = root.findViewById(R.id.btnSub);
-        btnMul = root.findViewById(R.id.btnMul);
-        btnDiv = root.findViewById(R.id.btnDiv);
-        btnAll = root.findViewById(R.id.btnAll);
-        btnQCM = root.findViewById(R.id.btnQCM);
-        btnDual = root.findViewById(R.id.btnDual);
+        cardAdd = root.findViewById(R.id.cardAdd);
+        cardSub = root.findViewById(R.id.cardSub);
+        cardMul = root.findViewById(R.id.cardMul);
+        cardDiv = root.findViewById(R.id.cardDiv);
+        cardAll = root.findViewById(R.id.cardAll);
+        cardQCM = root.findViewById(R.id.cardQCM);
+        cardDual = root.findViewById(R.id.cardDual);
+        tvAdd = cardAdd.findViewById(R.id.textButton);
+        tvSub = cardSub.findViewById(R.id.textButton);
+        tvMul = cardMul.findViewById(R.id.textButton);
+        tvDiv = cardDiv.findViewById(R.id.textButton);
+        tvAll = cardAll.findViewById(R.id.textButton);
+        tvQCM = cardQCM.findViewById(R.id.textButton);
+        tvDual = cardDual.findViewById(R.id.textButton);
 
 
-        btnAdd.setOnClickListener(v -> openGame(v, "ADD"));
-        btnSub.setOnClickListener(v -> openGame(v, "SUB"));
-        btnMul.setOnClickListener(v -> openGame(v, "MUL"));
-        btnDiv.setOnClickListener(v -> openGame(v, "DIV"));
-        btnAll.setOnClickListener(v -> openGame(v, "ALL"));
-        btnQCM.setOnClickListener(v ->
+        tvAdd.setText("a + b");
+        tvSub.setText("a - b");
+        tvMul.setText("a x b");
+        tvDiv.setText("a ÷ b");
+        tvAll.setText("+ - x ÷");
+        tvQCM.setText("QCM");
+        tvDual.setText("Dual");
+
+        cardAdd.setOnClickListener(v -> openGame(v, "ADD"));
+        cardSub.setOnClickListener(v -> openGame(v, "SUB"));
+        cardMul.setOnClickListener(v -> openGame(v, "MUL"));
+        cardDiv.setOnClickListener(v -> openGame(v, "DIV"));
+        cardAll.setOnClickListener(v -> openGame(v, "ALL"));
+        cardQCM.setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_qcmFragment)
         );
-        btnDual.setOnClickListener(v ->
+        cardDual.setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dualFragment)
         );
         return root;

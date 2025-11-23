@@ -4,18 +4,29 @@
 
         <!-- LIGHT MODE COLORS -->
         <item name="android:colorBackground">@color/white</item>
-        <item name="android:textColor">@color/black</item>
-
-        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="android:textColor">@color/grey_dark_1</item>
+        <item name="android:colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/grey_dark_1</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
-        <item name="colorAccent">@color/blue_primary</item>
+        <item name="colorAccent">@color/blue_primary_dark</item>
 
+        <item name="colorBackground">@color/white</item>
+        <item name="textPrimary">@color/black</item>
+        <item name="cardBackground">@color/white</item>
+        <item name="colorButtonNormal">@color/grey_light</item>
         <!-- NAV + STATUS BAR -->
-        <item name="android:navigationBarColor">@color/white</item>
-        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/grey_light</item>
+        <item name="android:statusBarColor">@color/grey_light</item>
 
         <!-- FONT -->
         <item name="android:fontFamily">@font/inter_regular</item>
+
+
+
+    <!-- Background & primary text -->
+    <item name="android:textColorSecondary">@color/grey_dark_2</item>
+
+
 
     </style>
 

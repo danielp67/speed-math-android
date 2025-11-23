@@ -52,8 +52,8 @@ public class QuestionGenerator {
         List<Character> ops = new ArrayList<>();
         if (allowPlus) ops.add('+');
         if (allowMinus) ops.add('-');
-        if (allowMultiply) ops.add('*');
-        if (allowDivide) ops.add('/');
+        if (allowMultiply) ops.add('x');
+        if (allowDivide) ops.add('÷');
 
         if (ops.isEmpty()) ops.add('+');
 
@@ -81,14 +81,14 @@ public class QuestionGenerator {
             int nextVal = values.get(i);
 
             // Gestion spéciale pour la division
-            if (op == '/') {
+            if (op == '÷') {
                 // Générer un dividende "propre"
                 int dividend = currentResult * nextVal;
-                expr = new StringBuilder("(" + dividend + " / " + nextVal + ")");
+                expr = new StringBuilder("(" + dividend + " ÷ " + nextVal + ")");
                 currentResult = dividend / nextVal;
-            } else if (op == '*') {
-                if (operandCount > 2) expr = new StringBuilder("(" + expr + " * " + nextVal + ")");
-                else expr.append(" * ").append(nextVal);
+            } else if (op == 'x') {
+                if (operandCount > 2) expr = new StringBuilder("(" + expr + " x " + nextVal + ")");
+                else expr.append(" x ").append(nextVal);
                 currentResult *= nextVal;
             } else if (op == '-') {
                 if (avoidNegative) {
