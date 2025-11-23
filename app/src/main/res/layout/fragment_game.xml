@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.home.HomeFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorBackground">
 
     <!-- Contenu principal -->
     <LinearLayout
@@ -47,7 +48,8 @@
             android:textStyle="bold" />
 
         <include
-            layout="@layout/layout_pave_numerique"
-            />
+            layout="@layout/layout_num_pad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </RelativeLayout>

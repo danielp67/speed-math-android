@@ -93,7 +93,7 @@
 
         <!-- Pavé numérique -->
         <include
-            layout="@layout/layout_pave_numerique" />
+            layout="@layout/layout_num_pad" />
     </LinearLayout>
 
 </RelativeLayout>

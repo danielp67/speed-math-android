@@ -2,88 +2,87 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
     android:useDefaultMargins="true"
     android:columnCount="3"
     android:rowCount="5">
 
-    <Button
-        android:id="@+id/btn1"
-        android:text="1"
+    <include
+        android:id="@+id/card1"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn2"
-        android:text="2"
+    <include
+        android:id="@+id/card2"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn3"
-        android:text="3"
+    <include
+        android:id="@+id/card3"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn4"
-        android:text="4"
+    <include
+        android:id="@+id/card4"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn5"
-        android:text="5"
+    <include
+        android:id="@+id/card5"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn6"
-        android:text="6"
+    <include
+        android:id="@+id/card6"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn7"
-        android:text="7"
+    <include
+        android:id="@+id/card7"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn8"
-        android:text="8"
+    <include
+        android:id="@+id/card8"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn9"
-        android:text="9"
+    <include
+        android:id="@+id/card9"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn_cancel"
-        android:text="X"
+    <include
+        android:id="@+id/cardX"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn0"
-        android:text="0"
+    <include
+        android:id="@+id/card0"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn_correct"
-        android:text="C"
+    <include
+        android:id="@+id/cardC"
+        layout="@layout/card_pad"
         android:layout_width="100dp"
         android:layout_height="60dp" />
 
-    <Button
-        android:id="@+id/btn_validate"
-        android:layout_width="320dp"
-        android:layout_height="60dp"
+    <include
+        android:id="@+id/cardOK"
+        layout="@layout/card_pad"
         android:layout_columnSpan="3"
-        android:text="OK" />
+        android:layout_width="320dp"
+        android:layout_height="60dp" />
 
 </GridLayout>

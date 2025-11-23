@@ -2,23 +2,23 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_width="100dp"
+    android:layout_height="60dp"
+    android:layout_margin="6dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="8dp">
+    android:foreground="?attr/selectableItemBackground"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="12dp">
 
     <TextView
         android:id="@+id/textButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="32dp"
-        android:text="Button"
-        android:textColor="?attr/textPrimary"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:fontFamily="@font/inter_regular"
+        android:text="8"
+        android:textSize="22sp"
         android:textStyle="bold"
-        android:textSize="24sp"/>
+        android:fontFamily="@font/inter_regular"
+        android:textColor="?attr/colorOnBackground"/>
 </androidx.cardview.widget.CardView>

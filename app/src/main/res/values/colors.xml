@@ -23,5 +23,21 @@
 
         <!-- TRANSPARENTS -->
         <color name="transparent">#00FFFFFF</color>
+        <!-- Backgrounds -->
+        <color name="background_dark">#121212</color>
+        <color name="background_light">#FFFFFF</color>
 
+        <!-- Card colors -->
+        <color name="card_completed">#FFD700</color> <!-- gold for completed -->
+        <color name="card_pending">#B0B0B0</color> <!-- grey for pending -->
+
+        <!-- Text colors -->
+        <color name="text_primary">#FFFFFF</color>
+        <color name="text_secondary">#B0B0B0</color>
+        <color name="text_star">#FFD700</color> <!-- star color -->
+
+        <!-- Buttons -->
+        <color name="button_bg">#1E88E5</color>
+        <color name="button_text">#FFFFFF</color>
     </resources>
+

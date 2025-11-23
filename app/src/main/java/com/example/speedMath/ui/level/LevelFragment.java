@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -23,8 +24,10 @@ public class LevelFragment extends Fragment {
 
     private TextView textQuestion, textResult, textScoreRight, textTimer;
     private EditText inputAnswer;
-    private Button[] numberButtons = new Button[10];
-    private Button buttonCancel, buttonClear, buttonValidate;
+    private CardView[] cards = new CardView[10];
+    private CardView cardCancel, cardClear, cardValidate;
+    private TextView[] texts = new TextView[10];
+    private TextView textCancel, textClear, textValidate;
     private ProgressBar progressBar;
 
     private String gameMode;
@@ -59,29 +62,37 @@ public class LevelFragment extends Fragment {
         progressBar = root.findViewById(R.id.progressScore);
         textTimer = root.findViewById(R.id.textTimer);
 
-        buttonValidate = root.findViewById(R.id.btn_validate);
-        buttonCancel = root.findViewById(R.id.btn_cancel);
-        buttonClear = root.findViewById(R.id.btn_correct);
 
         // Désactive le clavier Android par défaut
         inputAnswer.setShowSoftInputOnFocus(false);
 
-        // Initialisation des boutons numériques
+
+        // Boutons numériques 0-9
         for (int i = 0; i <= 9; i++) {
-            int resID = getResources().getIdentifier("btn" + i, "id", getActivity().getPackageName());
-            numberButtons[i] = root.findViewById(resID);
+            int resID = getResources().getIdentifier("card" + i, "id", getActivity().getPackageName());
+            cards[i] = root.findViewById(resID);
+            texts[i] = cards[i].findViewById(R.id.textButton);
+            texts[i].setText(i + "");
             int finalI = i;
-            numberButtons[i].setOnClickListener(v -> inputAnswer.append(String.valueOf(finalI)));
+            cards[i].setOnClickListener(v -> inputAnswer.append(String.valueOf(finalI)));
         }
 
-        // Bouton Corriger (Clear)
-        buttonClear.setOnClickListener(v -> inputAnswer.setText(""));
+        // Boutons clavier
+        cardCancel = root.findViewById(R.id.cardX);
+        cardClear = root.findViewById(R.id.cardC);
+        cardValidate = root.findViewById(R.id.cardOK);
 
-        // Bouton Stop
-        buttonCancel.setOnClickListener(v -> getActivity().onBackPressed());
+        textCancel = cardCancel.findViewById(R.id.textButton);
+        textClear = cardClear.findViewById(R.id.textButton);
+        textValidate = cardValidate.findViewById(R.id.textButton);
 
-        // Bouton Valider
-        buttonValidate.setOnClickListener(v -> checkAnswer());
+        textCancel.setText("X");
+        textClear.setText("C");
+        textValidate.setText("OK");
+
+        cardClear.setOnClickListener(v -> inputAnswer.setText(""));
+        cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        cardValidate.setOnClickListener(v -> checkAnswer());
 
         countUpTimer = new CountUpTimer();
         countUpTimer.start();
@@ -116,7 +127,6 @@ public class LevelFragment extends Fragment {
         textQuestion.setText(q.expression + " ?");
         correctAnswer = q.answer;
         inputAnswer.setText("");
-        //   textResult.setText("");
     }
 
     private void checkAnswer() {
@@ -126,23 +136,19 @@ public class LevelFragment extends Fragment {
         int userAnswer = Integer.parseInt(userInput);
 
         if (userAnswer == gameRequiredCorrect) {
-            textResult.setText("✔ Correct !");
+            textResult.setText("✔ Good !");
             score++;
         } else {
-            textResult.setText("✘ Wrong (" + correctAnswer + ")");
+            textResult.setText("✘  Wrong (" + correctAnswer + ")");
             score++;
         }
 
         updateScore();
         if (score >= gameRequiredCorrect) {
             // Niveau terminé
-            buttonValidate.setText("🎉 Niveau terminé !");
-            buttonValidate.setEnabled(false);
+            textValidate.setText("🎉 Level completed !");
             countUpTimer.stopTimer();
-
-            buttonValidate.setEnabled(true);
-
-            buttonValidate.setOnClickListener(v -> {
+            textValidate.setOnClickListener(v -> {
                 NavController navController = Navigation.findNavController(v);
                 navController.navigate(R.id.navigation_dashboard);
             });;
