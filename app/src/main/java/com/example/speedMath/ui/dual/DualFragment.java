@@ -146,11 +146,11 @@ public class DualFragment extends Fragment {
         int value = Integer.parseInt(selected.getText().toString());
 
         if (value == p1CorrectAnswer) {
-            p1Result.setText("Bonne réponse !");
+            p1Result.setText("✅");
             p1Result.setTextColor(Color.parseColor("#2ecc71"));
             highlightCorrect(selected);
         } else {
-            p1Result.setText("Mauvaise réponse");
+            p1Result.setText("❌");
             p1Result.setTextColor(Color.parseColor("#e74c3c"));
             highlightWrong(selected);
             highlightCorrectAnswer(p1Texts, p1Cards, p1CorrectAnswer);
@@ -166,11 +166,11 @@ public class DualFragment extends Fragment {
         int value = Integer.parseInt(selected.getText().toString());
 
         if (value == p2CorrectAnswer) {
-            p2Result.setText("Bonne réponse !");
+            p2Result.setText("✅");
             p2Result.setTextColor(Color.parseColor("#2ecc71"));
             highlightCorrect(selected);
         } else {
-            p2Result.setText("Mauvaise réponse");
+            p2Result.setText("❌");
             p2Result.setTextColor(Color.parseColor("#e74c3c"));
             highlightWrong(selected);
             highlightCorrectAnswer(p2Texts, p2Cards, p2CorrectAnswer);

@@ -33,8 +33,20 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
     @Override
     public void onBindViewHolder(@NonNull LevelViewHolder holder, int position) {
         LevelItem item = levels.get(position);
-        holder.levelNumber.setText("Level " + item.levelNumber);
+        holder.levelNumber.setText("" + item.levelNumber);
+        holder.levelStatus.setText(item.status.toString());
 
+        switch (item.status) {
+            case LOCKED:
+                holder.levelStatus.setText("\uD83D\uDD12");
+            break;
+            case UNLOCKED:
+                holder.levelStatus.setText("✩");
+            break;
+            case COMPLETED:
+                holder.levelStatus.setText("⭐");
+            break;
+        }
         holder.itemView.setTag(item);
         holder.itemView.setOnClickListener(listener);
     }
@@ -45,11 +57,12 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
     }
 
     static class LevelViewHolder extends RecyclerView.ViewHolder {
-        TextView levelNumber;
+        TextView levelNumber, levelStatus;
 
         public LevelViewHolder(@NonNull View itemView) {
             super(itemView);
             levelNumber = itemView.findViewById(R.id.textLevelNumber);
+            levelStatus = itemView.findViewById(R.id.textLevelStatus);
         }
     }
 }

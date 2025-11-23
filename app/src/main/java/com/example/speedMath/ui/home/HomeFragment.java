@@ -46,8 +46,8 @@ public class HomeFragment extends Fragment {
         tvMul.setText("a x b");
         tvDiv.setText("a ÷ b");
         tvAll.setText("+ - x ÷");
-        tvQCM.setText("QCM");
-        tvDual.setText("Dual");
+        tvQCM.setText("\uD83D\uDD22 \uD83D\uDC64");
+        tvDual.setText("\uD83D\uDD22 \uD83D\uDC65\u200B");
 
         cardAdd.setOnClickListener(v -> openGame(v, "ADD"));
         cardSub.setOnClickListener(v -> openGame(v, "SUB"));

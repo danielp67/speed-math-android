@@ -97,7 +97,7 @@ public class GameFragment extends Fragment {
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 
-        textQuestion.setText(q.expression + " ?");
+        textQuestion.setText(q.expression + " = ?");
         correctAnswer = q.answer;
         inputAnswer.setText("");
     }
@@ -108,7 +108,7 @@ public class GameFragment extends Fragment {
 
         int userAnswer = Integer.parseInt(userInput);
 
-        if (userAnswer == correctAnswer) textResult.setText("✔ Correct !");
+        if (userAnswer == correctAnswer) textResult.setText("✔ Good !");
         else textResult.setText("✘ Wrong (" + correctAnswer + ")");
 
         generateQuestion();
