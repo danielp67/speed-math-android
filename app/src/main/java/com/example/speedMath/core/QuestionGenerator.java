@@ -107,7 +107,7 @@ public class QuestionGenerator {
             }
         }
 
-        q.expression = expr.toString();
+        q.expression = expr.append(" = ?").toString();
         q.answer = currentResult;
 
         // Génération des mauvaises réponses si QCM

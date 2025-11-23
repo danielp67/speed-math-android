@@ -124,7 +124,7 @@ public class LevelFragment extends Fragment {
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 
-        textQuestion.setText(q.expression + " ?");
+        textQuestion.setText(q.expression);
         correctAnswer = q.answer;
         inputAnswer.setText("");
     }
