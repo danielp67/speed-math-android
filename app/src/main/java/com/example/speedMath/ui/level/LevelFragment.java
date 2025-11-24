@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,17 +20,15 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.QuestionGenerator;
-
-import java.util.Random;
+import com.example.speedMath.core.StatsManager;
 
 public class LevelFragment extends Fragment {
 
-    private TextView textQuestion, textResult, textScoreRight, textTimer;
- //   private EditText inputAnswer;
+    private TextView textQuestion, textResult, textScoreRight, textTimer, textValidate;
     private CardView[] cards = new CardView[10];
-    private CardView cardCancel, cardClear, cardValidate;
+    private CardView cardCancel, cardClear, cardValidateCard;
     private TextView[] texts = new TextView[10];
-    private TextView textCancel, textClear, textValidate;
+    private TextView textCancel, textClear;
     private ProgressBar progressBar;
 
     private String gameMode;
@@ -40,12 +36,10 @@ public class LevelFragment extends Fragment {
     private int correctAnswer;
     private int score = 0;
     private long elapsedMillis = 0;
-    private boolean timerRunning = false;
 
     private QuestionGenerator questionGenerator;
-
     private CountUpTimer countUpTimer;
-
+    private StatsManager statsManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -53,38 +47,41 @@ public class LevelFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_level, container, false);
 
-        // Récupère les params choisis
+        // Stats manager
+        statsManager = new StatsManager(requireContext());
+
+        // Paramètres
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
         gameLevel = getArguments() != null ? getArguments().getInt("LEVEL") : 1;
         gameRequiredCorrect = getArguments() != null ? getArguments().getInt("REQUIRED_CORRECT") : 5;
         gameDifficulty = getArguments() != null ? getArguments().getInt("DIFFICULTY") : 1;
 
-        // Initialisation des vues
+        // Vues
         textQuestion = root.findViewById(R.id.textQuestion);
         textResult = root.findViewById(R.id.textResult);
         textResult.setText("");
         textScoreRight = root.findViewById(R.id.textScoreRight);
-        progressBar = root.findViewById(R.id.progressScore);
         textTimer = root.findViewById(R.id.textTimer);
+        progressBar = root.findViewById(R.id.progressScore);
 
-        // Boutons numériques 0-9
+        // Boutons numériques
         for (int i = 0; i <= 9; i++) {
             int resID = getResources().getIdentifier("card" + i, "id", getActivity().getPackageName());
             cards[i] = root.findViewById(resID);
             texts[i] = cards[i].findViewById(R.id.textButton);
-            texts[i].setText(i + "");
+            texts[i].setText(String.valueOf(i));
             int finalI = i;
             cards[i].setOnClickListener(v -> textResult.append(String.valueOf(finalI)));
         }
 
-        // Boutons clavier
+        // Boutons fonction
         cardCancel = root.findViewById(R.id.cardX);
         cardClear = root.findViewById(R.id.cardC);
-        cardValidate = root.findViewById(R.id.cardOK);
+        cardValidateCard = root.findViewById(R.id.cardOK);
 
         textCancel = cardCancel.findViewById(R.id.textButton);
         textClear = cardClear.findViewById(R.id.textButton);
-        textValidate = cardValidate.findViewById(R.id.textButton);
+        textValidate = cardValidateCard.findViewById(R.id.textButton);
 
         textCancel.setText("X");
         textClear.setText("C");
@@ -92,27 +89,25 @@ public class LevelFragment extends Fragment {
 
         cardClear.setOnClickListener(v -> textResult.setText(""));
         cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
-        cardValidate.setOnClickListener(v -> checkAnswer());
+        cardValidateCard.setOnClickListener(v -> checkAnswer());
 
+        // Timer
         countUpTimer = new CountUpTimer();
         countUpTimer.start();
-        // Générer première question et afficher score
+
+        // Score initial
         score = 0;
         updateScore();
-        // ----- Initialisation du QuestionGenerator -----
+
+        // Question generator
         boolean allowAdd = gameMode.equals("ADD") || gameMode.equals("ALL");
         boolean allowSub = gameMode.equals("SUB") || gameMode.equals("ALL");
         boolean allowMul = gameMode.equals("MUL") || gameMode.equals("ALL");
         boolean allowDiv = gameMode.equals("DIV") || gameMode.equals("ALL");
+
         questionGenerator = new QuestionGenerator(
-                gameDifficulty,      // difficulty par défaut
-                2,      // nombre d'opérandes
-                false,  // pas de QCM ici
-                allowAdd,
-                allowSub,
-                allowMul,
-                allowDiv,
-                true
+                gameDifficulty, 2, false,
+                allowAdd, allowSub, allowMul, allowDiv, true
         );
         generateQuestion();
 
@@ -120,10 +115,7 @@ public class LevelFragment extends Fragment {
     }
 
     private void generateQuestion() {
-
-        // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
-
         textQuestion.setText(q.expression);
         correctAnswer = q.answer;
     }
@@ -134,28 +126,34 @@ public class LevelFragment extends Fragment {
 
         int userAnswer = Integer.parseInt(userInput);
 
-        if (userAnswer == correctAnswer) {
-            flashBorder(textResult, true);
-            score++;
-        } else {
-            flashBorder(textResult, false);
-            //score = 0;
-            score++;
-        }
+        boolean isCorrect = userAnswer == correctAnswer;
 
+        flashBorder(textResult, isCorrect);
+
+        // Ajout aux stats
+        statsManager.addAnswer(isCorrect);
+
+        if (isCorrect) score++;
         updateScore();
+
         if (score >= gameRequiredCorrect) {
-            // Niveau terminé
-            textValidate.setText("🎉 Level completed !");
-            textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
-            countUpTimer.stopTimer();
-            textValidate.setOnClickListener(v -> {
-                NavController navController = Navigation.findNavController(v);
-                navController.navigate(R.id.navigation_dashboard);
-            });;
+            levelCompleted();
         } else {
             generateQuestion();
         }
+    }
+
+    private void levelCompleted() {
+        textValidate.setText("🎉 Level completed !");
+        textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
+        countUpTimer.stopTimer();
+        statsManager.setCurrentLevel(gameLevel);
+        statsManager.setLevelTime(gameLevel, elapsedMillis);
+
+        textValidate.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.navigation_dashboard);
+        });
     }
 
     private void updateScore() {
@@ -167,20 +165,11 @@ public class LevelFragment extends Fragment {
     }
 
     private void flashBorder(TextView view, boolean isCorrect) {
-
-        // Stocke le fond actuel pour restauration
         Drawable originalBackground = view.getBackground();
-
-        // Couleur de feedback
-        int borderColor = isCorrect
-                ? Color.parseColor("#4CAF50") // Vert
-                : Color.parseColor("#F44336"); // Rouge
-
-        // Crée un drawable dynamique
+        int borderColor = isCorrect ? Color.parseColor("#4CAF50") : Color.parseColor("#F44336");
         GradientDrawable gd = new GradientDrawable();
         gd.setStroke(8, borderColor);
 
-        // Applique temporairement
         view.setBackground(gd);
 
         // Après 0,5s → retour à la normale
@@ -190,11 +179,8 @@ public class LevelFragment extends Fragment {
         }, 500);
     }
 
-
-    // Timer simple pour compter le temps écoulé
     private class CountUpTimer extends Thread {
         private boolean running = true;
-        private long elapsedMillis = 0;
 
         @Override
         public void run() {
@@ -202,32 +188,22 @@ public class LevelFragment extends Fragment {
                 try {
                     Thread.sleep(1000);
                     elapsedMillis += 1000;
-
-                    // Vérification que le fragment est toujours attaché
                     if (!isAdded() || getActivity() == null) continue;
-
-                    getActivity().runOnUiThread(() -> {
-                        if (textTimer != null) {
-                            textTimer.setText(formatTime(elapsedMillis));
-                        }
-                    });
-
+                    getActivity().runOnUiThread(() -> textTimer.setText(formatTime(elapsedMillis)));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        public void stopTimer() {
-            running = false;
-        }
+        public void stopTimer() { running = false; }
     }
 
-
     private String formatTime(long millis) {
-        int seconds = (int) (millis / 1000) % 60;
-        int minutes = (int) (millis / 1000) / 60;
-        return String.format("%02d:%02d", minutes, seconds);
+        int seconds = (int) (millis / 1000);
+        int milliseconds = (int) (millis % 1000) / 10; // centièmes (2 chiffres)
+
+        return String.format("%02d.%02d", seconds, milliseconds);
     }
 
 }

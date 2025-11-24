@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="center_vertical">
+        android:gravity="center">
 
         <!-- Timer -->
         <TextView
@@ -31,7 +31,7 @@
             android:id="@+id/progressScore"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="0dp"
-            android:layout_height="24dp"
+            android:layout_height="18dp"
             android:layout_weight="1"
             android:max="100"
             android:progress="0"
@@ -44,7 +44,8 @@
             android:layout_height="wrap_content"
             android:text="0/5"
             android:textSize="16sp"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <!-- Contenu central : question et réponse -->
@@ -71,7 +72,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardResult"
-            android:layout_width="200dp"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:clickable="true"

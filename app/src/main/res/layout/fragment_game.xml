@@ -16,6 +16,37 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Barre supérieure : score + timer -->
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center">
+
+            <!-- Timer -->
+            <TextView
+                android:id="@+id/textTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="16sp"
+                android:layout_margin="16dp"
+                android:textStyle="bold"/>
+
+            <!-- ProgressBar score -->
+
+            <!-- Score text -->
+            <TextView
+                android:id="@+id/textScoreRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/5"
+                android:textSize="16sp"
+                android:layout_margin="16dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/textQuestion"
             android:layout_width="wrap_content"
@@ -27,7 +58,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardResult"
-            android:layout_width="200dp"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:clickable="true"
