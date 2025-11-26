@@ -1,88 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.home.HomeFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorBackground">
 
-    <!-- Contenu principal -->
+    <!-- Top bar -->
+
+    <!-- Question -->
     <LinearLayout
-        android:id="@+id/mainContent"
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_32"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Barre supérieure : score + timer -->
-        <LinearLayout
-            android:id="@+id/topBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center">
-
-            <!-- Timer -->
-            <TextView
-                android:id="@+id/textTimer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00"
-                android:textSize="16sp"
-                android:layout_margin="16dp"
-                android:textStyle="bold"/>
-
-            <!-- ProgressBar score -->
-
-            <!-- Score text -->
-            <TextView
-                android:id="@+id/textScoreRight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0/5"
-                android:textSize="16sp"
-                android:layout_margin="16dp"
-                android:textStyle="bold"/>
-        </LinearLayout>
         <TextView
-            android:id="@+id/textQuestion"
-            android:layout_width="wrap_content"
+            android:id="@+id/textTimer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Loading..."
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="32dp" />
+            android:layout_weight="1"
+            android:gravity="start|center_vertical"
+            android:text="00.0"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardResult"
-            android:layout_width="320dp"
+        <TextView
+            android:id="@+id/textScoreRight"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="16dp"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+            android:layout_weight="1"
+            android:gravity="end|center_vertical"
+            android:text="0/5"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold" />
 
-            <!-- Résultat -->
-            <TextView
-                android:id="@+id/textResult"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="32sp"
-                android:text="?"
-                android:padding="16dp"
-                />
-        </androidx.cardview.widget.CardView>
-
-        <include
-            layout="@layout/layout_num_pad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </LinearLayout>
-</RelativeLayout>
+
+    <TextView
+        android:id="@+id/textQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Loading..."
+        android:textSize="@dimen/sp_32"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/dp_16"
+        app:layout_constraintTop_toBottomOf="@id/topBar" />
+
+    <!-- Num Pad -->
+    <include
+        layout="@layout/layout_num_pad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_80"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

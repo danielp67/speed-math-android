@@ -1,101 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="?attr/colorBackground">
+
+<!-- Top bar -->
+
+<!-- Question -->
+<LinearLayout
+    android:id="@+id/topBar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.level.LevelFragment"
-    android:background="@color/white">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/dp_32"
+    android:layout_marginTop="@dimen/dp_24"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Barre supérieure : score + timer -->
-    <LinearLayout
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textTimer"
+        android:layout_width="@dimen/dp_8"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center">
+        android:layout_weight="1"
+        android:gravity="start|center_vertical"
+        android:text="00.0"
+        android:textSize="@dimen/sp_16"
+        android:textStyle="bold" />
 
-        <!-- Timer -->
-        <TextView
-            android:id="@+id/textTimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00"
-            android:textSize="16sp"
-            android:layout_marginEnd="16dp"
-            android:textStyle="bold"/>
+    <ProgressBar
+        android:id="@+id/progressScore"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="150dp"
+        android:layout_height="16dp"
+        android:layout_weight="1"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/card_completed"/>
 
-        <!-- ProgressBar score -->
-        <ProgressBar
-            android:id="@+id/progressScore"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="0dp"
-            android:layout_height="18dp"
-            android:layout_weight="1"
-            android:max="100"
-            android:progress="0"
-            android:progressTint="@color/card_completed"/>
+    <TextView
+        android:id="@+id/textScoreRight"
+        android:layout_width="@dimen/dp_8"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end|center_vertical"
+        android:text="0/5"
+        android:textSize="@dimen/sp_16"
+        android:textStyle="bold" />
 
-        <!-- Score text -->
-        <TextView
-            android:id="@+id/textScoreRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0/5"
-            android:textSize="16sp"
-            android:layout_marginStart="8dp"
-            android:textStyle="bold"/>
-    </LinearLayout>
+</LinearLayout>
 
-    <!-- Contenu central : question et réponse -->
-    <LinearLayout
-        android:id="@+id/mainContent"
-        android:layout_below="@id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <TextView
+        android:id="@+id/textHighScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_8"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:text="Best : 00:00"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar" />
 
-        <!-- Question -->
-        <TextView
-            android:id="@+id/textQuestion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Loading..."
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp"/>
+    <TextView
+    android:id="@+id/textQuestion"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Loading..."
+    android:textSize="@dimen/sp_32"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginTop="@dimen/dp_64"
+    app:layout_constraintTop_toBottomOf="@id/topBar" />
 
+<!-- Num Pad -->
+<include
+    layout="@layout/layout_num_pad"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dp_80"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
 
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardResult"
-            android:layout_width="320dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="16dp"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
-
-            <!-- Résultat -->
-            <TextView
-                android:id="@+id/textResult"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="32sp"
-                android:text="?"
-                android:padding="16dp"
-                />
-        </androidx.cardview.widget.CardView>
-        <!-- Pavé numérique -->
-        <include
-            layout="@layout/layout_num_pad" />
-    </LinearLayout>
-
-</RelativeLayout>

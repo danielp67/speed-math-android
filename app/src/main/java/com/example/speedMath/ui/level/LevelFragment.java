@@ -20,11 +20,11 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.QuestionGenerator;
-import com.example.speedMath.core.StatsManager;
+import com.example.speedMath.core.PlayerManager;
 
 public class LevelFragment extends Fragment {
 
-    private TextView textQuestion, textResult, textScoreRight, textTimer, textValidate;
+    private TextView textQuestion, textResult, textScoreRight, textTimer, textValidate, textHighScore;
     private CardView[] cards = new CardView[10];
     private CardView cardCancel, cardClear, cardValidateCard;
     private TextView[] texts = new TextView[10];
@@ -39,7 +39,7 @@ public class LevelFragment extends Fragment {
 
     private QuestionGenerator questionGenerator;
     private CountUpTimer countUpTimer;
-    private StatsManager statsManager;
+    private PlayerManager playerManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,8 +47,8 @@ public class LevelFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_level, container, false);
 
-        // Stats manager
-        statsManager = new StatsManager(requireContext());
+        // Player manager
+        playerManager = PlayerManager.getInstance(requireContext());
 
         // Paramètres
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
@@ -57,6 +57,8 @@ public class LevelFragment extends Fragment {
         gameDifficulty = getArguments() != null ? getArguments().getInt("DIFFICULTY") : 1;
 
         // Vues
+        textHighScore = root.findViewById(R.id.textHighScore);
+        textHighScore.setText("High score : " +(float) playerManager.getLevelHighScore(gameLevel)/ 1000 + " s");
         textQuestion = root.findViewById(R.id.textQuestion);
         textResult = root.findViewById(R.id.textResult);
         textResult.setText("");
@@ -130,9 +132,6 @@ public class LevelFragment extends Fragment {
 
         flashBorder(textResult, isCorrect);
 
-        // Ajout aux stats
-        statsManager.addAnswer(isCorrect);
-
         if (isCorrect) score++;
         updateScore();
 
@@ -147,8 +146,8 @@ public class LevelFragment extends Fragment {
         textValidate.setText("🎉 Level completed !");
         textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
         countUpTimer.stopTimer();
-        statsManager.setCurrentLevel(gameLevel);
-        statsManager.setLevelTime(gameLevel, elapsedMillis);
+        playerManager.setCurrentLevel(gameLevel);
+        playerManager.setLevelHighScore(gameLevel, elapsedMillis);
 
         textValidate.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
@@ -186,8 +185,8 @@ public class LevelFragment extends Fragment {
         public void run() {
             while (running) {
                 try {
-                    Thread.sleep(1000);
-                    elapsedMillis += 1000;
+                    Thread.sleep(100);
+                    elapsedMillis += 100;
                     if (!isAdded() || getActivity() == null) continue;
                     getActivity().runOnUiThread(() -> textTimer.setText(formatTime(elapsedMillis)));
                 } catch (InterruptedException e) {
@@ -201,9 +200,9 @@ public class LevelFragment extends Fragment {
 
     private String formatTime(long millis) {
         int seconds = (int) (millis / 1000);
-        int milliseconds = (int) (millis % 1000) / 10; // centièmes (2 chiffres)
+        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
 
-        return String.format("%02d.%02d", seconds, milliseconds);
+        return String.format("%02d.%2d", seconds, milliseconds);
     }
 
 }

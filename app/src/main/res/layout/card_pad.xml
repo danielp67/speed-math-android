@@ -4,12 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="100dp"
     android:layout_height="60dp"
-    android:layout_margin="6dp"
+    android:layout_margin="0dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardElevation="8dp"
-    app:cardCornerRadius="12dp">
+    app:cardElevation="8dp">
 
     <TextView
         android:id="@+id/textButton"

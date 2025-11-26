@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,15 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.LevelGenerator;
+import com.example.speedMath.core.PlayerManager;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DashboardFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private LevelAdapter adapter;
     private List<LevelItem> levels;
+    private PlayerManager playerManager;
+    private TextView textDashboardTitle;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -31,8 +35,14 @@ public class DashboardFragment extends Fragment {
 
         recyclerView = root.findViewById(R.id.recyclerLevels);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        textDashboardTitle = root.findViewById(R.id.textDashboardTitle);
+        playerManager = PlayerManager.getInstance(requireContext());
 
-        adapter = new LevelAdapter(LevelGenerator.generateLevels(), v -> {
+        int currentLevel = playerManager.getCurrentLevel();
+        textDashboardTitle.setText(currentLevel + " ⭐");
+
+
+        adapter = new LevelAdapter(LevelGenerator.generateLevels(playerManager.getCurrentLevel()), v -> {
             LevelItem item = (LevelItem) v.getTag();
             Bundle args = new Bundle();
             args.putInt("LEVEL", item.levelNumber);
@@ -40,7 +50,6 @@ public class DashboardFragment extends Fragment {
             args.putInt("REQUIRED_CORRECT", item.requiredCorrect);
             args.putInt("DIFFICULTY", item.difficulty);
             args.putInt("STATUS", 0);
-
             Navigation.findNavController(v)
                     .navigate(R.id.action_navigation_dashboard_to_levelFragment, args);
         });

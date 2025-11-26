@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
     android:useDefaultMargins="true"
     android:columnCount="3"
     android:rowCount="5">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardResult"
+        android:layout_width="315dp"
+        android:layout_height="64dp"
+        android:layout_columnSpan="3"
+        android:useDefaultMargins="true"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/textQuestion">
+
+        <TextView
+            android:id="@+id/textResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/dp_16"
+            android:textSize="@dimen/sp_24" />
+
+    </androidx.cardview.widget.CardView>
 
     <include
         android:id="@+id/card1"
