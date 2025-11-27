@@ -19,7 +19,7 @@
         android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav_menu"
         android:layout_alignParentBottom="true"
-        android:background="@color/grey_dark_3"
+        android:background="?attr/colorPrimary"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"/>
 

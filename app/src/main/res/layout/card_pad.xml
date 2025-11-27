@@ -6,7 +6,7 @@
     android:layout_height="@dimen/dp_48"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
+    android:foreground="@drawable/num_pad_button_ripple"
     app:cardElevation="8dp">
 
     <TextView

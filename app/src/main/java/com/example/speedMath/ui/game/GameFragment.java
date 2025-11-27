@@ -35,7 +35,8 @@ public class GameFragment extends Fragment {
     private long elapsedMillis = 0;
     private int score = 0;
 
-    private int correctAnswer, correctAnswersStreak, lastPlayedLevel;
+    private long correctAnswer;
+    private int correctAnswersStreak, lastPlayedLevel;
     private PlayerManager playerManager;
     private CountUpTimer countUpTimer;
 
@@ -132,7 +133,7 @@ public class GameFragment extends Fragment {
         String userInput = textResult.getText().toString().trim();
         if (userInput.isEmpty()) return;
 
-        int userAnswer = Integer.parseInt(userInput);
+        long userAnswer = Long.parseLong(userInput);
 
         boolean isCorrect = userAnswer == correctAnswer;
 

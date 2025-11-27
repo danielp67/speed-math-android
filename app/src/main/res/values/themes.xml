@@ -1,33 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <style name="Theme.SpeedMath" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
 
         <!-- LIGHT MODE COLORS -->
-        <item name="android:colorBackground">@color/white</item>
+        <!-- background -->
+        <item name="android:colorBackground">@color/grey_light</item>
+        <item name="colorBackground">@color/grey_light</item>
+
+        <!-- primary text -->
         <item name="android:textColor">@color/grey_dark_1</item>
+        <item name="textPrimary">@color/grey_dark_1</item>
+        <item name="textBackground">@color/white</item>
+        <item name="actionBarTheme">@style/Theme.ActionBar</item>
+
         <item name="android:colorPrimary">@color/white</item>
         <item name="colorOnPrimary">@color/grey_dark_1</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
-        <item name="colorAccent">@color/blue_primary_dark</item>
+        <item name="colorAccent">@color/gold_accent</item>
 
-        <item name="colorBackground">@color/white</item>
-        <item name="textPrimary">@color/black</item>
-        <item name="cardBackground">@color/white</item>
-        <item name="colorButtonNormal">@color/grey_light</item>
         <!-- NAV + STATUS BAR -->
-        <item name="android:navigationBarColor">@color/grey_light</item>
-        <item name="android:statusBarColor">@color/grey_light</item>
-
+        <item name="android:navigationBarColor">@color/blue_primary</item>
+        <item name="android:statusBarColor">@color/blue_primary</item>
+        <item name="colorPrimary">@color/blue_primary</item>
         <!-- FONT -->
         <item name="android:fontFamily">@font/inter_regular</item>
-
-
-
-    <!-- Background & primary text -->
-    <item name="android:textColorSecondary">@color/grey_dark_2</item>
-
-
-
     </style>
 
+    <style name="Theme.ActionBar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="titleTextStyle">@style/ActionBar.TitleText</item>
+    </style>
+
+    <style name="ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/blue_primary</item>
+    </style>
 </resources>

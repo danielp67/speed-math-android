@@ -34,12 +34,13 @@ android:background="?attr/colorBackground">
     <ProgressBar
         android:id="@+id/progressScore"
         style="@android:style/Widget.ProgressBar.Horizontal"
+        android:progressBackgroundTint="@color/white"
         android:layout_width="150dp"
         android:layout_height="16dp"
         android:layout_weight="1"
         android:max="100"
         android:progress="0"
-        android:progressTint="@color/card_completed"/>
+        android:progressTint="@color/gold_accent"/>
 
     <TextView
         android:id="@+id/textScoreRight"

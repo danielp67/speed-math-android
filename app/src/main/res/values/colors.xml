@@ -15,6 +15,7 @@
         <color name="grey_light">#F1F1F1</color>
 
         <!-- ACCENTS -->
+        <color name="blue_primary_light">#4A7AC7</color>
         <color name="blue_primary">#2A5FA9</color>
         <color name="blue_primary_dark">#2A5FA9</color>
 

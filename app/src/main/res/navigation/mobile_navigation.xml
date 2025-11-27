@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.speedMath.ui.home.HomeFragment"
-        android:label="Menu"
+        android:label="@string/title_mode"
         tools:layout="@layout/fragment_home">
 
         <action
@@ -25,25 +25,25 @@
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.example.speedMath.ui.game.GameFragment"
-        android:label="Jeu"
+        android:label="@string/action_game"
         tools:layout="@layout/fragment_game"/>
 
     <fragment
         android:id="@+id/qcmFragment"
         android:name="com.example.speedMath.ui.qcm.QCMFragment"
-        android:label="Jeu"
+        android:label="@string/action_qcm"
         tools:layout="@layout/fragment_qcm"/>
 
     <fragment
         android:id="@+id/dualFragment"
         android:name="com.example.speedMath.ui.dual.DualFragment"
-        android:label="Jeu"
+        android:label="@string/action_dual"
         tools:layout="@layout/fragment_dual"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.speedMath.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_level"
         tools:layout="@layout/fragment_dashboard">
     <action
         android:id="@+id/action_navigation_dashboard_to_levelFragment"
@@ -53,11 +53,11 @@
     <fragment
         android:id="@+id/levelFragment"
         android:name="com.example.speedMath.ui.level.LevelFragment"
-        android:label="Jeu"
+        android:label="@string/action_game"
         tools:layout="@layout/fragment_level"/>
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.speedMath.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_settings"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="top"
-        android:paddingTop="32dp"
-        android:paddingBottom="64dp">
+        android:paddingTop="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_64">
 
         <include layout="@layout/card_button" android:id="@+id/cardAdd"/>
         <include layout="@layout/card_button" android:id="@+id/cardSub"/>
