@@ -1,5 +1,7 @@
 package com.example.speedMath.ui.dashboard;
 
+import static com.example.speedMath.ui.dashboard.LevelItem.Status.LOCKED;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,23 +35,46 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
     @Override
     public void onBindViewHolder(@NonNull LevelViewHolder holder, int position) {
         LevelItem item = levels.get(position);
-        holder.levelNumber.setText("" + item.levelNumber);
-        holder.levelStatus.setText(item.status.toString());
+
+        holder.levelNumber.setText(String.valueOf(item.levelNumber));
 
         switch (item.status) {
             case LOCKED:
-                holder.levelStatus.setText("\uD83D\uDD12");
-            break;
+                holder.levelStatus.setText("\uD83D\uDD12"); // 🔒
+                holder.levelNumber.setTextColor(
+                        holder.itemView.getResources().getColor(R.color.grey_light)
+                );
+
+                // FIX : désactiver les clics
+                holder.itemView.setOnClickListener(null);
+                holder.itemView.setClickable(false);
+                break;
+
             case UNLOCKED:
                 holder.levelStatus.setText("✩");
-            break;
+                holder.levelNumber.setTextColor(
+                        holder.itemView.getResources().getColor(R.color.black)
+                );
+
+                // autoriser clic
+                holder.itemView.setClickable(true);
+                holder.itemView.setOnClickListener(listener);
+                holder.itemView.setTag(item);
+                break;
+
             case COMPLETED:
                 holder.levelStatus.setText("⭐");
-            break;
+                holder.levelNumber.setTextColor(
+                        holder.itemView.getResources().getColor(R.color.black)
+                );
+
+                holder.itemView.setClickable(true);
+                holder.itemView.setOnClickListener(listener);
+                holder.itemView.setTag(item);
+                break;
         }
-        holder.itemView.setTag(item);
-        holder.itemView.setOnClickListener(listener);
     }
+
 
     @Override
     public int getItemCount() {

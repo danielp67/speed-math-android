@@ -36,7 +36,7 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             cardview:cardCornerRadius="12dp"
-            cardview:cardElevation="4dp">
+            cardview:cardElevation="8dp">
 
             <TextView
                 android:id="@+id/textOption1"
@@ -55,7 +55,7 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             cardview:cardCornerRadius="12dp"
-            cardview:cardElevation="4dp">
+            cardview:cardElevation="8dp">
 
             <TextView
                 android:id="@+id/textOption2"
@@ -74,7 +74,7 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             cardview:cardCornerRadius="12dp"
-            cardview:cardElevation="4dp">
+            cardview:cardElevation="8dp">
 
             <TextView
                 android:id="@+id/textOption3"
@@ -93,7 +93,7 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             cardview:cardCornerRadius="12dp"
-            cardview:cardElevation="4dp">
+            cardview:cardElevation="8dp">
 
             <TextView
                 android:id="@+id/textOption4"

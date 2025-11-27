@@ -56,6 +56,7 @@ public class LevelFragment extends Fragment {
         gameRequiredCorrect = getArguments() != null ? getArguments().getInt("REQUIRED_CORRECT") : 5;
         gameDifficulty = getArguments() != null ? getArguments().getInt("DIFFICULTY") : 1;
 
+        playerManager.setLastPlayedLevel(gameLevel);
         // Vues
         textHighScore = root.findViewById(R.id.textHighScore);
         textHighScore.setText("High score : " +(float) playerManager.getLevelHighScore(gameLevel)/ 1000 + " s");

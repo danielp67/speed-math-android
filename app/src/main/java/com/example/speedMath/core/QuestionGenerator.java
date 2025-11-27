@@ -12,6 +12,7 @@ public class QuestionGenerator {
     private int difficulty;         // ex: 1,2,3
     private int operandCount;       // ex: 2,3,4...
 
+    private int level;
     private boolean qcmMode;     // QCM ou non
     private boolean allowPlus;
     private boolean allowMinus;
@@ -57,8 +58,12 @@ public class QuestionGenerator {
 
         if (ops.isEmpty()) ops.add('+');
 
+        int difficultyCorrector = 100;
+        if (allowMultiply || allowDivide) difficultyCorrector = 20;
+        operandCount = Math.max(2, (level/40) + 2);
+        difficulty = Math.max(1, (level%40 * operandCount)/2);
         int min = 1;
-        int max = 10 * difficulty;
+        int max = 10 * difficulty * difficultyCorrector / 100;
 
         List<Integer> values = new ArrayList<>();
         List<Character> operations = new ArrayList<>();
@@ -125,5 +130,9 @@ public class QuestionGenerator {
         }
         int correctIndex = random.nextInt(4); // 0,1,2,3
         q.answersChoice.add(correctIndex, q.answer);
+    }
+
+    public void setLevel(int level) {
+        this.level = Math.max(1, level);
     }
 }

@@ -14,24 +14,32 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
+import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
+import com.example.speedMath.ui.level.LevelFragment;
 
 public class GameFragment extends Fragment {
 
-    private TextView textQuestion, textResult;
+    private TextView textQuestion, textResult, textTimer, textScoreRight, textLevelNumber;
     private CardView[] cards = new CardView[10];
     private CardView cardCancel, cardClear, cardValidate;
     private TextView[] texts = new TextView[10];
     private TextView textCancel, textClear, textValidate;
     private String gameMode;
-    private int correctAnswer;
+    private long elapsedMillis = 0;
+    private int score = 0;
+
+    private int correctAnswer, correctAnswersStreak, lastPlayedLevel;
+    private PlayerManager playerManager;
+    private CountUpTimer countUpTimer;
 
     private QuestionGenerator questionGenerator;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -39,10 +47,19 @@ public class GameFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_game, container, false);
 
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
+        playerManager = PlayerManager.getInstance(requireContext());
 
+        correctAnswersStreak = playerManager.getCorrectAnswersStreak(gameMode);
+        lastPlayedLevel = playerManager.getLastPlayedLevel();
+
+        textTimer = root.findViewById(R.id.textTimer);
+        textScoreRight = root.findViewById(R.id.textScoreRight);
         textQuestion = root.findViewById(R.id.textQuestion);
+        textLevelNumber = root.findViewById(R.id.textLevelNumber);
+        textLevelNumber.setText(" ⭐⭐⭐");
         textResult = root.findViewById(R.id.textResult);
         textResult.setText("");
+
 
         // Boutons numériques 0-9
         for (int i = 0; i <= 9; i++) {
@@ -71,6 +88,14 @@ public class GameFragment extends Fragment {
         cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         cardValidate.setOnClickListener(v -> checkAnswer());
 
+        // Timer
+        countUpTimer = new CountUpTimer();
+        countUpTimer.start();
+
+        // Score initial
+        score = 0;
+        updateScore();
+
         // ----- Initialisation du QuestionGenerator -----
         boolean allowAdd = gameMode.equals("ADD") || gameMode.equals("ALL");
         boolean allowSub = gameMode.equals("SUB") || gameMode.equals("ALL");
@@ -78,7 +103,7 @@ public class GameFragment extends Fragment {
         boolean allowDiv = gameMode.equals("DIV") || gameMode.equals("ALL");
 
         questionGenerator = new QuestionGenerator(
-                1,      // difficulty par défaut
+                score,      // difficulty par défaut
                 2,      // nombre d'opérandes
                 false,  // pas de QCM ici
                 allowAdd,
@@ -95,6 +120,7 @@ public class GameFragment extends Fragment {
 
     private void generateQuestion() {
 
+        questionGenerator.setLevel(score);
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 
@@ -108,30 +134,35 @@ public class GameFragment extends Fragment {
 
         int userAnswer = Integer.parseInt(userInput);
 
-        if (userAnswer == correctAnswer) {
-            flashBorder(textResult, true);
+        boolean isCorrect = userAnswer == correctAnswer;
+
+        flashBorder(textResult, isCorrect);
+
+        if (isCorrect)
+        {   score++;
         } else {
-            flashBorder(textResult, false);
-            //score = 0;
+            score = 0;
+            elapsedMillis = 0;
         }
+        updateScore();
+
         generateQuestion();
+
+    }
+
+    private void updateScore() {
+        if (textScoreRight != null) {
+            playerManager.setCorrectAnswersStreak(gameMode, score);
+            textScoreRight.setText(score + "/" + playerManager.getCorrectAnswersStreak(gameMode));
+        }
     }
 
     private void flashBorder(TextView view, boolean isCorrect) {
-
-        // Stocke le fond actuel pour restauration
         Drawable originalBackground = view.getBackground();
-
-        // Couleur de feedback
-        int borderColor = isCorrect
-                ? Color.parseColor("#4CAF50") // Vert
-                : Color.parseColor("#F44336"); // Rouge
-
-        // Crée un drawable dynamique
+        int borderColor = isCorrect ? Color.parseColor("#4CAF50") : Color.parseColor("#F44336");
         GradientDrawable gd = new GradientDrawable();
         gd.setStroke(8, borderColor);
 
-        // Applique temporairement
         view.setBackground(gd);
 
         // Après 0,5s → retour à la normale
@@ -139,5 +170,32 @@ public class GameFragment extends Fragment {
             view.setBackground(originalBackground);
             view.setText("");
         }, 500);
+    }
+
+    private class CountUpTimer extends Thread {
+        private boolean running = true;
+
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    Thread.sleep(100);
+                    elapsedMillis += 100;
+                    if (!isAdded() || getActivity() == null) continue;
+                    getActivity().runOnUiThread(() -> textTimer.setText(formatTime(elapsedMillis)));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void stopTimer() { running = false; }
+    }
+
+    private String formatTime(long millis) {
+        int seconds = (int) (millis / 1000);
+        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
+
+        return String.format("%02d.%2d", seconds, milliseconds);
     }
 }

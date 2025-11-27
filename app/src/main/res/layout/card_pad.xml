@@ -2,9 +2,8 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="100dp"
-    android:layout_height="60dp"
-    android:layout_margin="0dp"
+    android:layout_width="@dimen/dp_96"
+    android:layout_height="@dimen/dp_48"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
@@ -16,7 +15,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="8"
-        android:textSize="22sp"
+        android:textSize="@dimen/sp_24"
         android:textStyle="bold"
         android:fontFamily="@font/inter_regular"
         android:textColor="?attr/colorOnBackground"/>

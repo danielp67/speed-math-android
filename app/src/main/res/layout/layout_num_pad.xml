@@ -4,16 +4,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
-    android:useDefaultMargins="true"
     android:columnCount="3"
     android:rowCount="5">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardResult"
-        android:layout_width="315dp"
+        android:layout_width="296dp"
         android:layout_height="64dp"
+        android:layout_margin="@dimen/dp_2"
         android:layout_columnSpan="3"
-        android:useDefaultMargins="true"
         app:cardElevation="8dp"
         app:layout_constraintTop_toBottomOf="@id/textQuestion">
 
@@ -30,80 +29,94 @@
     <include
         android:id="@+id/card1"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card2"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card3"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card4"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card5"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card6"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card7"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card8"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card9"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/cardX"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/card0"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/cardC"
         layout="@layout/card_pad"
-        android:layout_width="100dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+        android:layout_width="@dimen/dp_96"
+        android:layout_height="@dimen/dp_48" />
 
     <include
         android:id="@+id/cardOK"
         layout="@layout/card_pad"
         android:layout_columnSpan="3"
-        android:layout_width="320dp"
-        android:layout_height="60dp" />
+        android:layout_margin="@dimen/dp_2"
+
+        android:layout_width="296dp"
+        android:layout_height="@dimen/dp_48" />
 
 </GridLayout>

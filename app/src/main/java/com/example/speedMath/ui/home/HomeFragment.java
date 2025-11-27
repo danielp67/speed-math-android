@@ -54,12 +54,9 @@ public class HomeFragment extends Fragment {
         cardMul.setOnClickListener(v -> openGame(v, "MUL"));
         cardDiv.setOnClickListener(v -> openGame(v, "DIV"));
         cardAll.setOnClickListener(v -> openGame(v, "ALL"));
-        cardQCM.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_qcmFragment)
-        );
-        cardDual.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dualFragment)
-        );
+        cardQCM.setOnClickListener(v -> openGame(v, "QCM"));
+        cardDual.setOnClickListener(v -> openGame(v, "DUAL"));
+
         return root;
     }
 
@@ -67,9 +64,19 @@ public class HomeFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("MODE", mode);
 
-        Navigation.findNavController(v)
-                .navigate(R.id.action_navigation_home_to_gameFragment, args);
+        switch (mode) {
+            case "QCM":
+                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_qcmFragment, args);
 
+                break;
+            case "DUAL":
+                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dualFragment, args);
 
+                break;
+            default:
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_navigation_home_to_gameFragment, args);
+
+        }
     }
 }

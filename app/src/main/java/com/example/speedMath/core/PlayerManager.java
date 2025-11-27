@@ -7,10 +7,10 @@ public class PlayerManager {
 
     private static final String PREF_NAME = "user_stats";
     private static PlayerManager instance;
-
+    private static final String KEY_BEST_LEVEL = "best_level";
     private static final String KEY_CURRENT_LEVEL = "current_level";
     private static final String KEY_TIME_LEVEL_PREFIX = "time_level_";
-    private static final String KEY_LAST_10 = "last_10";
+    private static final String KEY_ANSWERS_STREAK_PREFIX = "answers_streak_";
     private SharedPreferences prefs;
 
     private PlayerManager(Context context) {
@@ -28,12 +28,12 @@ public class PlayerManager {
     public void setCurrentLevel(int level) {
         if(level > getCurrentLevel())
         {
-            prefs.edit().putInt(KEY_CURRENT_LEVEL, level).apply();
+            prefs.edit().putInt(KEY_BEST_LEVEL, level).apply();
         }
     }
 
     public int getCurrentLevel() {
-        return prefs.getInt(KEY_CURRENT_LEVEL, 0);
+        return prefs.getInt(KEY_BEST_LEVEL, 0);
     }
 
     // ========================= HighScore =========================
@@ -50,46 +50,24 @@ public class PlayerManager {
 
     // ========================= HISTORY LAST 10 ANSWERS =========================
 
-
-
-/*    public void addAnswer(boolean correct) {
-        String history = prefs.getString(KEY_LAST_10, "");
-        if (history.isEmpty()) {
-            history = "0,0,0,0,0,0,0,0,0,0";
-        }
-
-        String[] values = history.split(",");
-        List<String> list = new ArrayList<>(Arrays.asList(values));
-
-        if (list.size() >= 10) list.remove(0); // garder max 10
-        list.add(correct ? "1" : "0");
-
-        String newHistory = TextUtils.join(",", list);
-        prefs.edit().putString(KEY_LAST_10, newHistory).apply();
+    public void setLastPlayedLevel(int level) {
+        prefs.edit().putInt(KEY_CURRENT_LEVEL, level).apply();
     }
 
-    public List<Boolean> getLast10Answers() {
-        String history = prefs.getString(KEY_LAST_10, "");
-        List<Boolean> list = new ArrayList<>();
-        if (!history.isEmpty()) {
-            String[] values = history.split(",");
-            for (String v : values) {
-                list.add(v.equals("1"));
-            }
-        }
-        return list;
+    public int getLastPlayedLevel() {
+        return prefs.getInt(KEY_CURRENT_LEVEL, 0);
     }
 
-    // ========================= POURCENTAGE DE REUSSITE =========================
-    public int getSuccessPercent() {
-        List<Boolean> last10 = getLast10Answers();
-        if (last10.isEmpty()) return 0;
+    public void setCorrectAnswersStreak(String mode, int streak) {
+        if(streak > getCorrectAnswersStreak(mode))
+        {
+            prefs.edit().putInt(KEY_ANSWERS_STREAK_PREFIX + mode, streak).apply();
+        }
+    }
 
-        int correct = 0;
-        for (Boolean b : last10) if (b) correct++;
-
-        return (correct * 100) / last10.size();
-    }*/
+    public int getCorrectAnswersStreak(String mode) {
+        return prefs.getInt(KEY_ANSWERS_STREAK_PREFIX + mode, 0);
+    }
 
     public void resetUserStats() {
         prefs.edit().clear().apply();
