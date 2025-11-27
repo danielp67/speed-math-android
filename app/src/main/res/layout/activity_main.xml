@@ -20,7 +20,7 @@
         app:menu="@menu/bottom_nav_menu"
         android:layout_alignParentBottom="true"
         android:background="?attr/colorPrimary"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"/>
+        app:itemIconTint="?attr/tabIconTint"
+        app:itemTextColor="?attr/tabIconTint"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

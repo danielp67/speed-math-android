@@ -10,7 +10,7 @@
             <!-- primary text -->
             <item name="android:textColor">@color/grey_light</item>
             <item name="textPrimary">@color/grey_light</item>
-            <item name="textBackground">@color/blue_primary_light</item>
+            <item name="tabIconTint">@color/blue_primary_light</item>
             <item name="actionBarTheme">@style/Theme.ActionBar</item>
 
             <item name="android:colorPrimary">@color/grey_dark_1</item>
