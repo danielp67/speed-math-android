@@ -1,6 +1,6 @@
 package com.example.speedMath.core;
 
-import com.example.speedMath.ui.dashboard.LevelItem;
+import com.example.speedMath.ui.league.LevelItem;
 import java.util.ArrayList;
 import java.util.List;
 

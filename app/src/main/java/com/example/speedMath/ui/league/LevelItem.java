@@ -1,4 +1,4 @@
-package com.example.speedMath.ui.dashboard;
+package com.example.speedMath.ui.league;
 
 public class LevelItem {
     public int levelNumber;

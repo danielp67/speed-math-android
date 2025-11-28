@@ -22,7 +22,7 @@ public class ModeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        View root = inflater.inflate(R.layout.fragment_mode, container, false);
 
         cardAdd = root.findViewById(R.id.cardAdd);
         cardSub = root.findViewById(R.id.cardSub);

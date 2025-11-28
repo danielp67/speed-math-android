@@ -1,6 +1,4 @@
-package com.example.speedMath.ui.dashboard;
-
-import static com.example.speedMath.ui.dashboard.LevelItem.Status.LOCKED;
+package com.example.speedMath.ui.league;
 
 import android.view.LayoutInflater;
 import android.view.View;
