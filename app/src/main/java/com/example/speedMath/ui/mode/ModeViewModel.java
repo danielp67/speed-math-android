@@ -1,14 +1,14 @@
-package com.example.speedMath.ui.home;
+package com.example.speedMath.ui.mode;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
+public class ModeViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public ModeViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is home fragment");
     }

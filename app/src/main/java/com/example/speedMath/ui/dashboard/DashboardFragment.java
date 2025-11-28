@@ -25,7 +25,7 @@ public class DashboardFragment extends Fragment {
     private LevelAdapter adapter;
     private List<LevelItem> levels;
     private PlayerManager playerManager;
-    private TextView textDashboardTitle;
+    private TextView textDashboardTitle, textScoreRight, textLevelNumber;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -35,12 +35,14 @@ public class DashboardFragment extends Fragment {
 
         recyclerView = root.findViewById(R.id.recyclerLevels);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        textDashboardTitle = root.findViewById(R.id.textDashboardTitle);
+        textLevelNumber = root.findViewById(R.id.textLevelNumber);
+        textScoreRight = root.findViewById(R.id.textScoreRight);
+
         playerManager = PlayerManager.getInstance(requireContext());
 
         int currentLevel = playerManager.getCurrentLevel();
-        textDashboardTitle.setText(currentLevel + " ⭐");
-
+        textScoreRight.setText(currentLevel + " ⭐");
+        textScoreRight.setText("1500 pts");
 
         adapter = new LevelAdapter(LevelGenerator.generateLevels(playerManager.getCurrentLevel()), v -> {
             LevelItem item = (LevelItem) v.getTag();

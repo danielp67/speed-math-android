@@ -1,10 +1,9 @@
-package com.example.speedMath.ui.home;
+package com.example.speedMath.ui.mode;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,7 +13,7 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 
-public class HomeFragment extends Fragment {
+public class ModeFragment extends Fragment {
 
     CardView cardAdd, cardSub, cardMul, cardDiv, cardAll, cardQCM, cardDual;
     TextView tvAdd, tvSub, tvMul, tvDiv, tvAll, tvQCM, tvDual;

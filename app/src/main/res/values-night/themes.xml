@@ -17,6 +17,7 @@
             <item name="colorOnPrimary">@color/white</item>
             <item name="colorPrimaryDark">@color/blue_primary_dark</item>
             <item name="colorAccent">@color/gold_accent</item>
+            <item name="itemTextAppearanceActive">@color/blue_primary_light</item>
 
             <!-- NAV + STATUS BAR -->
             <item name="android:navigationBarColor">@color/black</item>
