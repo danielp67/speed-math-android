@@ -34,14 +34,14 @@ public class PlayerManager {
     }
 
     public int getCurrentLevel() {
-        return prefs.getInt(KEY_BEST_LEVEL, 20);
+        return prefs.getInt(KEY_BEST_LEVEL, 0);
     }
 
     // ========================= HighScore =========================
-    public void setLevelHighScore(int level, long millis) {
-        if (millis < getLevelHighScore(level) || getLevelHighScore(level) == 0)
+    public void setLevelHighScore(int level, long score) {
+        if (score > getLevelHighScore(level))
         {
-        prefs.edit().putLong(KEY_TIME_LEVEL_PREFIX + level, millis).apply();
+        prefs.edit().putLong(KEY_TIME_LEVEL_PREFIX + level, score).apply();
         }
     }
 
@@ -72,5 +72,13 @@ public class PlayerManager {
 
     public void resetUserStats() {
         prefs.edit().clear().apply();
+    }
+
+    public int getTotalScore() {
+        int totalScore = 0;
+        for (int i = 1; i <= getCurrentLevel(); i++) {
+            totalScore += getLevelHighScore(i);
+        }
+        return totalScore;
     }
 }

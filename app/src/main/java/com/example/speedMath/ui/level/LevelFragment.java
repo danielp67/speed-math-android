@@ -65,7 +65,7 @@ public class LevelFragment extends Fragment {
 
         // Vues
         textHighScore = root.findViewById(R.id.textHighScore);
-        textHighScore.setText("High score : " +(float) playerManager.getLevelHighScore(gameLevel)/ 1000 + " s");
+        textHighScore.setText("High score : " + playerManager.getLevelHighScore(gameLevel) + " pts");
         textQuestion = root.findViewById(R.id.textQuestion);
         textResult = root.findViewById(R.id.textResult);
         textResult.setText("");
@@ -159,11 +159,11 @@ public class LevelFragment extends Fragment {
         textValidate.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
         countUpTimer.stopTimer();
-        score = (int) scoreManager.setScoreBonus(questionNbr, correctAnswerNbr, elapsedMillis);
+        score = (int) scoreManager.setFinalBonus(questionNbr, correctAnswerNbr, elapsedMillis);
         updateScore();
 
         playerManager.setCurrentLevel(gameLevel);
-        playerManager.setLevelHighScore(gameLevel, elapsedMillis);
+        playerManager.setLevelHighScore(gameLevel, score);
 
         textValidate.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
@@ -217,7 +217,7 @@ public class LevelFragment extends Fragment {
         int seconds = (int) (millis / 1000);
         int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
 
-        return String.format("%02d.%2d", seconds, milliseconds);
+        return String.format("%02d.%2d s", seconds, milliseconds);
     }
 
 }

@@ -31,13 +31,12 @@ public class LeagueFragment extends Fragment {
     private LevelAdapter adapter;
     private List<LevelItem> levels;
     private PlayerManager playerManager;
-    private TextView textDashboardTitle, textScoreRight, textLevelNumber;
+    private TextView textScoreRight, textLevelNumber;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_league, container, false);
-
 
         recyclerView = root.findViewById(R.id.recyclerLevels);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
@@ -47,8 +46,9 @@ public class LeagueFragment extends Fragment {
         playerManager = PlayerManager.getInstance(requireContext());
 
         int currentLevel = playerManager.getCurrentLevel();
-        textScoreRight.setText(currentLevel + " ⭐");
-        textScoreRight.setText("1500 pts");
+        int score = playerManager.getTotalScore();
+        textLevelNumber.setText(currentLevel + " ⭐");
+        textScoreRight.setText(score + " pts");
 
         adapter = new LevelAdapter(LevelGenerator.generateLevels(playerManager.getCurrentLevel()), v -> {
             LevelItem item = (LevelItem) v.getTag();

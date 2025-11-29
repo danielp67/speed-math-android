@@ -2,69 +2,82 @@ package com.example.speedMath.core;
 
 public class ScoreManager {
 
-    private final int level;
-    private int correctStreak = 0;
-    private long timeElapsedMs = 0;
-    private boolean isCorrect = true;
     private long score = 0;
-    private static final int basePointsPerQuestion = 10;
-    private static final int streakBonus = 5;
+    private int correctStreak = 0;
+    private long lastAnswerTime = 0;
+    private final int level;
 
     public ScoreManager(int level) {
         this.level = level;
     }
 
-    public long setScore(boolean isCorrect, long timeElapsedMs) {
+    // Valeur de base d’une question selon le niveau
+    private long getBasePoints() {
+        return 20 + (level * 5);  // ex : lvl10 → 150 pts
+    }
 
-        this.isCorrect = isCorrect;
+    // Bonus temps scalable
+    private long getTimeBonus(long deltaMs) {
+        long baseBonus;
+        if (deltaMs < 2500)      baseBonus = 15;
+        else if (deltaMs < 5000) baseBonus = 10;
+        else if (deltaMs < 10000) baseBonus = 5;
+        else if (deltaMs < 20000) baseBonus = 3;
+        else if (deltaMs < 30000) baseBonus = 2;
+        else return 0;
+
+        // scaling bonus : bonus * (1 + level*0.1)
+        return (long) (baseBonus * (1f + (level * 0.10f)));
+    }
+
+    /**
+     * Calcul du score pour UNE réponse.
+     */
+    public long setScore(boolean isCorrect, long currentTimeMs) {
+
+        long delta = currentTimeMs - lastAnswerTime;
+        lastAnswerTime = currentTimeMs;
 
         if (isCorrect) {
 
-            // --- Streak ---
+            // Streak
             correctStreak++;
-            score += basePointsPerQuestion + ((long) (correctStreak -1)* streakBonus );
+            long streakBonus = (correctStreak - 1) * 5; // simple, modifiable
 
-            // --- Bonus temps ---
-            long delta = timeElapsedMs - this.timeElapsedMs;
-            this.timeElapsedMs = timeElapsedMs;
-
-            // Bonus = premier seuil correspondant → pas de cumul
-            if (delta < 2500) {
-                score += 15;
-            } else if (delta < 5000) {
-                score += 10;
-            } else if (delta < 10000) {
-                score += 5;
-            } else if (delta < 20000) {
-                score += 3;
-            } else if (delta < 30000) {
-                score += 2;
-            }
-            // sinon 0 bonus
+            // Calcul points
+            score += getBasePoints();
+            score += streakBonus;
+            score += getTimeBonus(delta);
 
         } else {
             // Mauvaise réponse
             correctStreak = 0;
-           // score -= 100;
+            score -= (20 + (level * 5));      // pénalité ajustable
         }
 
         return score;
     }
 
-    public long setScoreBonus(int nbQuestions, int correctAnswerNbr, long timeElapsedMs) {
-        this.timeElapsedMs = timeElapsedMs;
+    public long setFinalBonus(int totalQuestions, int correctAnswers, long totalTimeMs) {
 
-        if (timeElapsedMs < 10000 + 5000 * this.level) {
-            score += 100 * this.level * correctAnswerNbr / nbQuestions;
+        long timeBonus = 0;
+        long  accuracyBonus = 0;
+
+        if(correctAnswers == totalQuestions) {
+            accuracyBonus = getBasePoints();
         }
+
+        if (totalTimeMs <= 10000 + (2000L * level)) {
+            timeBonus = getBasePoints();
+        }
+
+        //score += timeBonus + accuracyBonus;
+        score = 100 * level + timeBonus + accuracyBonus;
+
         return score;
     }
 
-
-    // Getters pour UI
-    public int getCorrectStreak() { return correctStreak; }
-    public long getTimeElapsedMs() { return timeElapsedMs; }
-    public int getLevel() { return level; }
-    public boolean getIsCorrect() { return isCorrect; }
-    public long getScore() { return score; }
+    public long getScore() {
+        return score;
+    }
 }
