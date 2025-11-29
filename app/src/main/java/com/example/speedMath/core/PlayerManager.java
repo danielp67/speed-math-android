@@ -10,6 +10,7 @@ public class PlayerManager {
     private static final String KEY_BEST_LEVEL = "best_level";
     private static final String KEY_CURRENT_LEVEL = "current_level";
     private static final String KEY_TIME_LEVEL_PREFIX = "time_level_";
+    private static final String KEY_POINTS_LEVEL_PREFIX = "points_level_";
     private static final String KEY_ANSWERS_STREAK_PREFIX = "answers_streak_";
     private SharedPreferences prefs;
 
@@ -33,7 +34,7 @@ public class PlayerManager {
     }
 
     public int getCurrentLevel() {
-        return prefs.getInt(KEY_BEST_LEVEL, 0);
+        return prefs.getInt(KEY_BEST_LEVEL, 20);
     }
 
     // ========================= HighScore =========================

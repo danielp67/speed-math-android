@@ -29,10 +29,12 @@
 
     <style name="Theme.ActionBar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorPrimary">@color/gold_accent</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
         <item name="titleTextStyle">@style/ActionBar.TitleText</item>
     </style>
 
     <style name="ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/gold_accent</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
     </style>
 </resources>

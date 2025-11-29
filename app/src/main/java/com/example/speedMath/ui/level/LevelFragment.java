@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 import com.example.speedMath.R;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.core.PlayerManager;
+import com.example.speedMath.core.ScoreManager;
 
 public class LevelFragment extends Fragment {
 
@@ -32,7 +33,7 @@ public class LevelFragment extends Fragment {
     private ProgressBar progressBar;
 
     private String gameMode;
-    private int gameLevel, gameDifficulty, gameRequiredCorrect;
+    private int gameLevel, gameDifficulty, gameRequiredCorrect, questionNbr, correctAnswerNbr;
     private int correctAnswer;
     private int score = 0;
     private long elapsedMillis = 0;
@@ -41,14 +42,13 @@ public class LevelFragment extends Fragment {
     private CountUpTimer countUpTimer;
     private PlayerManager playerManager;
 
+    private ScoreManager scoreManager;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_level, container, false);
-
-        // Player manager
-        playerManager = PlayerManager.getInstance(requireContext());
 
         // Paramètres
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
@@ -56,7 +56,13 @@ public class LevelFragment extends Fragment {
         gameRequiredCorrect = getArguments() != null ? getArguments().getInt("REQUIRED_CORRECT") : 5;
         gameDifficulty = getArguments() != null ? getArguments().getInt("DIFFICULTY") : 1;
 
+        // Player manager
+        playerManager = PlayerManager.getInstance(requireContext());
         playerManager.setLastPlayedLevel(gameLevel);
+
+        // Score manager
+        scoreManager = new ScoreManager(gameLevel);
+
         // Vues
         textHighScore = root.findViewById(R.id.textHighScore);
         textHighScore.setText("High score : " +(float) playerManager.getLevelHighScore(gameLevel)/ 1000 + " s");
@@ -66,6 +72,7 @@ public class LevelFragment extends Fragment {
         textScoreRight = root.findViewById(R.id.textScoreRight);
         textTimer = root.findViewById(R.id.textTimer);
         progressBar = root.findViewById(R.id.progressScore);
+        progressBar.setMax(100 * gameLevel);
 
         // Boutons numériques
         for (int i = 0; i <= 9; i++) {
@@ -119,6 +126,7 @@ public class LevelFragment extends Fragment {
 
     private void generateQuestion() {
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
+        questionNbr++;
         textQuestion.setText(q.expression);
         correctAnswer = q.answer;
     }
@@ -133,10 +141,13 @@ public class LevelFragment extends Fragment {
 
         flashBorder(textResult, isCorrect);
 
-        if (isCorrect) score++;
+        if (isCorrect) correctAnswerNbr++;
+        score =  (int) scoreManager.setScore(isCorrect, elapsedMillis);
         updateScore();
 
-        if (score >= gameRequiredCorrect) {
+
+
+        if (score >= 100 * gameLevel) {
             levelCompleted();
         } else {
             generateQuestion();
@@ -145,8 +156,12 @@ public class LevelFragment extends Fragment {
 
     private void levelCompleted() {
         textValidate.setText("🎉 Level completed !");
+        textValidate.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
         countUpTimer.stopTimer();
+        score = (int) scoreManager.setScoreBonus(questionNbr, correctAnswerNbr, elapsedMillis);
+        updateScore();
+
         playerManager.setCurrentLevel(gameLevel);
         playerManager.setLevelHighScore(gameLevel, elapsedMillis);
 
@@ -158,8 +173,7 @@ public class LevelFragment extends Fragment {
 
     private void updateScore() {
         if (textScoreRight != null && progressBar != null) {
-            textScoreRight.setText(score + "/" + gameRequiredCorrect);
-            progressBar.setMax(gameRequiredCorrect);
+            textScoreRight.setText(score + " pts" );
             progressBar.setProgress(score);
         }
     }
