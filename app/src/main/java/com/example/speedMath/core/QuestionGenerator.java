@@ -20,7 +20,7 @@ public class QuestionGenerator {
     private boolean allowDivide;
     private boolean avoidNegative;  // éviter résultats négatifs
 
-    public QuestionGenerator(int difficulty,
+    public QuestionGenerator(int level,
                              int operandCount,
                              boolean qcmMode,
                              boolean allowPlus,
@@ -29,7 +29,7 @@ public class QuestionGenerator {
                              boolean allowDivide,
                              boolean avoidNegative) {
 
-        this.difficulty = Math.max(1, difficulty);
+        this.level = Math.max(1, level);
         this.operandCount = Math.max(2, operandCount);
         this.qcmMode = qcmMode;
         this.allowPlus = allowPlus;
@@ -60,8 +60,9 @@ public class QuestionGenerator {
 
         int difficultyCorrector = 100;
         if (allowMultiply || allowDivide) difficultyCorrector = 20;
-        operandCount = Math.max(2, (level/40) + 2);
-        difficulty = Math.max(1, (level%40 * operandCount)/2);
+        operandCount = Math.max(2, ((level-1)/50) + 2);
+        if(level%10 == 0 && level > 0) level = 10;
+        difficulty = Math.max(1, (level * operandCount)/2);
         int min = 1;
         int max = 10 * difficulty * difficultyCorrector / 100;
 

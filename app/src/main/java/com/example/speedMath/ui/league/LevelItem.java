@@ -3,7 +3,7 @@ package com.example.speedMath.ui.league;
 public class LevelItem {
     public int levelNumber;
     public String mode;
-    public int requiredCorrect;
+    public long targetScore;
 
     public int difficulty;
 
@@ -12,10 +12,10 @@ public class LevelItem {
     }
     public Status status;
 
-    public LevelItem(int levelNumber, String mode, int requiredCorrect, int difficulty, Status status) {
+    public LevelItem(int levelNumber, String mode, long targetScore, int difficulty, Status status) {
         this.levelNumber = levelNumber;
         this.mode = mode;
-        this.requiredCorrect = requiredCorrect;
+        this.targetScore = targetScore;
         this.difficulty = difficulty;
         this.status = status;
     }

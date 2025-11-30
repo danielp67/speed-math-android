@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.speedMath.core.PlayerManager;
-import com.example.speedMath.databinding.FragmentNotificationsBinding;
+import com.example.speedMath.databinding.FragmentSettingsBinding;
 
 public class SettingsFragment extends Fragment {
 
-    private FragmentNotificationsBinding binding;
+    private FragmentSettingsBinding binding;
 
     private PlayerManager playerManager;
 
@@ -24,7 +24,7 @@ public class SettingsFragment extends Fragment {
         SettingsViewModel settingsViewModel =
                 new ViewModelProvider(this).get(SettingsViewModel.class);
 
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        binding = FragmentSettingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
 

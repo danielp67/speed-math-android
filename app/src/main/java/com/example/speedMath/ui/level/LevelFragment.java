@@ -33,7 +33,8 @@ public class LevelFragment extends Fragment {
     private ProgressBar progressBar;
 
     private String gameMode;
-    private int gameLevel, gameDifficulty, gameRequiredCorrect, questionNbr, correctAnswerNbr;
+    private int gameLevel, gameDifficulty, questionNbr, correctAnswerNbr;
+    private long targetScore;
     private int correctAnswer;
     private int score = 0;
     private long elapsedMillis = 0;
@@ -53,7 +54,7 @@ public class LevelFragment extends Fragment {
         // Paramètres
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
         gameLevel = getArguments() != null ? getArguments().getInt("LEVEL") : 1;
-        gameRequiredCorrect = getArguments() != null ? getArguments().getInt("REQUIRED_CORRECT") : 5;
+        targetScore = getArguments() != null ? getArguments().getInt("TARGET_SCORE") : 5;
         gameDifficulty = getArguments() != null ? getArguments().getInt("DIFFICULTY") : 1;
 
         // Player manager
@@ -116,7 +117,7 @@ public class LevelFragment extends Fragment {
         boolean allowDiv = gameMode.equals("DIV") || gameMode.equals("ALL");
 
         questionGenerator = new QuestionGenerator(
-                gameDifficulty, 2, false,
+                gameLevel, 2, false,
                 allowAdd, allowSub, allowMul, allowDiv, true
         );
         generateQuestion();

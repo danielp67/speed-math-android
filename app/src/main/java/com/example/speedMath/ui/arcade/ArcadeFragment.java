@@ -1,4 +1,4 @@
-package com.example.speedMath.ui.mode;
+package com.example.speedMath.ui.arcade;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +13,7 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 
-public class ModeFragment extends Fragment {
+public class ArcadeFragment extends Fragment {
 
     CardView cardAdd, cardSub, cardMul, cardDiv, cardAll, cardQCM, cardDual;
     TextView tvAdd, tvSub, tvMul, tvDiv, tvAll, tvQCM, tvDual;
@@ -22,7 +22,7 @@ public class ModeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_mode, container, false);
+        View root = inflater.inflate(R.layout.fragment_arcade, container, false);
 
         cardAdd = root.findViewById(R.id.cardAdd);
         cardSub = root.findViewById(R.id.cardSub);

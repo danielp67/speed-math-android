@@ -55,7 +55,7 @@ public class LeagueFragment extends Fragment {
             Bundle args = new Bundle();
             args.putInt("LEVEL", item.levelNumber);
             args.putString("MODE", item.mode);
-            args.putInt("REQUIRED_CORRECT", item.requiredCorrect);
+            args.putLong("TARGET_SCORE", item.targetScore);
             args.putInt("DIFFICULTY", item.difficulty);
             args.putInt("STATUS", 0);
             Navigation.findNavController(v)
