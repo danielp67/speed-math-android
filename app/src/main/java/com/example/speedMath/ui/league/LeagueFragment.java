@@ -1,11 +1,6 @@
 package com.example.speedMath.ui.league;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -23,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.speedMath.R;
 import com.example.speedMath.core.LevelGenerator;
 import com.example.speedMath.core.PlayerManager;
-
 import java.util.List;
 
 public class LeagueFragment extends Fragment {

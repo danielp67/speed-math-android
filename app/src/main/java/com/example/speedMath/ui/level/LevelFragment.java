@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.core.PlayerManager;
@@ -34,7 +34,7 @@ import com.example.speedMath.core.ScoreManager;
 public class LevelFragment extends Fragment {
 
     private TextView textQuestion, textResult, textScoreRight, textTimer, textValidate, textHighScore;
-    private CardView[] cards = new CardView[10];
+    private final CardView[] cards = new CardView[10];
     private CardView cardCancel, cardClear, cardValidateCard;
     private TextView[] texts = new TextView[10];
     private TextView textCancel, textClear;
@@ -294,5 +294,19 @@ public class LevelFragment extends Fragment {
             }
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) requireActivity()).setNavigationEnabled(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((MainActivity) requireActivity()).setNavigationEnabled(true);
+    }
+
+
 
 }

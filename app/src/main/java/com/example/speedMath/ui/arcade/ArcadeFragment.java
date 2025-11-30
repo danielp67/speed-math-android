@@ -46,9 +46,9 @@ public class ArcadeFragment extends Fragment {
         iconAdd = cardAdd.findViewById(R.id.iconCard);
         titleAdd = cardAdd.findViewById(R.id.titleCard);
         descriptionAdd = cardAdd.findViewById(R.id.descriptionCard);
-        iconAdd.setText("+");
-        titleAdd.setText("Addition Suite");
-        descriptionAdd.setText("a + b");
+        iconAdd.setText(R.string.icon_add);
+        titleAdd.setText(R.string.title_add);
+        descriptionAdd.setText(R.string.description_add);
 
         iconSub = cardSub.findViewById(R.id.iconCard);
         titleSub = cardSub.findViewById(R.id.titleCard);

@@ -1,6 +1,5 @@
 package com.example.speedMath;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import com.example.speedMath.core.PlayerManager;
@@ -53,6 +52,17 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (playerManager.isMusicEnabled()) {
             playerManager.setMusicEnabled(false);
+        }
+    }
+
+    public void setNavigationEnabled(boolean enabled) {
+        BottomNavigationView nav = findViewById(R.id.bottomNav);
+        nav.setEnabled(enabled);
+        nav.setClickable(enabled);
+
+        // Optionnel : désactiver l’animation visuelle
+        for (int i = 0; i < nav.getMenu().size(); i++) {
+            nav.getMenu().getItem(i).setEnabled(enabled);
         }
     }
 

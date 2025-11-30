@@ -7,4 +7,30 @@
     <string name="action_game">Challenge</string>
     <string name="action_dual">Battle</string>
     <string name="action_qcm">Solo</string>
+
+    <string name="title_add">Addition Suite</string>
+    <string name="title_sub">Subtraction Suite</string>
+    <string name="title_mul">Multiplication Suite</string>
+    <string name="title_div">Division Suite</string>
+    <string name="title_all">All Suites</string>
+    <string name="title_qcm">Solo</string>
+    <string name="title_dual">Battle</string>
+
+    <string name="description_add">a + b</string>
+    <string name="description_sub">a - b</string>
+    <string name="description_mul">a * b</string>
+    <string name="description_div">a / b</string>
+    <string name="description_all">All Suites</string>
+    <string name="description_qcm">Solo</string>
+    <string name="description_dual">Battle</string>
+
+    <string name="icon_add">+</string>
+    <string name="icon_sub">-</string>
+    <string name="icon_mul">*</string>
+    <string name="icon_div">÷</string>
+    <string name="icon_all">All Suites</string>
+    <string name="icon_qcm">Solo</string>
+    <string name="icon_dual">Battle</string>
+
+
 </resources>

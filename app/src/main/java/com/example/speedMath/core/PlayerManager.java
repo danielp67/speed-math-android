@@ -1,7 +1,5 @@
 package com.example.speedMath.core;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -133,11 +131,17 @@ public class PlayerManager {
             backgroundMusic.setLooping(true);
             backgroundMusic.setVolume(0.25f, 0.25f);
         }
+
+        if (!backgroundMusic.isPlaying()) {
+            backgroundMusic.start();
+        }
     }
 
     public void stopMusic() {
         if (backgroundMusic != null) {
-            backgroundMusic.stop();
+            if (backgroundMusic.isPlaying()) {
+                backgroundMusic.stop();
+            }
             backgroundMusic.release();
             backgroundMusic = null;
         }

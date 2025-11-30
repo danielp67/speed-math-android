@@ -15,21 +15,17 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
-import com.example.speedMath.ui.level.LevelFragment;
 
 public class GameFragment extends Fragment {
 
@@ -265,5 +261,17 @@ public class GameFragment extends Fragment {
                 vibrator.vibrate(durationMs);
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) requireActivity()).setNavigationEnabled(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((MainActivity) requireActivity()).setNavigationEnabled(true);
     }
 }
