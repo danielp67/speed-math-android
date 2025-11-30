@@ -1,6 +1,7 @@
 package com.example.speedMath.ui.arcade;
 
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
+import com.example.speedMath.core.PlayerManager;
 
 public class ArcadeFragment extends Fragment {
 
@@ -23,12 +25,14 @@ public class ArcadeFragment extends Fragment {
     TextView iconAll, titleAll, descriptionAll;
     TextView iconQCM, titleQCM, descriptionQCM;
     TextView iconDual, titleDual, descriptionDual;
+    private PlayerManager playerManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_arcade, container, false);
+        playerManager = PlayerManager.getInstance(requireContext());
 
         cardAdd = root.findViewById(R.id.cardAdd);
         cardSub = root.findViewById(R.id.cardSub);
@@ -107,14 +111,17 @@ public class ArcadeFragment extends Fragment {
 
         switch (mode) {
             case "QCM":
+                if(playerManager.isHapticEnabled()) v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_qcmFragment, args);
 
                 break;
             case "DUAL":
+                if(playerManager.isHapticEnabled()) v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dualFragment, args);
 
                 break;
             default:
+                if(playerManager.isHapticEnabled()) v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 Navigation.findNavController(v)
                         .navigate(R.id.action_navigation_home_to_gameFragment, args);
 

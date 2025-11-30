@@ -25,9 +25,6 @@ public class PlayerManager {
 
     private static final String KEY_ANIMATION = "animation";
     private static final String KEY_HAPTIC = "haptic";
-
-
-    private boolean musicEnabled;
     private MediaPlayer backgroundMusic = null;
     private SharedPreferences prefs;
     private Context context;
@@ -35,8 +32,6 @@ public class PlayerManager {
     private PlayerManager(Context context) {
         this.context = context.getApplicationContext();
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        musicEnabled = prefs.getBoolean(KEY_MUSIC, true);
-
     }
 
     public static PlayerManager getInstance(Context context) {
@@ -123,14 +118,13 @@ public class PlayerManager {
 
 
     public void setMusicEnabled(boolean enabled) {
-        musicEnabled = enabled;
         prefs.edit().putBoolean(KEY_MUSIC, enabled).apply();
         if (enabled) startMusic();
         else stopMusic();
     }
 
     public boolean isMusicEnabled() {
-        return musicEnabled;
+        return prefs.getBoolean(KEY_MUSIC, true);
     }
 
     public void startMusic() {
@@ -139,7 +133,6 @@ public class PlayerManager {
             backgroundMusic.setLooping(true);
             backgroundMusic.setVolume(0.25f, 0.25f);
         }
-        if (!backgroundMusic.isPlaying()) backgroundMusic.start();
     }
 
     public void stopMusic() {

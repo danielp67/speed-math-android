@@ -1,10 +1,17 @@
 package com.example.speedMath.ui.game;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +48,9 @@ public class GameFragment extends Fragment {
     private CountUpTimer countUpTimer;
 
     private QuestionGenerator questionGenerator;
+
+    private SoundPool soundPool;
+    private int soundCorrect, soundWrong, soundLevelUp;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -88,6 +98,24 @@ public class GameFragment extends Fragment {
         cardClear.setOnClickListener(v -> textResult.setText(""));
         cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         cardValidate.setOnClickListener(v -> checkAnswer());
+
+
+        // Création du SoundPool
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        soundPool = new SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(attrs)
+                .build();
+
+
+        // Chargement des sons
+        soundCorrect = soundPool.load(getContext(), R.raw.correct, 1);
+        soundWrong   = soundPool.load(getContext(), R.raw.wrong, 1);
+        soundLevelUp = soundPool.load(getContext(), R.raw.levelup, 1);
+
 
         // Timer
         countUpTimer = new CountUpTimer();
@@ -141,9 +169,13 @@ public class GameFragment extends Fragment {
 
         if (isCorrect)
         {   score++;
+            playSound(soundCorrect);
+            triggerCorrectFeedback(textValidate);
         } else {
             score = 0;
             elapsedMillis = 0;
+            playSound(soundWrong);
+            triggerWrongFeedback(textValidate);
         }
         updateScore();
 
@@ -198,5 +230,40 @@ public class GameFragment extends Fragment {
         int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
 
         return String.format("%02d.%2d", seconds, milliseconds);
+    }
+
+    private void playSound(int soundId) {
+        if (playerManager.isSoundEnabled() && soundPool != null) {
+            soundPool.play(soundId, 0.75f, 0.75f, 1, 0, 1f);
+        }
+    }
+
+    // Appeler quand réponse correcte
+    private void triggerCorrectFeedback(View v) {
+        if (playerManager.isHapticEnabled()) {
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        } else if (playerManager.isVibrationEnabled()) {
+            vibrate(50); // 50ms vibration
+        }
+    }
+
+    // Appeler quand réponse incorrecte
+    private void triggerWrongFeedback(View v) {
+        if (playerManager.isHapticEnabled()) {
+            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        } else if (playerManager.isVibrationEnabled()) {
+            vibrate(100); // 100ms vibration
+        }
+    }
+
+    private void vibrate(int durationMs) {
+        Vibrator vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                vibrator.vibrate(durationMs);
+            }
+        }
     }
 }

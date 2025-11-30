@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,7 @@ public class LeagueFragment extends Fragment {
             args.putLong("TARGET_SCORE", item.targetScore);
             args.putInt("DIFFICULTY", item.difficulty);
             args.putInt("STATUS", 0);
+            if(playerManager.isHapticEnabled()) v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             Navigation.findNavController(v)
                     .navigate(R.id.action_navigation_dashboard_to_levelFragment, args);
         });

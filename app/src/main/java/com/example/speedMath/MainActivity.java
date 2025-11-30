@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (playerManager.isMusicEnabled()) {
-            playerManager.stopMusic();
+            playerManager.setMusicEnabled(false);
         }
     }
 

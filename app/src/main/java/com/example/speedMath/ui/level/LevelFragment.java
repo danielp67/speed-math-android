@@ -1,5 +1,6 @@
 package com.example.speedMath.ui.level;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -9,6 +10,9 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +54,6 @@ public class LevelFragment extends Fragment {
     private ScoreManager scoreManager;
     private SoundPool soundPool;
     private int soundCorrect, soundWrong, soundLevelUp;
-    private boolean soundEnabled = true;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -170,10 +173,12 @@ public class LevelFragment extends Fragment {
         {
             correctAnswerNbr++;
             playSound(soundCorrect);
+            triggerCorrectFeedback(textValidate); // answerButton = bouton cliqué
         }
         else
         {
             playSound(soundWrong);
+            triggerWrongFeedback(textValidate);
         }
         score =  (int) scoreManager.setScore(isCorrect, elapsedMillis);
         updateScore();
@@ -189,6 +194,7 @@ public class LevelFragment extends Fragment {
 
     private void levelCompleted() {
         playSound(soundLevelUp);
+        triggerCorrectFeedback(textValidate);
         textValidate.setText("🎉 Level completed !");
         textValidate.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
@@ -255,8 +261,37 @@ public class LevelFragment extends Fragment {
     }
 
     private void playSound(int soundId) {
-        if (soundEnabled && soundPool != null) {
-            soundPool.play(soundId, 1f, 1f, 1, 0, 1f);
+        if (playerManager.isSoundEnabled() && soundPool != null) {
+            soundPool.play(soundId, 0.75f, 0.75f, 1, 0, 1f);
+        }
+    }
+
+    // Appeler quand réponse correcte
+    private void triggerCorrectFeedback(View v) {
+        if (playerManager.isHapticEnabled()) {
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        } else if (playerManager.isVibrationEnabled()) {
+            vibrate(50); // 50ms vibration
+        }
+    }
+
+    // Appeler quand réponse incorrecte
+    private void triggerWrongFeedback(View v) {
+        if (playerManager.isHapticEnabled()) {
+            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        } else if (playerManager.isVibrationEnabled()) {
+            vibrate(100); // 100ms vibration
+        }
+    }
+
+    private void vibrate(int durationMs) {
+        Vibrator vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                vibrator.vibrate(durationMs);
+            }
         }
     }
 

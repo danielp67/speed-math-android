@@ -2,6 +2,7 @@ package com.example.speedMath.ui.settings;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,6 @@ import com.example.speedMath.databinding.FragmentSettingsBinding;
 public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;
-
-    private MediaPlayer backgroundMusic;
     private PlayerManager playerManager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -57,44 +56,52 @@ public class SettingsFragment extends Fragment {
 
 
         switchDark.setOnCheckedChangeListener((b, on) -> {
+            if(playerManager.isHapticEnabled()){
+                switchDark.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
             playerManager.setDarkMode(on);
         });
 
         switchSound.setOnCheckedChangeListener((b, on) -> {
+            if(playerManager.isHapticEnabled()){
+                switchSound.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
             playerManager.setSoundEnabled(on);
         });
 
         switchMusic.setOnCheckedChangeListener((b, on) -> {
+            if (playerManager.isHapticEnabled()) {
+                switchMusic.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
             playerManager.setMusicEnabled(on);
 
-            if (backgroundMusic != null) {
-                if (on && !backgroundMusic.isPlaying()) {
-                    backgroundMusic.start();
-                } else if (!on && backgroundMusic.isPlaying()) {
-                    backgroundMusic.pause();
-                }
-            } else if (on) {
-                // Si backgroundMusic n'est pas encore créé
-                backgroundMusic = MediaPlayer.create(getContext(), R.raw.music);
-                backgroundMusic.setLooping(true);
-                backgroundMusic.setVolume(0.25f, 0.25f);
-                backgroundMusic.start();
-            }
         });
         switchVibration.setOnCheckedChangeListener((b, on) -> {
-            playerManager.setVibrationEnabled(switchVibration.isEnabled());
+            if (playerManager.isHapticEnabled()) {
+                switchVibration.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
+            playerManager.setVibrationEnabled(on);
         });
 
         switchAnimation.setOnCheckedChangeListener((b, on) -> {
-            playerManager.setAnimationEnabled(switchAnimation.isEnabled());
+            if (playerManager.isHapticEnabled()) {
+                switchAnimation.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
+            playerManager.setAnimationEnabled(on);
         });
 
         switchHaptic.setOnCheckedChangeListener((b, on) -> {
-            playerManager.setHapticEnabled(switchHaptic.isEnabled());
+            if (playerManager.isHapticEnabled()) {
+                switchHaptic.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
+            playerManager.setHapticEnabled(on);
         });
 
 
         btnResetScore.setOnClickListener(v -> {
+            if (playerManager.isHapticEnabled()) {
+                btnResetScore.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            }
             playerManager.resetUserStats();
         });
 
