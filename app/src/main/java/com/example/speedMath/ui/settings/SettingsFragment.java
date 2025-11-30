@@ -1,5 +1,6 @@
 package com.example.speedMath.ui.settings;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,6 +25,7 @@ public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;
 
+    private MediaPlayer backgroundMusic;
     private PlayerManager playerManager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -35,11 +38,15 @@ public class SettingsFragment extends Fragment {
 
         SwitchCompat switchDark = root.findViewById(R.id.switchDark);
         SwitchCompat switchSound = root.findViewById(R.id.switchSound);
+        SwitchCompat switchMusic = root.findViewById(R.id.switchMusic);
         SwitchCompat switchVibration = root.findViewById(R.id.switchVibration);
+        SwitchCompat switchAnimation = root.findViewById(R.id.switchAnimations);
+        SwitchCompat switchHaptic = root.findViewById(R.id.switchHaptic);
         Spinner spinnerDifficulty = root.findViewById(R.id.spinnerDifficulty);
         Button btnResetScore = root.findViewById(R.id.btnResetScore);
 
-// Exemple : remplir le spinner
+        playerManager = PlayerManager.getInstance(requireContext());
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 getContext(),
                 android.R.layout.simple_spinner_item,
@@ -48,15 +55,60 @@ public class SettingsFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDifficulty.setAdapter(adapter);
 
-// Exemple d’actions
-        switchSound.setOnCheckedChangeListener((b, on) -> {
-            // save to preferences
+
+        switchDark.setOnCheckedChangeListener((b, on) -> {
+            playerManager.setDarkMode(on);
         });
 
-        playerManager = PlayerManager.getInstance(requireContext());
+        switchSound.setOnCheckedChangeListener((b, on) -> {
+            playerManager.setSoundEnabled(on);
+        });
+
+        switchMusic.setOnCheckedChangeListener((b, on) -> {
+            playerManager.setMusicEnabled(on);
+
+            if (backgroundMusic != null) {
+                if (on && !backgroundMusic.isPlaying()) {
+                    backgroundMusic.start();
+                } else if (!on && backgroundMusic.isPlaying()) {
+                    backgroundMusic.pause();
+                }
+            } else if (on) {
+                // Si backgroundMusic n'est pas encore créé
+                backgroundMusic = MediaPlayer.create(getContext(), R.raw.music);
+                backgroundMusic.setLooping(true);
+                backgroundMusic.setVolume(0.25f, 0.25f);
+                backgroundMusic.start();
+            }
+        });
+        switchVibration.setOnCheckedChangeListener((b, on) -> {
+            playerManager.setVibrationEnabled(switchVibration.isEnabled());
+        });
+
+        switchAnimation.setOnCheckedChangeListener((b, on) -> {
+            playerManager.setAnimationEnabled(switchAnimation.isEnabled());
+        });
+
+        switchHaptic.setOnCheckedChangeListener((b, on) -> {
+            playerManager.setHapticEnabled(switchHaptic.isEnabled());
+        });
+
 
         btnResetScore.setOnClickListener(v -> {
             playerManager.resetUserStats();
+        });
+
+
+
+        // Charger l'état actuel
+        boolean isDark = playerManager.isDarkModeEnabled();
+        switchDark.setChecked(isDark);
+
+        applyTheme(isDark);
+
+        switchDark.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            playerManager.setDarkMode(isChecked);
+            applyTheme(isChecked);
         });
 
         //        final TextView textView = binding.textNotifications;
@@ -68,5 +120,11 @@ public class SettingsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void applyTheme(boolean isDark) {
+        AppCompatDelegate.setDefaultNightMode(
+                isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
     }
 }

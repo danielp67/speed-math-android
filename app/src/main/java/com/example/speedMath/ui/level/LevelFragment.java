@@ -3,6 +3,10 @@ package com.example.speedMath.ui.level;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -44,6 +48,9 @@ public class LevelFragment extends Fragment {
     private PlayerManager playerManager;
 
     private ScoreManager scoreManager;
+    private SoundPool soundPool;
+    private int soundCorrect, soundWrong, soundLevelUp;
+    private boolean soundEnabled = true;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -102,6 +109,23 @@ public class LevelFragment extends Fragment {
         cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         cardValidateCard.setOnClickListener(v -> checkAnswer());
 
+        // Création du SoundPool
+            AudioAttributes attrs = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(3)
+                    .setAudioAttributes(attrs)
+                    .build();
+
+
+        // Chargement des sons
+        soundCorrect = soundPool.load(getContext(), R.raw.correct, 1);
+        soundWrong   = soundPool.load(getContext(), R.raw.wrong, 1);
+        soundLevelUp = soundPool.load(getContext(), R.raw.levelup, 1);
+
+
         // Timer
         countUpTimer = new CountUpTimer();
         countUpTimer.start();
@@ -142,7 +166,15 @@ public class LevelFragment extends Fragment {
 
         flashBorder(textResult, isCorrect);
 
-        if (isCorrect) correctAnswerNbr++;
+        if (isCorrect)
+        {
+            correctAnswerNbr++;
+            playSound(soundCorrect);
+        }
+        else
+        {
+            playSound(soundWrong);
+        }
         score =  (int) scoreManager.setScore(isCorrect, elapsedMillis);
         updateScore();
 
@@ -156,6 +188,7 @@ public class LevelFragment extends Fragment {
     }
 
     private void levelCompleted() {
+        playSound(soundLevelUp);
         textValidate.setText("🎉 Level completed !");
         textValidate.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
@@ -219,6 +252,12 @@ public class LevelFragment extends Fragment {
         int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
 
         return String.format("%02d.%2d s", seconds, milliseconds);
+    }
+
+    private void playSound(int soundId) {
+        if (soundEnabled && soundPool != null) {
+            soundPool.play(soundId, 1f, 1f, 1, 0, 1f);
+        }
     }
 
 }

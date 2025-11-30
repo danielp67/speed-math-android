@@ -1,7 +1,9 @@
 package com.example.speedMath;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
+import com.example.speedMath.core.PlayerManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
+
+    private PlayerManager playerManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_notifications
         ).build();
 
+        playerManager = PlayerManager.getInstance(this);
+
+        if(playerManager.isMusicEnabled())
+        {
+            playerManager.setMusicEnabled(true);
+        }
         // Lien toolbar avec NavController pour gérer flèche Up
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
@@ -36,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return navController.navigateUp() || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (playerManager.isMusicEnabled()) {
+            playerManager.stopMusic();
+        }
     }
 
 }

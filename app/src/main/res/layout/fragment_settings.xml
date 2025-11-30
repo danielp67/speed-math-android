@@ -75,13 +75,23 @@
                     android:id="@+id/switchSound"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="Sounds"
+                    android:textSize="16sp"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchMusic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Music"
                     android:textSize="16sp"/>
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchVibration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="Vibration"
                     android:textSize="16sp"
                     android:layout_marginTop="10dp"/>
@@ -90,7 +100,7 @@
                     android:id="@+id/switchAnimations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Animations"
+                    android:text="Animation"
                     android:textSize="16sp"
                     android:layout_marginTop="10dp"/>
 
@@ -98,6 +108,7 @@
                     android:id="@+id/switchHaptic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="Haptic Feedback"
                     android:textSize="16sp"
                     android:layout_marginTop="10dp"/>
