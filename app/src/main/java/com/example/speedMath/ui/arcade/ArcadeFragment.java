@@ -16,7 +16,13 @@ import com.example.speedMath.R;
 public class ArcadeFragment extends Fragment {
 
     CardView cardAdd, cardSub, cardMul, cardDiv, cardAll, cardQCM, cardDual;
-    TextView tvAdd, tvSub, tvMul, tvDiv, tvAll, tvQCM, tvDual;
+    TextView iconAdd, titleAdd, descriptionAdd;
+    TextView iconSub, titleSub, descriptionSub;
+    TextView iconMul, titleMul, descriptionMul;
+    TextView iconDiv, titleDiv, descriptionDiv;
+    TextView iconAll, titleAll, descriptionAll;
+    TextView iconQCM, titleQCM, descriptionQCM;
+    TextView iconDual, titleDual, descriptionDual;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -31,22 +37,58 @@ public class ArcadeFragment extends Fragment {
         cardAll = root.findViewById(R.id.cardAll);
         cardQCM = root.findViewById(R.id.cardQCM);
         cardDual = root.findViewById(R.id.cardDual);
-        tvAdd = cardAdd.findViewById(R.id.textButton);
-        tvSub = cardSub.findViewById(R.id.textButton);
-        tvMul = cardMul.findViewById(R.id.textButton);
-        tvDiv = cardDiv.findViewById(R.id.textButton);
-        tvAll = cardAll.findViewById(R.id.textButton);
-        tvQCM = cardQCM.findViewById(R.id.textButton);
-        tvDual = cardDual.findViewById(R.id.textButton);
 
 
-        tvAdd.setText("a + b");
-        tvSub.setText("a - b");
-        tvMul.setText("a x b");
-        tvDiv.setText("a ÷ b");
-        tvAll.setText("+ - x ÷");
-        tvQCM.setText("\uD83D\uDD22 \uD83D\uDC64");
-        tvDual.setText("\uD83D\uDD22 \uD83D\uDC65\u200B");
+        iconAdd = cardAdd.findViewById(R.id.iconCard);
+        titleAdd = cardAdd.findViewById(R.id.titleCard);
+        descriptionAdd = cardAdd.findViewById(R.id.descriptionCard);
+        iconAdd.setText("+");
+        titleAdd.setText("Addition Suite");
+        descriptionAdd.setText("a + b");
+
+        iconSub = cardSub.findViewById(R.id.iconCard);
+        titleSub = cardSub.findViewById(R.id.titleCard);
+        descriptionSub = cardSub.findViewById(R.id.descriptionCard);
+        iconSub.setText("-");
+        titleSub.setText("Subtraction Suite");
+        descriptionSub.setText("a - b");
+
+        iconMul = cardMul.findViewById(R.id.iconCard);
+        titleMul = cardMul.findViewById(R.id.titleCard);
+        descriptionMul = cardMul.findViewById(R.id.descriptionCard);
+        iconMul.setText("x");
+        titleMul.setText("Multiplication Suite");
+        descriptionMul.setText("a x b");
+
+        iconDiv = cardDiv.findViewById(R.id.iconCard);
+        titleDiv = cardDiv.findViewById(R.id.titleCard);
+        descriptionDiv = cardDiv.findViewById(R.id.descriptionCard);
+        iconDiv.setText("÷");
+        titleDiv.setText("Division Suite");
+        descriptionDiv.setText("a ÷ b");
+
+        iconAll = cardAll.findViewById(R.id.iconCard);
+        titleAll = cardAll.findViewById(R.id.titleCard);
+        descriptionAll = cardAll.findViewById(R.id.descriptionCard);
+        iconAll.setText("+ - x ÷");
+        iconAll.setTextSize(10);
+        titleAll.setText("All Suite");
+        descriptionAll.setText("+ - x ÷");
+
+        iconQCM = cardQCM.findViewById(R.id.iconCard);
+        titleQCM = cardQCM.findViewById(R.id.titleCard);
+        descriptionQCM = cardQCM.findViewById(R.id.descriptionCard);
+        iconQCM.setText("\uD83D\uDC64");
+        titleQCM.setText("Solo");
+        descriptionQCM.setText("\uD83D\uDD22 \uD83D\uDC64");
+
+        iconDual = cardDual.findViewById(R.id.iconCard);
+        titleDual = cardDual.findViewById(R.id.titleCard);
+        descriptionDual = cardDual.findViewById(R.id.descriptionCard);
+        iconDual.setText("\uD83D\uDC65");
+        titleDual.setText("Battle");
+        descriptionDual.setText("\uD83D\uDD22 \uD83D\uDC65");
+
 
         cardAdd.setOnClickListener(v -> openGame(v, "ADD"));
         cardSub.setOnClickListener(v -> openGame(v, "SUB"));
