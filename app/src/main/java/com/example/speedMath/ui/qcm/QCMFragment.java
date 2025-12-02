@@ -5,13 +5,21 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
+import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
+import com.example.speedMath.ui.level.LevelFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,11 +27,16 @@ import java.util.Random;
 
 public class QCMFragment extends Fragment {
 
-    private TextView textQuestion, textResult;
+    private TextView textQuestion, textResult, textTimer, textScoreRight;
     private CardView card1, card2, card3, card4;
     private TextView t1, t2, t3, t4;
     private int correctAnswer;
+    private long elapsedMillis = 0;
     private QuestionGenerator questionGenerator;
+    private CountUpTimer countUpTimer;
+    private PlayerManager playerManager;
+    private String gameMode;
+    private int score = 0;
 
     public QCMFragment() {
         // Required empty constructor
@@ -44,19 +57,23 @@ public class QCMFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
+        gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
+
         // UI references
         textQuestion = view.findViewById(R.id.textQuestion);
         textResult = view.findViewById(R.id.textResult);
+        textTimer = view.findViewById(R.id.textTimer);
+        textScoreRight = view.findViewById(R.id.textScoreRight);
 
         card1 = view.findViewById(R.id.cardOption1);
         card2 = view.findViewById(R.id.cardOption2);
         card3 = view.findViewById(R.id.cardOption3);
         card4 = view.findViewById(R.id.cardOption4);
 
-        t1 = view.findViewById(R.id.textOption1);
-        t2 = view.findViewById(R.id.textOption2);
-        t3 = view.findViewById(R.id.textOption3);
-        t4 = view.findViewById(R.id.textOption4);
+        t1 = card1.findViewById(R.id.textOption);
+        t2 = card2.findViewById(R.id.textOption);
+        t3 = card3.findViewById(R.id.textOption);
+        t4 = card4.findViewById(R.id.textOption);
 
         // Click handlers
         card1.setOnClickListener(v -> checkAnswer(t1));
@@ -64,10 +81,14 @@ public class QCMFragment extends Fragment {
         card3.setOnClickListener(v -> checkAnswer(t3));
         card4.setOnClickListener(v -> checkAnswer(t4));
 
+        // Timer
+        countUpTimer = new CountUpTimer();
+        countUpTimer.start();
+
         questionGenerator = new QuestionGenerator(
-                10,      // difficulty par défaut
+                50,      // difficulty par défaut
                 2,      // nombre d'opérandes
-                true,  // pas de QCM ici
+                true,  //  QCM
                 true,
                 true,
                 true,
@@ -85,7 +106,7 @@ public class QCMFragment extends Fragment {
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 
-        textQuestion.setText(q.expression + " ?");
+        textQuestion.setText(q.expression);
         correctAnswer = q.answer;
 
         // Shuffle display order
@@ -104,21 +125,42 @@ public class QCMFragment extends Fragment {
         int value = Integer.parseInt(selected.getText().toString());
 
         if (value == correctAnswer) {
-            textResult.setText("Bonne réponse !");
-            textResult.setTextColor(Color.parseColor("#2ecc71")); // vert
+            textResult.setText("✅");
             highlightCorrect(selected);
+            score++;
+            updateScore();
         } else {
-            textResult.setText("Mauvaise réponse");
-            textResult.setTextColor(Color.parseColor("#e74c3c")); // rouge
+            textResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer();
         }
 
-        // Load next question after 1 sec
-        selected.postDelayed(this::generateQuestion, 1000);
+        if (score >= 5) {
+            levelCompleted();
+        } else {
+            selected.postDelayed(this::generateQuestion, 1000);
+        }
     }
 
+    private void updateScore() {
+        if (textScoreRight != null) {
+           // playerManager.setCorrectAnswersStreak(gameMode, score);
+            textScoreRight.setText(score + "/5");
+        }
+    }
 
+    private void levelCompleted() {
+        textResult.setText("🎉 You win !");
+        textResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
+        textResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
+        countUpTimer.stopTimer();
+
+
+        textResult.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.navigation_home);
+        });
+    }
     // UI helpers
     private void highlightCorrect(TextView view) {
         ((CardView)view.getParent()).setCardBackgroundColor(Color.parseColor("#A5D6A7"));
@@ -144,5 +186,44 @@ public class QCMFragment extends Fragment {
         card2.setCardBackgroundColor(Color.WHITE);
         card3.setCardBackgroundColor(Color.WHITE);
         card4.setCardBackgroundColor(Color.WHITE);
+    }
+
+    private class CountUpTimer extends Thread {
+        private boolean running = true;
+
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    Thread.sleep(100);
+                    elapsedMillis += 100;
+                    if (!isAdded() || getActivity() == null) continue;
+                    getActivity().runOnUiThread(() -> textTimer.setText(formatTime(elapsedMillis)));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void stopTimer() { running = false; }
+    }
+
+    private String formatTime(long millis) {
+        int seconds = (int) (millis / 1000);
+        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
+
+        return String.format("%02d.%2d s", seconds, milliseconds);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) requireActivity()).setNavigationEnabled(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((MainActivity) requireActivity()).setNavigationEnabled(true);
     }
 }

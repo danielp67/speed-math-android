@@ -9,8 +9,16 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
+import com.example.speedMath.core.QuestionGenerator;
+import com.example.speedMath.ui.qcm.QCMFragment;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -18,16 +26,25 @@ import java.util.Random;
 public class DualFragment extends Fragment {
 
     // ================= PLAYER 1 =================
-    private TextView p1Question, p1Result;
+    private TextView p1TextQuestion, p1TextResult, p1TextTimer, p1TextScoreRight;
     private ArrayList<CardView> p1Cards = new ArrayList<>();
+    private CardView p1Card1, p1Card2, p1Card3, p1Card4;
+    private TextView p1Text1, p1Text2, p1Text3, p1Text4;
     private ArrayList<TextView> p1Texts = new ArrayList<>();
     private int p1CorrectAnswer;
 
     // ================= PLAYER 2 =================
-    private TextView p2Question, p2Result;
+    private TextView p2TextQuestion, p2TextResult, p2TextTimer, p2TextScoreRight;
     private ArrayList<CardView> p2Cards = new ArrayList<>();
+    private CardView p2Card1, p2Card2, p2Card3, p2Card4;
+    private TextView p2Text1, p2Text2, p2Text3, p2Text4;
     private ArrayList<TextView> p2Texts = new ArrayList<>();
     private int p2CorrectAnswer;
+    private long elapsedMillis = 0;
+    private QuestionGenerator questionGenerator;
+
+    private CountUpTimer countUpTimer;
+    private int p1Score = 0, p2Score = 0;
 
     private Random random = new Random();
 
@@ -45,47 +62,75 @@ public class DualFragment extends Fragment {
 
         // ====================== INIT PLAYER 1 ======================
         View p1 = v.findViewById(R.id.viewPlayer1);
-        p1Question = p1.findViewById(R.id.textQuestion);
-        p1Result = p1.findViewById(R.id.textResult);
+        p1TextQuestion = p1.findViewById(R.id.textQuestion);
+        p1TextResult = p1.findViewById(R.id.textResult);
+        p1TextTimer = p1.findViewById(R.id.textTimer);
+        p1TextScoreRight = p1.findViewById(R.id.textScoreRight);
+        p1Card1 = p1.findViewById(R.id.cardOption1);
+        p1Card2 = p1.findViewById(R.id.cardOption2);
+        p1Card3 = p1.findViewById(R.id.cardOption3);
+        p1Card4 = p1.findViewById(R.id.cardOption4);
+        p1Text1 = p1Card1.findViewById(R.id.textOption);
+        p1Text2 = p1Card2.findViewById(R.id.textOption);
+        p1Text3 = p1Card3.findViewById(R.id.textOption);
+        p1Text4 = p1Card4.findViewById(R.id.textOption);
+        p1Card1.setOnClickListener(view -> checkAnswerPlayer1(p1Text1));
+        p1Card2.setOnClickListener(view -> checkAnswerPlayer1(p1Text2));
+        p1Card3.setOnClickListener(view -> checkAnswerPlayer1(p1Text3));
+        p1Card4.setOnClickListener(view -> checkAnswerPlayer1(p1Text4));
 
-        p1Cards.add(p1.findViewById(R.id.cardOption1));
-        p1Cards.add(p1.findViewById(R.id.cardOption2));
-        p1Cards.add(p1.findViewById(R.id.cardOption3));
-        p1Cards.add(p1.findViewById(R.id.cardOption4));
+        p1Cards.add(p1Card1);
+        p1Cards.add(p1Card2);
+        p1Cards.add(p1Card3);
+        p1Cards.add(p1Card4);
+        p1Texts.add(p1Text1);
+        p1Texts.add(p1Text2);
+        p1Texts.add(p1Text3);
+        p1Texts.add(p1Text4);
 
-        p1Texts.add(p1.findViewById(R.id.textOption1));
-        p1Texts.add(p1.findViewById(R.id.textOption2));
-        p1Texts.add(p1.findViewById(R.id.textOption3));
-        p1Texts.add(p1.findViewById(R.id.textOption4));
-
-        // Click listeners
-        for (int i = 0; i < 4; i++) {
-            final int index = i;
-            p1Cards.get(i).setOnClickListener(view ->
-                    checkAnswerPlayer1(p1Texts.get(index)));
-        }
 
         // ====================== INIT PLAYER 2 ======================
         View p2 = v.findViewById(R.id.viewPlayer2);
-        p2Question = p2.findViewById(R.id.textQuestion);
-        p2Result = p2.findViewById(R.id.textResult);
+        p2TextQuestion = p2.findViewById(R.id.textQuestion);
+        p2TextResult = p2.findViewById(R.id.textResult);
+        p2TextTimer = p2.findViewById(R.id.textTimer);
+        p2TextScoreRight = p2.findViewById(R.id.textScoreRight);
+        p2Card1 = p2.findViewById(R.id.cardOption1);
+        p2Card2 = p2.findViewById(R.id.cardOption2);
+        p2Card3 = p2.findViewById(R.id.cardOption3);
+        p2Card4 = p2.findViewById(R.id.cardOption4);
+        p2Text1 = p2Card1.findViewById(R.id.textOption);
+        p2Text2 = p2Card2.findViewById(R.id.textOption);
+        p2Text3 = p2Card3.findViewById(R.id.textOption);
+        p2Text4 = p2Card4.findViewById(R.id.textOption);
+        p2Card1.setOnClickListener(view -> checkAnswerPlayer2(p2Text1));
+        p2Card2.setOnClickListener(view -> checkAnswerPlayer2(p2Text2));
+        p2Card3.setOnClickListener(view -> checkAnswerPlayer2(p2Text3));
+        p2Card4.setOnClickListener(view -> checkAnswerPlayer2(p2Text4));
 
-        p2Cards.add(p2.findViewById(R.id.cardOption1));
-        p2Cards.add(p2.findViewById(R.id.cardOption2));
-        p2Cards.add(p2.findViewById(R.id.cardOption3));
-        p2Cards.add(p2.findViewById(R.id.cardOption4));
+        p2Cards.add(p2Card1);
+        p2Cards.add(p2Card2);
+        p2Cards.add(p2Card3);
+        p2Cards.add(p2Card4);
+        p2Texts.add(p2Text1);
+        p2Texts.add(p2Text2);
+        p2Texts.add(p2Text3);
+        p2Texts.add(p2Text4);
 
-        p2Texts.add(p2.findViewById(R.id.textOption1));
-        p2Texts.add(p2.findViewById(R.id.textOption2));
-        p2Texts.add(p2.findViewById(R.id.textOption3));
-        p2Texts.add(p2.findViewById(R.id.textOption4));
+        // Timer
+        countUpTimer = new CountUpTimer();
+        countUpTimer.start();
 
-        for (int i = 0; i < 4; i++) {
-            final int index = i;
-            p2Cards.get(i).setOnClickListener(view ->
-                    checkAnswerPlayer2(p2Texts.get(index)));
-        }
-
+        questionGenerator = new QuestionGenerator(
+                50,      // difficulty par défaut
+                2,      // nombre d'opérandes
+                true,  //  QCM
+                true,
+                true,
+                true,
+                true,
+                true
+        );
         // First questions
         generateQuestionPlayer1();
         generateQuestionPlayer2();
@@ -96,23 +141,21 @@ public class DualFragment extends Fragment {
     // =====================================================
     private void generateQuestionPlayer1() {
         resetCardColors(p1Cards);
+        p1TextResult.setText("");
 
-        int a = random.nextInt(10) + 1;
-        int b = random.nextInt(10) + 1;
-        p1CorrectAnswer = a + b;
+        // Génération via QuestionGenerator
+        QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
+        p1TextQuestion.setText(q.expression);
+        p1CorrectAnswer = q.answer;
 
-        p1Question.setText(a + " + " + b + " = ?");
+        // Shuffle display order
+        Collections.shuffle(q.answersChoice);
 
-        ArrayList<Integer> options = new ArrayList<>();
-        options.add(p1CorrectAnswer);
-        options.add(p1CorrectAnswer + 1);
-        options.add(p1CorrectAnswer - 1);
-        options.add(p1CorrectAnswer + 2);
-        Collections.shuffle(options);
+        p1Text1.setText(String.valueOf(q.answersChoice.get(0)));
+        p1Text2.setText(String.valueOf(q.answersChoice.get(1)));
+        p1Text3.setText(String.valueOf(q.answersChoice.get(2)));
+        p1Text4.setText(String.valueOf(q.answersChoice.get(3)));
 
-        for (int i = 0; i < 4; i++) {
-            p1Texts.get(i).setText(String.valueOf(options.get(i)));
-        }
     }
 
     // =====================================================
@@ -120,23 +163,20 @@ public class DualFragment extends Fragment {
     // =====================================================
     private void generateQuestionPlayer2() {
         resetCardColors(p2Cards);
+        p2TextResult.setText("");
 
-        int a = random.nextInt(10) + 1;
-        int b = random.nextInt(10) + 1;
-        p2CorrectAnswer = a + b;
+        // Génération via QuestionGenerator
+        QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
+        p2TextQuestion.setText(q.expression);
+        p2CorrectAnswer = q.answer;
 
-        p2Question.setText(a + " + " + b + " = ?");
+        // Shuffle display order
+        Collections.shuffle(q.answersChoice);
 
-        ArrayList<Integer> options = new ArrayList<>();
-        options.add(p2CorrectAnswer);
-        options.add(p2CorrectAnswer + 1);
-        options.add(p2CorrectAnswer - 1);
-        options.add(p2CorrectAnswer + 2);
-        Collections.shuffle(options);
-
-        for (int i = 0; i < 4; i++) {
-            p2Texts.get(i).setText(String.valueOf(options.get(i)));
-        }
+        p2Text1.setText(String.valueOf(q.answersChoice.get(0)));
+        p2Text2.setText(String.valueOf(q.answersChoice.get(1)));
+        p2Text3.setText(String.valueOf(q.answersChoice.get(2)));
+        p2Text4.setText(String.valueOf(q.answersChoice.get(3)));
     }
 
     // =====================================================
@@ -146,17 +186,21 @@ public class DualFragment extends Fragment {
         int value = Integer.parseInt(selected.getText().toString());
 
         if (value == p1CorrectAnswer) {
-            p1Result.setText("✅");
-            p1Result.setTextColor(Color.parseColor("#2ecc71"));
+            p1TextResult.setText("✅");
             highlightCorrect(selected);
+            p1Score++;
+            if(p1TextScoreRight != null) p1TextScoreRight.setText(p1Score + "/5");
         } else {
-            p1Result.setText("❌");
-            p1Result.setTextColor(Color.parseColor("#e74c3c"));
+            p1TextResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer(p1Texts, p1Cards, p1CorrectAnswer);
         }
 
-        selected.postDelayed(this::generateQuestionPlayer1, 1000);
+        if (p1Score >= 5) {
+            levelCompleted(p1TextResult, p2TextResult);
+        } else {
+            selected.postDelayed(this::generateQuestionPlayer1, 1000);
+        }
     }
 
     // =====================================================
@@ -166,19 +210,52 @@ public class DualFragment extends Fragment {
         int value = Integer.parseInt(selected.getText().toString());
 
         if (value == p2CorrectAnswer) {
-            p2Result.setText("✅");
-            p2Result.setTextColor(Color.parseColor("#2ecc71"));
+            p2TextResult.setText("✅");
             highlightCorrect(selected);
+            p2Score++;
+            if(p2TextScoreRight != null) p2TextScoreRight.setText(p2Score + "/5");
         } else {
-            p2Result.setText("❌");
-            p2Result.setTextColor(Color.parseColor("#e74c3c"));
+            p2TextResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer(p2Texts, p2Cards, p2CorrectAnswer);
         }
 
-        selected.postDelayed(this::generateQuestionPlayer2, 1000);
+        if (p2Score >= 5) {
+             levelCompleted(p2TextResult, p1TextResult);
+        } else {
+            selected.postDelayed(this::generateQuestionPlayer2, 1000);
+        }
     }
 
+    private void levelCompleted(TextView n1TextResult, TextView n2TextResult) {
+        countUpTimer.stopTimer();
+        // win
+        n1TextResult.setText("🎉 You win !");
+        n1TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
+        n1TextResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
+
+        // loose
+        n2TextResult.setText("You loose");
+        n2TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
+        n2TextResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
+        p1Card1.setOnClickListener(null);
+        p1Card2.setOnClickListener(null);
+        p1Card3.setOnClickListener(null);
+        p1Card4.setOnClickListener(null);
+        p1Card1.setClickable(false);
+        p1Card2.setClickable(false);
+        p1Card3.setClickable(false);
+        p1Card4.setClickable(false);
+        p2Card1.setOnClickListener(null);
+        p2Card2.setOnClickListener(null);
+        p2Card3.setOnClickListener(null);
+        p2Card4.setOnClickListener(null);
+        p2Card1.setClickable(false);
+        p2Card2.setClickable(false);
+        p2Card3.setClickable(false);
+        p2Card4.setClickable(false);
+
+    }
     // =====================================================
     // HIGHLIGHT HELPERS
     // =====================================================
@@ -209,5 +286,47 @@ public class DualFragment extends Fragment {
         for (CardView c : cards) {
             c.setCardBackgroundColor(Color.WHITE);
         }
+    }
+
+    private class CountUpTimer extends Thread {
+        private boolean running = true;
+
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    Thread.sleep(100);
+                    elapsedMillis += 100;
+                    if (!isAdded() || getActivity() == null) continue;
+                    getActivity().runOnUiThread(() -> {
+                        p1TextTimer.setText(formatTime(elapsedMillis));
+                        p2TextTimer.setText(formatTime(elapsedMillis));
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void stopTimer() { running = false; }
+    }
+
+    private String formatTime(long millis) {
+        int seconds = (int) (millis / 1000);
+        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
+
+        return String.format("%02d.%2d s", seconds, milliseconds);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) requireActivity()).setNavigationEnabled(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((MainActivity) requireActivity()).setNavigationEnabled(true);
     }
 }

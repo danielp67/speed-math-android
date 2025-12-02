@@ -14,17 +14,17 @@
         android:paddingHorizontal="@dimen/dp_16"
         android:paddingBottom="@dimen/dp_64">
 
-        <include layout="@layout/card_button" android:id="@+id/cardAdd"/>
-        <include layout="@layout/card_button" android:id="@+id/cardSub"/>
-        <include layout="@layout/card_button" android:id="@+id/cardMul"/>
-        <include layout="@layout/card_button" android:id="@+id/cardDiv"/>
-        <include layout="@layout/card_button" android:id="@+id/cardAll"/>
-        <include layout="@layout/card_button" android:id="@+id/cardQCM"/>
-        <include layout="@layout/card_button" android:id="@+id/cardDual"/>
-        <include layout="@layout/card_button" android:id="@+id/test1"/>
-        <include layout="@layout/card_button" android:id="@+id/test2"/>
-        <include layout="@layout/card_button" android:id="@+id/test3"/>
-        <include layout="@layout/card_button" android:id="@+id/test4"/>
+        <include layout="@layout/card_arcade" android:id="@+id/cardAdd"/>
+        <include layout="@layout/card_arcade" android:id="@+id/cardSub"/>
+        <include layout="@layout/card_arcade" android:id="@+id/cardMul"/>
+        <include layout="@layout/card_arcade" android:id="@+id/cardDiv"/>
+        <include layout="@layout/card_arcade" android:id="@+id/cardAll"/>
+        <include layout="@layout/card_arcade" android:id="@+id/cardQCM"/>
+        <include layout="@layout/card_arcade" android:id="@+id/cardDual"/>
+        <include layout="@layout/card_arcade" android:id="@+id/test1"/>
+        <include layout="@layout/card_arcade" android:id="@+id/test2"/>
+        <include layout="@layout/card_arcade" android:id="@+id/test3"/>
+        <include layout="@layout/card_arcade" android:id="@+id/test4"/>
 
     </LinearLayout>
 </ScrollView>
