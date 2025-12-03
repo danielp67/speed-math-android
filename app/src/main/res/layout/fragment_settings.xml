@@ -132,10 +132,10 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/titleDifficulty"
+                    android:id="@+id/titleArcade"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Difficulty"
+                    android:text="Arcade Mode"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_marginBottom="12dp"/>
@@ -144,11 +144,24 @@
                     android:id="@+id/labelDifficulty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Training Difficulty"
+                    android:text="Select difficulty"
                     android:textSize="16sp"/>
 
                 <Spinner
                     android:id="@+id/spinnerDifficulty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/labelNbQuestions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Nb of questions"
+                    android:textSize="16sp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerNbQuestions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"/>

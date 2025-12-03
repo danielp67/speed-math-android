@@ -13,7 +13,6 @@ public class PlayerManager {
     private static final String KEY_BEST_LEVEL = "best_level";
     private static final String KEY_CURRENT_LEVEL = "current_level";
     private static final String KEY_TIME_LEVEL_PREFIX = "time_level_";
-    private static final String KEY_POINTS_LEVEL_PREFIX = "points_level_";
     private static final String KEY_ANSWERS_STREAK_PREFIX = "answers_streak_";
 
     private static final String KEY_DARK_MODE = "dark_mode";
@@ -23,6 +22,8 @@ public class PlayerManager {
 
     private static final String KEY_ANIMATION = "animation";
     private static final String KEY_HAPTIC = "haptic";
+    private static final String KEY_ARCADE_DIFFICULTY = "arcade_difficulty";
+    private static final String KEY_NB_QUESTIONS = "nb_questions";
     private MediaPlayer backgroundMusic = null;
     private SharedPreferences prefs;
     private Context context;
@@ -147,15 +148,6 @@ public class PlayerManager {
         }
     }
 
-    public void setAnimationEnabled(boolean enabled) {
-        prefs.edit().putBoolean(KEY_VIBRATION, enabled).apply();
-    }
-
-    public boolean isAnimationEnabled() {
-        return prefs.getBoolean(KEY_VIBRATION, true);
-    }
-
-
     public void setVibrationEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_VIBRATION, enabled).apply();
     }
@@ -164,10 +156,33 @@ public class PlayerManager {
         return prefs.getBoolean(KEY_VIBRATION, true);
     }
 
+    public void setAnimationEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_ANIMATION, enabled).apply();
+    }
+
+    public boolean isAnimationEnabled() {
+        return prefs.getBoolean(KEY_ANIMATION, true);
+    }
+
+
     public void setHapticEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_HAPTIC, enabled).apply();
     }
     public boolean isHapticEnabled() {
         return prefs.getBoolean(KEY_HAPTIC, true);
+    }
+
+    public void setArcadeDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_ARCADE_DIFFICULTY, difficulty).apply();
+    }
+    public int getArcadeDifficulty() {
+        return prefs.getInt(KEY_ARCADE_DIFFICULTY, 0);
+    }
+
+    public void setNbQuestions(int nbQuestions) {
+        prefs.edit().putInt(KEY_NB_QUESTIONS, nbQuestions).apply();
+    }
+    public int getNbQuestions() {
+        return prefs.getInt(KEY_NB_QUESTIONS, 10);
     }
 }

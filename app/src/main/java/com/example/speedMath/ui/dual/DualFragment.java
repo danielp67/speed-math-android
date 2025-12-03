@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
+import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.ui.qcm.QCMFragment;
 
@@ -44,7 +45,8 @@ public class DualFragment extends Fragment {
     private QuestionGenerator questionGenerator;
 
     private CountUpTimer countUpTimer;
-    private int p1Score = 0, p2Score = 0;
+    private int p1Score = 0, p2Score = 0, nbQuestions, arcadeDifficulty;;
+    private PlayerManager playerManager;
 
     private Random random = new Random();
 
@@ -60,6 +62,22 @@ public class DualFragment extends Fragment {
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
+        playerManager = PlayerManager.getInstance(requireContext());
+        arcadeDifficulty = playerManager.getArcadeDifficulty();
+        nbQuestions = playerManager.getNbQuestions();
+        switch (nbQuestions) {
+            case 1:
+                nbQuestions = 10;
+                break;
+            case 2:
+                nbQuestions = 20;
+                break;
+            case 3:
+                nbQuestions = 25;
+                break;
+            default:
+                nbQuestions = 5;
+        }
         // ====================== INIT PLAYER 1 ======================
         View p1 = v.findViewById(R.id.viewPlayer1);
         p1TextQuestion = p1.findViewById(R.id.textQuestion);
@@ -117,12 +135,14 @@ public class DualFragment extends Fragment {
         p2Texts.add(p2Text3);
         p2Texts.add(p2Text4);
 
+        p1TextScoreRight.setText(p1Score + "/" + nbQuestions);
+        p2TextScoreRight.setText(p2Score + "/" + nbQuestions);
         // Timer
         countUpTimer = new CountUpTimer();
         countUpTimer.start();
 
         questionGenerator = new QuestionGenerator(
-                50,      // difficulty par défaut
+                arcadeDifficulty * 50,      // difficulty par défaut
                 2,      // nombre d'opérandes
                 true,  //  QCM
                 true,
@@ -134,6 +154,7 @@ public class DualFragment extends Fragment {
         // First questions
         generateQuestionPlayer1();
         generateQuestionPlayer2();
+
     }
 
     // =====================================================
@@ -142,6 +163,13 @@ public class DualFragment extends Fragment {
     private void generateQuestionPlayer1() {
         resetCardColors(p1Cards);
         p1TextResult.setText("");
+        setP1CardsClickable(true);
+
+        if (arcadeDifficulty == 0) {
+            questionGenerator.setLevel(p1Score);
+        }else {
+            questionGenerator.setLevel(arcadeDifficulty*50);
+        }
 
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
@@ -164,6 +192,13 @@ public class DualFragment extends Fragment {
     private void generateQuestionPlayer2() {
         resetCardColors(p2Cards);
         p2TextResult.setText("");
+        setP2CardsClickable(true);
+
+        if (arcadeDifficulty == 0) {
+            questionGenerator.setLevel(p2Score);
+        }else {
+            questionGenerator.setLevel(arcadeDifficulty*50);
+        }
 
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
@@ -184,19 +219,20 @@ public class DualFragment extends Fragment {
     // =====================================================
     private void checkAnswerPlayer1(TextView selected) {
         int value = Integer.parseInt(selected.getText().toString());
+        setP1CardsClickable(false);
 
         if (value == p1CorrectAnswer) {
             p1TextResult.setText("✅");
             highlightCorrect(selected);
             p1Score++;
-            if(p1TextScoreRight != null) p1TextScoreRight.setText(p1Score + "/5");
+            if(p1TextScoreRight != null) p1TextScoreRight.setText(p1Score + "/" + nbQuestions);
         } else {
             p1TextResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer(p1Texts, p1Cards, p1CorrectAnswer);
         }
 
-        if (p1Score >= 5) {
+        if (p1Score >= nbQuestions) {
             levelCompleted(p1TextResult, p2TextResult);
         } else {
             selected.postDelayed(this::generateQuestionPlayer1, 1000);
@@ -208,19 +244,20 @@ public class DualFragment extends Fragment {
     // =====================================================
     private void checkAnswerPlayer2(TextView selected) {
         int value = Integer.parseInt(selected.getText().toString());
+        setP2CardsClickable(false);
 
         if (value == p2CorrectAnswer) {
             p2TextResult.setText("✅");
             highlightCorrect(selected);
             p2Score++;
-            if(p2TextScoreRight != null) p2TextScoreRight.setText(p2Score + "/5");
+            if(p2TextScoreRight != null) p2TextScoreRight.setText(p2Score + "/" + nbQuestions);
         } else {
             p2TextResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer(p2Texts, p2Cards, p2CorrectAnswer);
         }
 
-        if (p2Score >= 5) {
+        if (p2Score >= nbQuestions) {
              levelCompleted(p2TextResult, p1TextResult);
         } else {
             selected.postDelayed(this::generateQuestionPlayer2, 1000);
@@ -228,7 +265,11 @@ public class DualFragment extends Fragment {
     }
 
     private void levelCompleted(TextView n1TextResult, TextView n2TextResult) {
+        setP1CardsClickable(false);
+        setP2CardsClickable(false);
+
         countUpTimer.stopTimer();
+
         // win
         n1TextResult.setText("🎉 You win !");
         n1TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
@@ -238,23 +279,6 @@ public class DualFragment extends Fragment {
         n2TextResult.setText("You loose");
         n2TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         n2TextResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
-        p1Card1.setOnClickListener(null);
-        p1Card2.setOnClickListener(null);
-        p1Card3.setOnClickListener(null);
-        p1Card4.setOnClickListener(null);
-        p1Card1.setClickable(false);
-        p1Card2.setClickable(false);
-        p1Card3.setClickable(false);
-        p1Card4.setClickable(false);
-        p2Card1.setOnClickListener(null);
-        p2Card2.setOnClickListener(null);
-        p2Card3.setOnClickListener(null);
-        p2Card4.setOnClickListener(null);
-        p2Card1.setClickable(false);
-        p2Card2.setClickable(false);
-        p2Card3.setClickable(false);
-        p2Card4.setClickable(false);
-
     }
     // =====================================================
     // HIGHLIGHT HELPERS
@@ -316,6 +340,20 @@ public class DualFragment extends Fragment {
         int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
 
         return String.format("%02d.%2d s", seconds, milliseconds);
+    }
+
+    public void setP1CardsClickable(boolean clickable) {
+        p1Card1.setClickable(clickable);
+        p1Card2.setClickable(clickable);
+        p1Card3.setClickable(clickable);
+        p1Card4.setClickable(clickable);
+    }
+
+    public void setP2CardsClickable(boolean clickable) {
+        p2Card1.setClickable(clickable);
+        p2Card2.setClickable(clickable);
+        p2Card3.setClickable(clickable);
+        p2Card4.setClickable(clickable);
     }
 
     @Override

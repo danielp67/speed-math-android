@@ -1,11 +1,14 @@
 package com.example.speedMath;
 
+import static androidx.core.graphics.drawable.DrawableCompat.applyTheme;
+
 import android.os.Bundle;
 
 import com.example.speedMath.core.PlayerManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -35,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         {
             playerManager.setMusicEnabled(true);
         }
+
+        // Charger l'état actuel
+        boolean isDark = playerManager.isDarkModeEnabled();
+
+        applyTheme(isDark);
         // Lien toolbar avec NavController pour gérer flèche Up
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
@@ -65,5 +73,9 @@ public class MainActivity extends AppCompatActivity {
             nav.getMenu().getItem(i).setEnabled(enabled);
         }
     }
-
+    private void applyTheme(boolean isDark) {
+        AppCompatDelegate.setDefaultNightMode(
+                isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
+    }
 }

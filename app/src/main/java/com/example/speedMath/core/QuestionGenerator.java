@@ -1,8 +1,11 @@
 package com.example.speedMath.core;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class QuestionGenerator {
 
@@ -60,17 +63,18 @@ public class QuestionGenerator {
 
         int difficultyCorrector = 100;
         if (allowMultiply || allowDivide) difficultyCorrector = 20;
-        operandCount = Math.max(2, ((level-1)/50) + 2);
-        if(level%10 == 0 && level > 0) level = 10;
-        difficulty = Math.max(1, (level * operandCount)/2);
+        this.operandCount = Math.max(2, ((this.level-1)/50) + 2);
+        if(this.level%10 == 0 && this.level > 0) this.level = 10;
+        this.difficulty = Math.max(1, (this.level * this.operandCount)/2);
         int min = 1;
-        int max = 10 * difficulty * difficultyCorrector / 100;
+        int max = 10 * this.difficulty * difficultyCorrector / 100;
 
         List<Integer> values = new ArrayList<>();
         List<Character> operations = new ArrayList<>();
 
+
         // Génération des valeurs et opérateurs
-        for (int i = 0; i < operandCount; i++) {
+        for (int i = 0; i < this.operandCount; i++) {
             values.add(random.nextInt(max - min + 1) + min);
             if (i > 0) {
                 operations.add(ops.get(random.nextInt(ops.size())));
@@ -93,7 +97,7 @@ public class QuestionGenerator {
                 expr = new StringBuilder("(" + dividend + " ÷ " + nextVal + ")");
                 currentResult = dividend / nextVal;
             } else if (op == 'x') {
-                if (operandCount > 2) expr = new StringBuilder("(" + expr + " x " + nextVal + ")");
+                if (this.operandCount > 2) expr = new StringBuilder("(" + expr + " x " + nextVal + ")");
                 else expr.append(" x ").append(nextVal);
                 currentResult *= nextVal;
             } else if (op == '-') {
@@ -103,11 +107,11 @@ public class QuestionGenerator {
                         nextVal = random.nextInt(currentResult + 1); // 0 à currentResult
                     }
                 }
-                if (operandCount > 2) expr = new StringBuilder("(" + expr + " - " + nextVal + ")");
+                if (this.operandCount > 2) expr = new StringBuilder("(" + expr + " - " + nextVal + ")");
                 else expr.append(" - ").append(nextVal);
                 currentResult -= nextVal;
             } else { // '+'
-                if (operandCount > 2) expr = new StringBuilder("(" + expr + " + " + nextVal + ")");
+                if (this.operandCount > 2) expr = new StringBuilder("(" + expr + " + " + nextVal + ")");
                 else expr.append(" + ").append(nextVal);
                 currentResult += nextVal;
             }

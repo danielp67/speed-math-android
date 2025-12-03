@@ -5,6 +5,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -39,18 +40,48 @@ public class SettingsFragment extends Fragment {
         SwitchCompat switchAnimation = root.findViewById(R.id.switchAnimations);
         SwitchCompat switchHaptic = root.findViewById(R.id.switchHaptic);
         Spinner spinnerDifficulty = root.findViewById(R.id.spinnerDifficulty);
+        Spinner spinnerNbQuestions = root.findViewById(R.id.spinnerNbQuestions);
         Button btnResetScore = root.findViewById(R.id.btnResetScore);
 
         playerManager = PlayerManager.getInstance(requireContext());
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        ArrayAdapter<String> adapterDifficulty = new ArrayAdapter<>(
                 getContext(),
                 android.R.layout.simple_spinner_item,
-                new String[]{"Facile", "Normal", "Difficile"}
+                new String[]{"Adaptive", "Easy", "Medium", "Hard", "Extreme"}
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDifficulty.setAdapter(adapter);
+        adapterDifficulty.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDifficulty.setAdapter(adapterDifficulty);
 
+        spinnerDifficulty.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                playerManager.setArcadeDifficulty(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        ArrayAdapter<Integer> adapterNbQuestions = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                new Integer[]{5, 10, 20, 25}
+        );
+        adapterNbQuestions.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerNbQuestions.setAdapter(adapterNbQuestions);
+
+        spinnerNbQuestions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                playerManager.setNbQuestions(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         switchDark.setOnCheckedChangeListener((b, on) -> {
             if(playerManager.isHapticEnabled()){
@@ -101,8 +132,6 @@ public class SettingsFragment extends Fragment {
             }
             playerManager.resetUserStats();
         });
-
-
 
         // Charger l'état actuel
         boolean isDark = playerManager.isDarkModeEnabled();

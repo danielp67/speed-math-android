@@ -39,7 +39,7 @@ public class GameFragment extends Fragment {
     private int score = 0;
 
     private long correctAnswer;
-    private int correctAnswersStreak, lastPlayedLevel;
+    private int correctAnswersStreak, lastPlayedLevel, arcadeDifficulty;
     private PlayerManager playerManager;
     private CountUpTimer countUpTimer;
 
@@ -55,6 +55,7 @@ public class GameFragment extends Fragment {
 
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
         playerManager = PlayerManager.getInstance(requireContext());
+        arcadeDifficulty = playerManager.getArcadeDifficulty();
 
         correctAnswersStreak = playerManager.getCorrectAnswersStreak(gameMode);
         lastPlayedLevel = playerManager.getLastPlayedLevel();
@@ -128,8 +129,8 @@ public class GameFragment extends Fragment {
         boolean allowDiv = gameMode.equals("DIV") || gameMode.equals("ALL");
 
         questionGenerator = new QuestionGenerator(
-                score,      // difficulty par défaut
-                2,      // nombre d'opérandes
+                arcadeDifficulty * 50,      // difficulty par défaut
+                2 ,      // nombre d'opérandes
                 false,  // pas de QCM ici
                 allowAdd,
                 allowSub,
@@ -145,7 +146,11 @@ public class GameFragment extends Fragment {
 
     private void generateQuestion() {
 
-        questionGenerator.setLevel(score);
+        if (arcadeDifficulty == 0) {
+            questionGenerator.setLevel(score);
+        }else {
+            questionGenerator.setLevel(arcadeDifficulty*50);
+        }
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
 

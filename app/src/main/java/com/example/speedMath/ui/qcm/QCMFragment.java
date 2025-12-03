@@ -30,7 +30,7 @@ public class QCMFragment extends Fragment {
     private TextView textQuestion, textResult, textTimer, textScoreRight;
     private CardView card1, card2, card3, card4;
     private TextView t1, t2, t3, t4;
-    private int correctAnswer;
+    private int correctAnswer, nbQuestions, arcadeDifficulty;
     private long elapsedMillis = 0;
     private QuestionGenerator questionGenerator;
     private CountUpTimer countUpTimer;
@@ -58,12 +58,28 @@ public class QCMFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
-
+        playerManager = PlayerManager.getInstance(requireContext());
+        arcadeDifficulty = playerManager.getArcadeDifficulty();
+        nbQuestions = playerManager.getNbQuestions();
+        switch (nbQuestions) {
+            case 1:
+                nbQuestions = 10;
+                break;
+            case 2:
+                nbQuestions = 20;
+                break;
+            case 3:
+                nbQuestions = 25;
+                break;
+            default:
+                nbQuestions = 5;
+        }
         // UI references
         textQuestion = view.findViewById(R.id.textQuestion);
         textResult = view.findViewById(R.id.textResult);
         textTimer = view.findViewById(R.id.textTimer);
         textScoreRight = view.findViewById(R.id.textScoreRight);
+        textScoreRight.setText(score + "/" + nbQuestions);
 
         card1 = view.findViewById(R.id.cardOption1);
         card2 = view.findViewById(R.id.cardOption2);
@@ -86,7 +102,7 @@ public class QCMFragment extends Fragment {
         countUpTimer.start();
 
         questionGenerator = new QuestionGenerator(
-                50,      // difficulty par défaut
+                arcadeDifficulty*50,      // difficulty par défaut
                 2,      // nombre d'opérandes
                 true,  //  QCM
                 true,
@@ -102,6 +118,13 @@ public class QCMFragment extends Fragment {
     private void generateQuestion() {
         resetCardColors();
         textResult.setText("");
+        setCardsClickable(true);
+
+        if (arcadeDifficulty == 0) {
+            questionGenerator.setLevel(score);
+        }else {
+            questionGenerator.setLevel(arcadeDifficulty*50);
+        }
 
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
@@ -121,6 +144,7 @@ public class QCMFragment extends Fragment {
 
     // Handle user click
     private void checkAnswer(TextView selected) {
+        setCardsClickable(false);
 
         int value = Integer.parseInt(selected.getText().toString());
 
@@ -135,7 +159,7 @@ public class QCMFragment extends Fragment {
             highlightCorrectAnswer();
         }
 
-        if (score >= 5) {
+        if (score >= nbQuestions) {
             levelCompleted();
         } else {
             selected.postDelayed(this::generateQuestion, 1000);
@@ -145,11 +169,12 @@ public class QCMFragment extends Fragment {
     private void updateScore() {
         if (textScoreRight != null) {
            // playerManager.setCorrectAnswersStreak(gameMode, score);
-            textScoreRight.setText(score + "/5");
+            textScoreRight.setText(score + "/" + nbQuestions);
         }
     }
 
     private void levelCompleted() {
+        setCardsClickable(false);
         textResult.setText("🎉 You win !");
         textResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         textResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
@@ -215,6 +240,12 @@ public class QCMFragment extends Fragment {
         return String.format("%02d.%2d s", seconds, milliseconds);
     }
 
+    public void setCardsClickable(boolean clickable) {
+        card1.setClickable(clickable);
+        card2.setClickable(clickable);
+        card3.setClickable(clickable);
+        card4.setClickable(clickable);
+    }
     @Override
     public void onResume() {
         super.onResume();
