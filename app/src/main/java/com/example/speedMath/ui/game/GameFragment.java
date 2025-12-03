@@ -26,6 +26,7 @@ import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
+import com.example.speedMath.utils.AnimUtils;
 
 public class GameFragment extends Fragment {
 
@@ -145,6 +146,7 @@ public class GameFragment extends Fragment {
     }
 
     private void generateQuestion() {
+        if(playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(textQuestion);
 
         if (arcadeDifficulty == 0) {
             questionGenerator.setLevel(score);
@@ -272,11 +274,13 @@ public class GameFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) requireActivity()).setNavigationEnabled(false);
+        ((MainActivity) requireActivity()).animateNavigation(false);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         ((MainActivity) requireActivity()).setNavigationEnabled(true);
+        ((MainActivity) requireActivity()).animateNavigation(true);
     }
 }

@@ -19,6 +19,7 @@ import com.example.speedMath.R;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.ui.qcm.QCMFragment;
+import com.example.speedMath.utils.AnimUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +51,8 @@ public class DualFragment extends Fragment {
 
     private Random random = new Random();
 
+    private TextView p1TextCombo, p2TextCombo;
+    private int p1Combo = 0, p2Combo = 0;
     public DualFragment() {}
 
     @Override
@@ -84,6 +87,8 @@ public class DualFragment extends Fragment {
         p1TextResult = p1.findViewById(R.id.textResult);
         p1TextTimer = p1.findViewById(R.id.textTimer);
         p1TextScoreRight = p1.findViewById(R.id.textScoreRight);
+        p1TextCombo = p1.findViewById(R.id.textCombo);
+
         p1Card1 = p1.findViewById(R.id.cardOption1);
         p1Card2 = p1.findViewById(R.id.cardOption2);
         p1Card3 = p1.findViewById(R.id.cardOption3);
@@ -113,6 +118,8 @@ public class DualFragment extends Fragment {
         p2TextResult = p2.findViewById(R.id.textResult);
         p2TextTimer = p2.findViewById(R.id.textTimer);
         p2TextScoreRight = p2.findViewById(R.id.textScoreRight);
+        p2TextCombo = p2.findViewById(R.id.textCombo);
+
         p2Card1 = p2.findViewById(R.id.cardOption1);
         p2Card2 = p2.findViewById(R.id.cardOption2);
         p2Card3 = p2.findViewById(R.id.cardOption3);
@@ -161,6 +168,7 @@ public class DualFragment extends Fragment {
     // PLAYER 1 : Question
     // =====================================================
     private void generateQuestionPlayer1() {
+        if(playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(p1TextQuestion);
         resetCardColors(p1Cards);
         p1TextResult.setText("");
         setP1CardsClickable(true);
@@ -190,6 +198,7 @@ public class DualFragment extends Fragment {
     // PLAYER 2 : Question
     // =====================================================
     private void generateQuestionPlayer2() {
+        if(playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(p2TextQuestion);
         resetCardColors(p2Cards);
         p2TextResult.setText("");
         setP2CardsClickable(true);
@@ -226,7 +235,14 @@ public class DualFragment extends Fragment {
             highlightCorrect(selected);
             p1Score++;
             if(p1TextScoreRight != null) p1TextScoreRight.setText(p1Score + "/" + nbQuestions);
+            p1Combo++;
+            if (p1Combo >= 2 && playerManager.isAnimationEnabled()) { // combo commence à 2
+                p1TextCombo.setText("🔥x" + p1Combo + " !");
+                AnimUtils.comboPop(p1TextCombo);
+            }
         } else {
+            p1Combo = 0;
+            p1TextCombo.setAlpha(0);
             p1TextResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer(p1Texts, p1Cards, p1CorrectAnswer);
@@ -251,7 +267,14 @@ public class DualFragment extends Fragment {
             highlightCorrect(selected);
             p2Score++;
             if(p2TextScoreRight != null) p2TextScoreRight.setText(p2Score + "/" + nbQuestions);
+            p2Combo++;
+            if (p2Combo >= 2 && playerManager.isAnimationEnabled()) { // combo commence à 2
+                p2TextCombo.setText("🔥 x" + p2Combo + " !");
+                AnimUtils.comboPop(p2TextCombo);
+            }
         } else {
+            p2Combo = 0;
+            p2TextCombo.setAlpha(0);
             p2TextResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer(p2Texts, p2Cards, p2CorrectAnswer);
@@ -360,11 +383,13 @@ public class DualFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) requireActivity()).setNavigationEnabled(false);
+        ((MainActivity) requireActivity()).animateNavigation(false);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         ((MainActivity) requireActivity()).setNavigationEnabled(true);
+        ((MainActivity) requireActivity()).animateNavigation(true);
     }
 }

@@ -30,6 +30,7 @@ import com.example.speedMath.R;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.ScoreManager;
+import com.example.speedMath.utils.AnimUtils;
 
 public class LevelFragment extends Fragment {
 
@@ -54,6 +55,8 @@ public class LevelFragment extends Fragment {
     private ScoreManager scoreManager;
     private SoundPool soundPool;
     private int soundCorrect, soundWrong, soundLevelUp;
+    private TextView textCombo;
+    private int combo = 0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -84,6 +87,7 @@ public class LevelFragment extends Fragment {
         textTimer = root.findViewById(R.id.textTimer);
         progressBar = root.findViewById(R.id.progressScore);
         progressBar.setMax(100 * gameLevel);
+        textCombo = root.findViewById(R.id.textCombo);
 
         // Boutons numériques
         for (int i = 0; i <= 9; i++) {
@@ -153,6 +157,7 @@ public class LevelFragment extends Fragment {
     }
 
     private void generateQuestion() {
+        if(playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(textQuestion);
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
         questionNbr++;
         textQuestion.setText(q.expression);
@@ -171,12 +176,20 @@ public class LevelFragment extends Fragment {
 
         if (isCorrect)
         {
+            combo++;
+            if (combo >= 2 && playerManager.isAnimationEnabled()) { // combo commence à 2
+                textCombo.setText("🔥 COMBO x" + combo + " !");
+                AnimUtils.comboPop(textCombo);
+            }
             correctAnswerNbr++;
             playSound(soundCorrect);
             triggerCorrectFeedback(textValidate); // answerButton = bouton cliqué
+
         }
         else
         {
+            combo = 0;
+            textCombo.setAlpha(0);
             playSound(soundWrong);
             triggerWrongFeedback(textValidate);
         }
@@ -299,12 +312,14 @@ public class LevelFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) requireActivity()).setNavigationEnabled(false);
+        ((MainActivity) requireActivity()).animateNavigation(false);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         ((MainActivity) requireActivity()).setNavigationEnabled(true);
+        ((MainActivity) requireActivity()).animateNavigation(true);
     }
 
 

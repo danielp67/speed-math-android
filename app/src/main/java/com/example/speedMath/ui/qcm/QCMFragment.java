@@ -20,6 +20,7 @@ import com.example.speedMath.R;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.ui.level.LevelFragment;
+import com.example.speedMath.utils.AnimUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,8 @@ public class QCMFragment extends Fragment {
     private PlayerManager playerManager;
     private String gameMode;
     private int score = 0;
-
+    private TextView textCombo;
+    private int combo = 0;
     public QCMFragment() {
         // Required empty constructor
     }
@@ -80,6 +82,7 @@ public class QCMFragment extends Fragment {
         textTimer = view.findViewById(R.id.textTimer);
         textScoreRight = view.findViewById(R.id.textScoreRight);
         textScoreRight.setText(score + "/" + nbQuestions);
+        textCombo = view.findViewById(R.id.textCombo);
 
         card1 = view.findViewById(R.id.cardOption1);
         card2 = view.findViewById(R.id.cardOption2);
@@ -116,6 +119,8 @@ public class QCMFragment extends Fragment {
 
 
     private void generateQuestion() {
+        if(playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(textQuestion);
+
         resetCardColors();
         textResult.setText("");
         setCardsClickable(true);
@@ -153,7 +158,14 @@ public class QCMFragment extends Fragment {
             highlightCorrect(selected);
             score++;
             updateScore();
+            combo++;
+            if (combo >= 2 && playerManager.isAnimationEnabled()) { // combo commence à 2
+                textCombo.setText("🔥 x" + combo + " !");
+                AnimUtils.comboPop(textCombo);
+            }
         } else {
+            combo = 0;
+            textCombo.setAlpha(0);
             textResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer();
@@ -250,11 +262,13 @@ public class QCMFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) requireActivity()).setNavigationEnabled(false);
+        ((MainActivity) requireActivity()).animateNavigation(false);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         ((MainActivity) requireActivity()).setNavigationEnabled(true);
+        ((MainActivity) requireActivity()).animateNavigation(true);
     }
 }

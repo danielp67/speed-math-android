@@ -3,6 +3,7 @@ package com.example.speedMath;
 import static androidx.core.graphics.drawable.DrawableCompat.applyTheme;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.speedMath.core.PlayerManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -78,4 +79,24 @@ public class MainActivity extends AppCompatActivity {
                 isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
         );
     }
+
+    public void animateNavigation(boolean show) {
+        View nav = findViewById(R.id.bottomNav);
+        if (nav == null) return;
+
+        if (show) {
+            nav.animate()
+                    .translationY(0)
+                    .alpha(1)
+                    .setDuration(200)
+                    .start();
+        } else {
+            nav.animate()
+                    .translationY(nav.getHeight() )
+                    .alpha(0.2f)
+                    .setDuration(200)
+                    .start();
+        }
+    }
+
 }
