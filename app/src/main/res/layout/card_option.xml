@@ -14,7 +14,7 @@
         android:id="@+id/textOption"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Option 1"
+        android:text="@string/option_1"
         android:textSize="20sp"
         android:gravity="center"/>
 </androidx.cardview.widget.CardView>

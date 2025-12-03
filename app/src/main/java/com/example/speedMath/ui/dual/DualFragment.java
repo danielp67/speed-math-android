@@ -139,8 +139,8 @@ public class DualFragment extends Fragment {
         p2Texts.add(p2Text3);
         p2Texts.add(p2Text4);
 
-        p1TextScoreRight.setText(p1Score + "/" + nbQuestions);
-        p2TextScoreRight.setText(p2Score + "/" + nbQuestions);
+        p1TextScoreRight.setText(getString(R.string.score_format, p1Score, nbQuestions));
+        p2TextScoreRight.setText(getString(R.string.score_format, p2Score, nbQuestions));
         // Timer
         countUpTimer = new CountUpTimer();
         countUpTimer.start();
@@ -231,7 +231,7 @@ public class DualFragment extends Fragment {
             p1TextResult.setText("✅");
             highlightCorrect(selected);
             p1Score++;
-            if(p1TextScoreRight != null) p1TextScoreRight.setText(p1Score + "/" + nbQuestions);
+            if(p1TextScoreRight != null) p1TextScoreRight.setText(getString(R.string.score_format, p1Score, nbQuestions));
             p1Combo++;
             if (p1Combo >= 2 && playerManager.isAnimationEnabled()) { // combo commence à 2
                 p1TextCombo.setText("🔥x" + p1Combo + " !");
@@ -263,7 +263,7 @@ public class DualFragment extends Fragment {
             p2TextResult.setText("✅");
             highlightCorrect(selected);
             p2Score++;
-            if(p2TextScoreRight != null) p2TextScoreRight.setText(p2Score + "/" + nbQuestions);
+            if(p2TextScoreRight != null) p2TextScoreRight.setText(getString(R.string.score_format, p2Score, nbQuestions));
             p2Combo++;
             if (p2Combo >= 2 && playerManager.isAnimationEnabled()) { // combo commence à 2
                 p2TextCombo.setText("🔥 x" + p2Combo + " !");
