@@ -32,7 +32,7 @@
                     android:id="@+id/titleDisplay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Display"
+                    android:text="@string/display"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_marginBottom="12dp"/>
@@ -41,7 +41,7 @@
                     android:id="@+id/switchDark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Dark Mode"
+                    android:text="@string/darkMode"
                     android:textSize="16sp"/>
 
             </LinearLayout>
@@ -66,7 +66,7 @@
                     android:id="@+id/titleEffects"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Effects"
+                    android:text="@string/effects"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_marginBottom="12dp"/>
@@ -76,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Sounds"
+                    android:text="@string/sounds"
                     android:textSize="16sp"/>
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -84,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Music"
+                    android:text="@string/music"
                     android:textSize="16sp"/>
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -92,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Vibration"
+                    android:text="@string/vibration"
                     android:textSize="16sp"
                     android:layout_marginTop="10dp"/>
 
@@ -101,7 +101,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Animation"
+                    android:text="@string/animation"
                     android:textSize="16sp"
                     android:layout_marginTop="10dp"/>
 
@@ -110,7 +110,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Haptic Feedback"
+                    android:text="@string/haptic_feedback"
                     android:textSize="16sp"
                     android:layout_marginTop="10dp"/>
 
@@ -136,7 +136,7 @@
                     android:id="@+id/titleArcade"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Arcade Mode"
+                    android:text="@string/arcadeMode"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_marginBottom="12dp"/>
@@ -145,7 +145,7 @@
                     android:id="@+id/labelDifficulty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select difficulty"
+                    android:text="@string/selectDifficulty"
                     android:textSize="16sp"/>
 
                 <Spinner
@@ -158,7 +158,7 @@
                     android:id="@+id/labelNbQuestions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Nb of questions"
+                    android:text="@string/selectNbQuestions"
                     android:textSize="16sp"/>
 
                 <Spinner
@@ -187,7 +187,7 @@
                     android:id="@+id/titleDangerZone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Danger Zone"
+                    android:text="@string/dangerZone"
                     android:textStyle="bold"
                     android:textColor="#C62828"
                     android:textSize="18sp"
@@ -197,7 +197,7 @@
                     android:id="@+id/btnResetScore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Reset All Scores"
+                    android:text="@string/resetAllScores"
                     android:textAllCaps="false"
                     android:backgroundTint="#D32F2F"
                     android:textColor="@android:color/white"/>

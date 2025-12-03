@@ -1,7 +1,5 @@
 package com.example.speedMath;
 
-import static androidx.core.graphics.drawable.DrawableCompat.applyTheme;
-
 import android.os.Bundle;
 import android.view.View;
 

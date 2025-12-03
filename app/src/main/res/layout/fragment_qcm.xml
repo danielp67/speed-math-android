@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -13,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_weight="1"
-        android:text="Question ?"
+        android:text="@string/question"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"/>
@@ -78,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="start|center_vertical"
-            android:text="00.0"
+            android:text="@string/timer"
             android:textSize="@dimen/sp_16"
             android:textStyle="bold" />
 
@@ -88,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="result"
+            android:text="@string/result"
             android:textSize="@dimen/sp_20"
             android:textStyle="bold" />
         <TextView
@@ -106,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end|center_vertical"
-            android:text="0/5"
+            android:text="@string/score"
             android:textSize="@dimen/sp_16"
             android:textStyle="bold" />
 

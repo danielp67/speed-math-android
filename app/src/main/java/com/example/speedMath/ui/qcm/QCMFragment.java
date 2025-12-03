@@ -19,12 +19,9 @@ import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
-import com.example.speedMath.ui.level.LevelFragment;
 import com.example.speedMath.utils.AnimUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 public class QCMFragment extends Fragment {
 

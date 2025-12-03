@@ -1,11 +1,8 @@
 package com.example.speedMath.core;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class QuestionGenerator {
 

@@ -11,14 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
-import com.example.speedMath.ui.qcm.QCMFragment;
 import com.example.speedMath.utils.AnimUtils;
 
 import java.util.ArrayList;
@@ -46,7 +43,7 @@ public class DualFragment extends Fragment {
     private QuestionGenerator questionGenerator;
 
     private CountUpTimer countUpTimer;
-    private int p1Score = 0, p2Score = 0, nbQuestions, arcadeDifficulty;;
+    private int p1Score = 0, p2Score = 0, nbQuestions, arcadeDifficulty;
     private PlayerManager playerManager;
 
     private Random random = new Random();
