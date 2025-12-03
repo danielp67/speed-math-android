@@ -17,7 +17,7 @@ import com.example.speedMath.core.PlayerManager;
 
 public class ArcadeFragment extends Fragment {
 
-    CardView cardAdd, cardSub, cardMul, cardDiv, cardAll, cardQCM, cardDual;
+    CardView cardAdd, cardSub, cardMul, cardDiv, cardAll, cardQCM, cardDual, cardMemory;
     TextView iconAdd, titleAdd, descriptionAdd;
     TextView iconSub, titleSub, descriptionSub;
     TextView iconMul, titleMul, descriptionMul;
@@ -25,6 +25,8 @@ public class ArcadeFragment extends Fragment {
     TextView iconAll, titleAll, descriptionAll;
     TextView iconQCM, titleQCM, descriptionQCM;
     TextView iconDual, titleDual, descriptionDual;
+
+    TextView iconMemory, titleMemory, descriptionMemory;
     private PlayerManager playerManager;
 
     @Override
@@ -41,6 +43,7 @@ public class ArcadeFragment extends Fragment {
         cardAll = root.findViewById(R.id.cardAll);
         cardQCM = root.findViewById(R.id.cardQCM);
         cardDual = root.findViewById(R.id.cardDual);
+        cardMemory = root.findViewById(R.id.cardMemory);
 
 
         iconAdd = cardAdd.findViewById(R.id.iconCard);
@@ -101,6 +104,7 @@ public class ArcadeFragment extends Fragment {
         cardAll.setOnClickListener(v -> openGame(v, "ALL"));
         cardQCM.setOnClickListener(v -> openGame(v, "QCM"));
         cardDual.setOnClickListener(v -> openGame(v, "DUAL"));
+        cardMemory.setOnClickListener(v -> openGame(v, "MEMORY"));
 
         return root;
     }
@@ -118,6 +122,11 @@ public class ArcadeFragment extends Fragment {
             case "DUAL":
                 if(playerManager.isHapticEnabled()) v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dualFragment, args);
+
+                break;
+            case "MEMORY":
+                if(playerManager.isHapticEnabled()) v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_memoryFragment, args);
 
                 break;
             default:
