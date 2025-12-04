@@ -147,32 +147,6 @@ public class MemoryFragment extends Fragment {
         }
     }
 
-    private int evaluate(String expression) {
-        // Nettoyer l'expression : enlever = ou ? si présent
-        expression = expression.replace("=", "").replace("?", "").trim();
-
-        try {
-            if (expression.contains("+")) {
-                String[] parts = expression.split("\\+");
-                return Integer.parseInt(parts[0].trim()) + Integer.parseInt(parts[1].trim());
-            } else if (expression.contains("-")) {
-                String[] parts = expression.split("-");
-                return Integer.parseInt(parts[0].trim()) - Integer.parseInt(parts[1].trim());
-            } else if (expression.contains("*")) {
-                String[] parts = expression.split("X");
-                return Integer.parseInt(parts[0].trim()) * Integer.parseInt(parts[1].trim());
-            } else if (expression.contains("/")) {
-                String[] parts = expression.split("÷");
-                return Integer.parseInt(parts[0].trim()) / Integer.parseInt(parts[1].trim());
-            } else {
-                return Integer.parseInt(expression);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
