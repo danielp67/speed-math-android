@@ -194,8 +194,8 @@ public class SettingsFragment extends Fragment {
         switchHaptic.setChecked(playerManager.isHapticEnabled());
 
         // Spinners
-        spinnerDifficulty.setSelection(playerManager.getArcadeDifficulty());
-        spinnerNbQuestions.setSelection(playerManager.getNbQuestions());
+        spinnerDifficulty.setSelection(playerManager.getArcadeDifficulty(), false);
+        spinnerNbQuestions.setSelection(playerManager.getNbQuestions(), false);
 
         // Appliquer thème
         applyTheme(playerManager.isDarkModeEnabled());

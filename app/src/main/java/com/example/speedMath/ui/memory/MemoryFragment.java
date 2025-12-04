@@ -124,10 +124,8 @@ public class MemoryFragment extends Fragment {
         if (firstCard != null && secondCard != null) {
             boolean match = false;
 
-            if ((firstCard.getType() == Card.CardType.OPERATION && secondCard.getType() == Card.CardType.RESULT &&
-                    evaluate(firstCard.getContent()) == Integer.parseInt(secondCard.getContent()))
-                    || (firstCard.getType() == Card.CardType.RESULT && secondCard.getType() == Card.CardType.OPERATION &&
-                    evaluate(secondCard.getContent()) == Integer.parseInt(firstCard.getContent()))) {
+            if (firstCard.getIndex() == secondCard.getIndex())
+            {
                 match = true;
             }
 

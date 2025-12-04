@@ -183,6 +183,6 @@ public class PlayerManager {
         prefs.edit().putInt(KEY_NB_QUESTIONS, nbQuestions).apply();
     }
     public int getNbQuestions() {
-        return prefs.getInt(KEY_NB_QUESTIONS, 10);
+        return prefs.getInt(KEY_NB_QUESTIONS, 0);
     }
 }
