@@ -27,12 +27,14 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
+import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.ScoreManager;
 import com.example.speedMath.utils.AnimUtils;
 
-public class LevelFragment extends Fragment {
+public class LevelFragment extends BaseGameFragment {
 
     private TextView textQuestion, textResult, textScoreRight, textTimer, textValidate, textHighScore;
     private final CardView[] cards = new CardView[10];
@@ -49,7 +51,6 @@ public class LevelFragment extends Fragment {
     private long elapsedMillis = 0;
 
     private QuestionGenerator questionGenerator;
-    private CountUpTimer countUpTimer;
     private PlayerManager playerManager;
 
     private ScoreManager scoreManager;
@@ -57,6 +58,8 @@ public class LevelFragment extends Fragment {
     private int soundCorrect, soundWrong, soundLevelUp;
     private TextView textCombo;
     private int combo = 0;
+
+    private GameTimer gameTimer;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -132,10 +135,13 @@ public class LevelFragment extends Fragment {
         soundWrong   = soundPool.load(getContext(), R.raw.wrong, 1);
         soundLevelUp = soundPool.load(getContext(), R.raw.levelup, 1);
 
-
         // Timer
-        countUpTimer = new CountUpTimer();
-        countUpTimer.start();
+        gameTimer = new GameTimer();
+        gameTimer.setListener((elapsed, formatted) -> {
+            if (textTimer != null) textTimer.setText(formatted);
+        });
+        gameTimer.start();
+
 
         // Score initial
         score = 0;
@@ -211,7 +217,8 @@ public class LevelFragment extends Fragment {
         textValidate.setText("🎉 Level completed !");
         textValidate.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
-        countUpTimer.stopTimer();
+
+        if (gameTimer != null) gameTimer.stop();
         score = (int) scoreManager.setFinalBonus(questionNbr, correctAnswerNbr, elapsedMillis);
         updateScore();
 
@@ -244,33 +251,6 @@ public class LevelFragment extends Fragment {
             view.setBackground(originalBackground);
             view.setText("");
         }, 500);
-    }
-
-    private class CountUpTimer extends Thread {
-        private boolean running = true;
-
-        @Override
-        public void run() {
-            while (running) {
-                try {
-                    Thread.sleep(100);
-                    elapsedMillis += 100;
-                    if (!isAdded() || getActivity() == null) continue;
-                    getActivity().runOnUiThread(() -> textTimer.setText(formatTime(elapsedMillis)));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void stopTimer() { running = false; }
-    }
-
-    private String formatTime(long millis) {
-        int seconds = (int) (millis / 1000);
-        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
-
-        return String.format("%02d.%2d s", seconds, milliseconds);
     }
 
     private void playSound(int soundId) {
@@ -307,21 +287,5 @@ public class LevelFragment extends Fragment {
             }
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) requireActivity()).setNavigationEnabled(false);
-        ((MainActivity) requireActivity()).animateNavigation(false);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((MainActivity) requireActivity()).setNavigationEnabled(true);
-        ((MainActivity) requireActivity()).animateNavigation(true);
-    }
-
-
 
 }

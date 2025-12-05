@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
+import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.utils.AnimUtils;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class DualFragment extends Fragment {
+public class DualFragment extends BaseGameFragment {
 
     // ================= PLAYER 1 =================
     private TextView p1TextQuestion, p1TextResult, p1TextTimer, p1TextScoreRight;
@@ -42,7 +44,7 @@ public class DualFragment extends Fragment {
     private long elapsedMillis = 0;
     private QuestionGenerator questionGenerator;
 
-    private CountUpTimer countUpTimer;
+    private GameTimer gameTimer;
     private int p1Score = 0, p2Score = 0, nbQuestions, arcadeDifficulty;
     private PlayerManager playerManager;
 
@@ -141,9 +143,14 @@ public class DualFragment extends Fragment {
 
         p1TextScoreRight.setText(getString(R.string.score_format, p1Score, nbQuestions));
         p2TextScoreRight.setText(getString(R.string.score_format, p2Score, nbQuestions));
+
         // Timer
-        countUpTimer = new CountUpTimer();
-        countUpTimer.start();
+        gameTimer = new GameTimer();
+        gameTimer.setListener((elapsed, formatted) -> {
+            if (p1TextTimer != null) p1TextTimer.setText(formatted);
+            if (p2TextTimer != null) p2TextTimer.setText(formatted);
+        });
+        gameTimer.start();
 
         questionGenerator = new QuestionGenerator(
                 arcadeDifficulty * 50,      // difficulty par défaut
@@ -288,7 +295,7 @@ public class DualFragment extends Fragment {
         setP1CardsClickable(false);
         setP2CardsClickable(false);
 
-        countUpTimer.stopTimer();
+        if (gameTimer != null) gameTimer.stop();
 
         // win
         n1TextResult.setText("🎉 You win !");
@@ -376,17 +383,4 @@ public class DualFragment extends Fragment {
         p2Card4.setClickable(clickable);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) requireActivity()).setNavigationEnabled(false);
-        ((MainActivity) requireActivity()).animateNavigation(false);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((MainActivity) requireActivity()).setNavigationEnabled(true);
-        ((MainActivity) requireActivity()).animateNavigation(true);
-    }
 }

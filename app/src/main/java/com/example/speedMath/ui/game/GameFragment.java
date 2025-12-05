@@ -24,11 +24,13 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
+import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.utils.AnimUtils;
 
-public class GameFragment extends Fragment {
+public class GameFragment extends BaseGameFragment {
 
     private TextView textQuestion, textResult, textTimer, textScoreRight, textLevelNumber;
     private CardView[] cards = new CardView[10];
@@ -42,7 +44,7 @@ public class GameFragment extends Fragment {
     private long correctAnswer;
     private int correctAnswersStreak, lastPlayedLevel, arcadeDifficulty;
     private PlayerManager playerManager;
-    private CountUpTimer countUpTimer;
+    private GameTimer gameTimer;
 
     private QuestionGenerator questionGenerator;
 
@@ -116,8 +118,11 @@ public class GameFragment extends Fragment {
 
 
         // Timer
-        countUpTimer = new CountUpTimer();
-        countUpTimer.start();
+        gameTimer = new GameTimer();
+        gameTimer.setListener((elapsed, formatted) -> {
+            if (textTimer != null) textTimer.setText(formatted);
+        });
+        gameTimer.start();
 
         // Score initial
         score = 0;
@@ -208,33 +213,6 @@ public class GameFragment extends Fragment {
         }, 500);
     }
 
-    private class CountUpTimer extends Thread {
-        private boolean running = true;
-
-        @Override
-        public void run() {
-            while (running) {
-                try {
-                    Thread.sleep(100);
-                    elapsedMillis += 100;
-                    if (!isAdded() || getActivity() == null) continue;
-                    getActivity().runOnUiThread(() -> textTimer.setText(formatTime(elapsedMillis)));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void stopTimer() { running = false; }
-    }
-
-    private String formatTime(long millis) {
-        int seconds = (int) (millis / 1000);
-        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
-
-        return String.format("%02d.%2d", seconds, milliseconds);
-    }
-
     private void playSound(int soundId) {
         if (playerManager.isSoundEnabled() && soundPool != null) {
             soundPool.play(soundId, 0.75f, 0.75f, 1, 0, 1f);
@@ -270,17 +248,4 @@ public class GameFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) requireActivity()).setNavigationEnabled(false);
-        ((MainActivity) requireActivity()).animateNavigation(false);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((MainActivity) requireActivity()).setNavigationEnabled(true);
-        ((MainActivity) requireActivity()).animateNavigation(true);
-    }
 }

@@ -17,13 +17,15 @@ import android.widget.TextView;
 
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
+import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.utils.AnimUtils;
 
 import java.util.Collections;
 
-public class QCMFragment extends Fragment {
+public class QCMFragment extends BaseGameFragment {
 
     private TextView textQuestion, textResult, textTimer, textScoreRight;
     private CardView card1, card2, card3, card4;
@@ -31,7 +33,7 @@ public class QCMFragment extends Fragment {
     private int correctAnswer, nbQuestions, arcadeDifficulty;
     private long elapsedMillis = 0;
     private QuestionGenerator questionGenerator;
-    private CountUpTimer countUpTimer;
+    private GameTimer gameTimer;
     private PlayerManager playerManager;
     private String gameMode;
     private int score = 0;
@@ -98,8 +100,11 @@ public class QCMFragment extends Fragment {
         card4.setOnClickListener(v -> checkAnswer(t4));
 
         // Timer
-        countUpTimer = new CountUpTimer();
-        countUpTimer.start();
+        gameTimer = new GameTimer();
+        gameTimer.setListener((elapsed, formatted) -> {
+            if (textTimer != null) textTimer.setText(formatted);
+        });
+        gameTimer.start();
 
         questionGenerator = new QuestionGenerator(
                 arcadeDifficulty*50,      // difficulty par défaut
@@ -187,9 +192,8 @@ public class QCMFragment extends Fragment {
         textResult.setText("🎉 You win !");
         textResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         textResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
-        countUpTimer.stopTimer();
 
-
+        if (gameTimer != null) gameTimer.stop();
         textResult.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.navigation_home);
@@ -255,17 +259,5 @@ public class QCMFragment extends Fragment {
         card3.setClickable(clickable);
         card4.setClickable(clickable);
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) requireActivity()).setNavigationEnabled(false);
-        ((MainActivity) requireActivity()).animateNavigation(false);
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((MainActivity) requireActivity()).setNavigationEnabled(true);
-        ((MainActivity) requireActivity()).animateNavigation(true);
-    }
 }
