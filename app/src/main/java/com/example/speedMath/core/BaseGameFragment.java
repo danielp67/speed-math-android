@@ -11,6 +11,7 @@ public abstract class BaseGameFragment extends Fragment {
 
     private GameTimer gameTimer;
 
+    private FeedbackManager feedbackManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,12 @@ public abstract class BaseGameFragment extends Fragment {
         ((MainActivity) requireActivity()).setNavigationEnabled(true);
         ((MainActivity) requireActivity()).animateNavigation(true);
         if (gameTimer != null) gameTimer.stop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (feedbackManager != null) feedbackManager.release();
     }
 }
 

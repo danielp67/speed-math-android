@@ -61,29 +61,4 @@ public class LeagueFragment extends Fragment {
         return root;
     }
 
-/*    public static void setStarIcon(TextView tv, int count, Context context) {
-        SpannableStringBuilder sb = new SpannableStringBuilder(count + " ⭐⭐⭐");
-
-
-
-            Drawable d = ContextCompat.getDrawable(context, R.drawable.star_solid_full);// vector drawable
-
-            // Taille = 120% du texte
-            int size = (int) (tv.getTextSize() * 1f);
-            d.setBounds(0, 0, size, size);
-
-            // Tint : couleur or
-            d = DrawableCompat.wrap(d);
-            DrawableCompat.setTint(d, ContextCompat.getColor(context, R.color.gold_accent));
- //           int color = MaterialColors.getColor(context, R.attr.colorBackground, Color.BLACK);
- //           DrawableCompat.setTint(drawable, color);
-
-            ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_CENTER);
-          //  sb.setSpan(span, i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        sb.setSpan(span, 2, 3, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-
-        tv.setText(sb);
-    }*/
-
 }

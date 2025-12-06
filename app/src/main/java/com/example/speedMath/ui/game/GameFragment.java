@@ -25,6 +25,7 @@ import androidx.navigation.Navigation;
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.FeedbackManager;
 import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
@@ -48,7 +49,7 @@ public class GameFragment extends BaseGameFragment {
 
     private QuestionGenerator questionGenerator;
 
-    private SoundPool soundPool;
+    private FeedbackManager feedbackManager;
     private int soundCorrect, soundWrong, soundLevelUp;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -62,6 +63,11 @@ public class GameFragment extends BaseGameFragment {
 
         correctAnswersStreak = playerManager.getCorrectAnswersStreak(gameMode);
         lastPlayedLevel = playerManager.getLastPlayedLevel();
+
+        // Feedback manager
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
+
 
         textTimer = root.findViewById(R.id.textTimer);
         textScoreRight = root.findViewById(R.id.textScoreRight);
@@ -98,24 +104,6 @@ public class GameFragment extends BaseGameFragment {
         cardClear.setOnClickListener(v -> textResult.setText(""));
         cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         cardValidate.setOnClickListener(v -> checkAnswer());
-
-
-        // Création du SoundPool
-        AudioAttributes attrs = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
-        soundPool = new SoundPool.Builder()
-                .setMaxStreams(3)
-                .setAudioAttributes(attrs)
-                .build();
-
-
-        // Chargement des sons
-        soundCorrect = soundPool.load(getContext(), R.raw.correct, 1);
-        soundWrong   = soundPool.load(getContext(), R.raw.wrong, 1);
-        soundLevelUp = soundPool.load(getContext(), R.raw.levelup, 1);
-
 
         // Timer
         gameTimer = new GameTimer();
@@ -177,13 +165,13 @@ public class GameFragment extends BaseGameFragment {
 
         if (isCorrect)
         {   score++;
-            playSound(soundCorrect);
-            triggerCorrectFeedback(textValidate);
+            feedbackManager.playCorrectSound();
+            feedbackManager.correctFeedback(textValidate);
         } else {
             score = 0;
             elapsedMillis = 0;
-            playSound(soundWrong);
-            triggerWrongFeedback(textValidate);
+            feedbackManager.playWrongSound();
+            feedbackManager.wrongFeedback(textValidate);
         }
         updateScore();
 
@@ -213,39 +201,5 @@ public class GameFragment extends BaseGameFragment {
         }, 500);
     }
 
-    private void playSound(int soundId) {
-        if (playerManager.isSoundEnabled() && soundPool != null) {
-            soundPool.play(soundId, 0.75f, 0.75f, 1, 0, 1f);
-        }
-    }
-
-    // Appeler quand réponse correcte
-    private void triggerCorrectFeedback(View v) {
-        if (playerManager.isHapticEnabled()) {
-            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-        } else if (playerManager.isVibrationEnabled()) {
-            vibrate(50); // 50ms vibration
-        }
-    }
-
-    // Appeler quand réponse incorrecte
-    private void triggerWrongFeedback(View v) {
-        if (playerManager.isHapticEnabled()) {
-            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-        } else if (playerManager.isVibrationEnabled()) {
-            vibrate(100); // 100ms vibration
-        }
-    }
-
-    private void vibrate(int durationMs) {
-        Vibrator vibrator = (Vibrator) requireContext().getSystemService(Context.VIBRATOR_SERVICE);
-        if (vibrator != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                vibrator.vibrate(durationMs);
-            }
-        }
-    }
 
 }
