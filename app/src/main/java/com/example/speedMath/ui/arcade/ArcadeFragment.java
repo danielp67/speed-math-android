@@ -36,6 +36,7 @@ public class ArcadeFragment extends Fragment {
         items.add(new ArcadeItem("👤", 16,"Solo", "🔢 👤", "QCM"));
         items.add(new ArcadeItem("👥", 16,"Battle", "🔢 👥", "DUAL"));
         items.add(new ArcadeItem("🧠", 16,"Memory", "Find pairs", "MEMORY"));
+        items.add(new ArcadeItem("🧠🧠", 10,"Memory Duo", "Find pairs", "MEMORY_DUO"));
         items.add(new ArcadeItem("+ - × ÷", 10,"All Suite", "+ - × ÷", "ALL"));
         items.add(new ArcadeItem("+", 16,"Addition Suite", "a + b", "ADD"));
         items.add(new ArcadeItem("-", 16,"Subtraction Suite", "a - b", "SUB"));
@@ -71,7 +72,10 @@ public class ArcadeFragment extends Fragment {
                 Navigation.findNavController(v)
                         .navigate(R.id.action_navigation_home_to_memoryFragment, args);
                 break;
-
+            case "MEMORY_DUO":
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_navigation_home_to_memoryDualFragment, args);
+                break;
             default:
                 Navigation.findNavController(v)
                         .navigate(R.id.action_navigation_home_to_gameFragment, args);

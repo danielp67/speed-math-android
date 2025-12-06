@@ -89,5 +89,29 @@ public class AnimUtils {
                 .start();
     }
 
+    // Flip 3D animation pour une carte (recto → verso ou inverse)
+// On peut passer un callback (Runnable) pour exécuter du code au milieu du flip
+    public static void flipCard(View card, Runnable midAction) {
+
+        // Première partie : rotation 0 → 90°
+        card.animate()
+                .rotationY(90f)
+                .setDuration(150)
+                .withEndAction(() -> {
+
+                    // Au milieu de la rotation : on change le contenu
+                    if (midAction != null) midAction.run();
+
+                    // Remet la rotation à 270° pour éviter un effet miroir
+                    card.setRotationY(-90f);
+
+                    // Deuxième partie : rotation 270° → 360°
+                    card.animate()
+                            .rotationY(0f)
+                            .setDuration(150)
+                            .start();
+                })
+                .start();
+    }
 
 }
