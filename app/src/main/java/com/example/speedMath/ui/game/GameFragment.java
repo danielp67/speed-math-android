@@ -1,17 +1,10 @@
 package com.example.speedMath.ui.game;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.media.AudioAttributes;
-import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +12,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.BaseGameFragment;
 import com.example.speedMath.core.FeedbackManager;
@@ -50,7 +41,7 @@ public class GameFragment extends BaseGameFragment {
     private QuestionGenerator questionGenerator;
 
     private FeedbackManager feedbackManager;
-    private int soundCorrect, soundWrong, soundLevelUp;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

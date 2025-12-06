@@ -5,16 +5,14 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.speedMath.R;
+import com.example.speedMath.core.FeedbackManager;
 import com.example.speedMath.core.PlayerManager;
 
 import java.util.ArrayList;
@@ -22,14 +20,16 @@ import java.util.List;
 
 public class ArcadeFragment extends Fragment {
 
-    private PlayerManager playerManager;
+    private FeedbackManager feedbackManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_arcade, container, false);
-        playerManager = PlayerManager.getInstance(requireContext());
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
+
 
         RecyclerView recycler = root.findViewById(R.id.recyclerArcade);
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -53,9 +53,7 @@ public class ArcadeFragment extends Fragment {
     private void openGame(View v) {
         String mode = (String) v.getTag();
 
-        if (playerManager.isHapticEnabled()) {
-            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-        }
+        feedbackManager.correctFeedback(v);
 
         Bundle args = new Bundle();
         args.putString("MODE", mode);
