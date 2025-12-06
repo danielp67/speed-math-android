@@ -44,7 +44,7 @@ public class MemoryFragment extends BaseGameFragment {
     private int score = 0;
     private int combo = 0;
 
-    private boolean busy = false; // empêche les clics pendant animations
+    private boolean busy = false;
 
     private final Handler handler = new Handler();
 
@@ -182,8 +182,8 @@ public class MemoryFragment extends BaseGameFragment {
                 // coloriser en vert (ou couleur joueur)
                 Button b1 = safeGetButton(firstIndex);
                 Button b2 = safeGetButton(secondIndex);
-                if (b1 != null) b1.setBackgroundColor(getColor(getContext(), R.color.correct));
-                if (b2 != null) b2.setBackgroundColor(getColor(getContext(), R.color.correct));
+                if (b1 != null) b1.setBackgroundColor(getColor(requireContext(), R.color.correct));
+                if (b2 != null) b2.setBackgroundColor(getColor(requireContext(), R.color.correct));
 
                 // scoring & combo
                 combo++;

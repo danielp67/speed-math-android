@@ -18,6 +18,7 @@ import com.example.speedMath.core.BaseGameFragment;
 import com.example.speedMath.core.FeedbackManager;
 import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.QuestionGenerator;
+import com.example.speedMath.utils.AnimUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,15 +27,18 @@ import java.util.List;
 public class MemoryDualFragment extends BaseGameFragment {
 
     private GridLayout grid;
-    private TextView textTimer, textTurn, textScoreP1, textScoreP2;
+    private TextView textTimer, textTurn, textScoreP1, textScoreP2, textCombo;
     private List<Card> cards;
     private List<Button> buttons;
 
+    private int combo = 0;
     private Card firstCard = null, secondCard = null;
     private int firstIndex = -1, secondIndex = -1;
 
     private int playerTurn = 1;
     private int scoreP1 = 0, scoreP2 = 0;
+    private boolean busy = false;
+    private final Handler handler = new Handler();
 
     private GameTimer gameTimer;
     private FeedbackManager feedbackManager;
@@ -48,44 +52,63 @@ public class MemoryDualFragment extends BaseGameFragment {
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
-        textTimer = root.findViewById(R.id.textTimerDual);
         textTurn = root.findViewById(R.id.textTurn);
         textScoreP1 = root.findViewById(R.id.textScoreP1);
         textScoreP2 = root.findViewById(R.id.textScoreP2);
-        grid = root.findViewById(R.id.gridMemoryDual);
+        textCombo = root.findViewById(R.id.textCombo);
+        grid = root.findViewById(R.id.gridMemory);
 
-        cards = generateCards();
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
+
         buttons = new ArrayList<>();
+        cards = generateCards();
 
-        for (int i = 0; i < cards.size(); i++) {
-            Button btn = new Button(getContext());
-            btn.setText("");
-            btn.setTag(i);
+        setupGrid();
 
-            btn.setOnClickListener(v -> onCardClicked((int) v.getTag(), btn));
-
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.width = 0;
-            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
-            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-            params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-            btn.setLayoutParams(params);
-
-            grid.addView(btn);
-            buttons.add(btn);
-        }
-
+        // Timer
         gameTimer = new GameTimer();
         gameTimer.setListener((elapsed, formatted) -> {
             if (textTimer != null) textTimer.setText(formatted);
         });
         gameTimer.start();
 
+        // init UI values
         updateUI();
+        textCombo.setAlpha(0f);
 
         return root;
     }
 
+    private void setupGrid() {
+        grid.removeAllViews();
+        buttons.clear();
+
+        // GridLayout params reuse
+        int n = cards.size();
+        for (int i = 0; i < n; i++) {
+            final int idx = i;
+            Button btn = new Button(requireContext());
+            btn.setText(""); // face cachée
+            btn.setTag(i);
+
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = 0;
+            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+            params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+            params.setMargins(8,8,8,8);
+            btn.setLayoutParams(params);
+
+            btn.setOnClickListener(v -> {
+                if (busy) return;
+                onCardClicked(idx, btn);
+            });
+
+            grid.addView(btn);
+            buttons.add(btn);
+        }
+    }
     private List<Card> generateCards() {
         List<Card> list = new ArrayList<>();
         QuestionGenerator generator = new QuestionGenerator(50, 2, false, true, true, true, true, true);
@@ -109,25 +132,35 @@ public class MemoryDualFragment extends BaseGameFragment {
     }
 
     private void onCardClicked(int index, Button btn) {
+        // sécurité
+        if (index < 0 || index >= cards.size()) return;
         Card card = cards.get(index);
         if (card.isFaceUp() || card.isMatched()) return;
 
-        card.setFaceUp(true);
-        btn.setText(card.getContent());
+        // flip to front (3D)
+        AnimUtils.flipToFront(btn, card.getContent(), () -> {
+            // after flip completed
+            card.setFaceUp(true);
 
-        if (firstCard == null) {
-            firstCard = card;
-            firstIndex = index;
-        } else if (secondCard == null) {
-            secondCard = card;
-            secondIndex = index;
+            if (firstCard == null) {
+                firstCard = card;
+                firstIndex = index;
+            } else if (secondCard == null && index != firstIndex) {
+                secondCard = card;
+                secondIndex = index;
 
-            new Handler().postDelayed(this::checkMatch, 400);
-        }
+                // disable further clicks while checking
+                busy = true;
+                handler.postDelayed(this::checkMatch, 500);
+            }
+        });
     }
 
     private void checkMatch() {
-        if (firstCard == null || secondCard == null) return;
+        if (firstCard == null || secondCard == null || firstIndex < 0 || secondIndex < 0) {
+            busy = false;
+            return;
+        }
 
         boolean match = firstCard.getIndex() == secondCard.getIndex();
 
@@ -136,26 +169,41 @@ public class MemoryDualFragment extends BaseGameFragment {
             firstCard.setMatched(true);
             secondCard.setMatched(true);
 
-            if (playerTurn == 1) {
-                scoreP1++;
-                buttons.get(firstIndex).setBackgroundColor(getColor(getContext(), R.color.correct));
-                buttons.get(secondIndex).setBackgroundColor(getColor(getContext(), R.color.correct));
-            } else {
-                scoreP2++;
-                buttons.get(firstIndex).setBackgroundColor(getColor(getContext(), R.color.wrong));
-                buttons.get(secondIndex).setBackgroundColor(getColor(getContext(), R.color.wrong));
+            Button b1 = buttons.get(firstIndex);
+            Button b2 = buttons.get(secondIndex);
+
+            int color = (playerTurn == 1)
+                    ? getColor(requireContext(), R.color.correct)
+                    : getColor(requireContext(), R.color.wrong);
+
+            b1.setBackgroundColor(color);
+            b2.setBackgroundColor(color);
+
+            if (playerTurn == 1) scoreP1++;
+            else scoreP2++;
+
+            combo++;
+            if (combo >= 2) {
+                textCombo.setText("🔥 x" + combo + " !");
+                textCombo.setAlpha(1f);
+                AnimUtils.comboPop(textCombo);
             }
 
+            // feedback
+            feedbackManager.playCorrectSound();
+
         } else {
-            // Mauvaises paires → cacher
+            // Wrong match → flip back
             firstCard.setFaceUp(false);
             secondCard.setFaceUp(false);
 
-            buttons.get(firstIndex).setText("");
-            buttons.get(secondIndex).setText("");
-
-            // Changement de joueur
-            playerTurn = (playerTurn == 1) ? 2 : 1;
+            AnimUtils.flipToBack(buttons.get(firstIndex));
+            AnimUtils.flipToBack(buttons.get(secondIndex));
+            feedbackManager.playWrongSound();
+            combo = 0;
+            textCombo.setAlpha(0f);
+            // Switch turn
+            playerTurn = (playerTurn == 1 ? 2 : 1);
         }
 
         firstCard = null;
@@ -164,11 +212,16 @@ public class MemoryDualFragment extends BaseGameFragment {
         secondIndex = -1;
 
         updateUI();
+        busy = false;
     }
 
+
     private void updateUI() {
-        textTurn.setText("Tour : Joueur " + playerTurn);
-        textScoreP1.setText("J1 : " + scoreP1);
-        textScoreP2.setText("J2 : " + scoreP2);
+        textTurn.setText("Player " + playerTurn);
+        textTurn.setBackgroundColor(getColor(requireContext(), playerTurn == 1 ? R.color.correct : R.color.wrong));
+        AnimUtils.slideTextTurn(textTurn, playerTurn == 2);
+
+        textScoreP1.setText("P1 : " + scoreP1);
+        textScoreP2.setText("P2 : " + scoreP2);
     }
 }

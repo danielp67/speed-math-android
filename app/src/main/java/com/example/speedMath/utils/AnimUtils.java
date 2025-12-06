@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.content.Context;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 
 public class AnimUtils {
@@ -149,5 +150,23 @@ public class AnimUtils {
         rot1.start();
     }
 
+    public static void slideTextTurn(View view, boolean isPlayer1) {
+        float distance = 200f; // pixels de déplacement (tu peux adapter)
+
+        float fromX = isPlayer1 ? distance : -distance;
+        float toX = 0f;
+
+        TranslateAnimation anim = new TranslateAnimation(
+                fromX,  // startX
+                toX,    // endX
+                0f,     // startY
+                0f      // endY
+        );
+
+        anim.setDuration(300);
+        anim.setFillAfter(false); // important : la position revient automatiquement
+
+        view.startAnimation(anim);
+    }
 
 }

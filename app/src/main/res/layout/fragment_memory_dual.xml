@@ -1,52 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="?attr/colorBackground">
 
-    <TextView
-        android:id="@+id/textTimerDual"
-        android:textSize="20sp"
-        android:text="00:00"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/textTurn"
-        android:textSize="20sp"
-        android:text="Tour : Joueur 1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
+    <!-- HEADER : Timer – Moves – Score – Combo -->
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/textScoreP1"
-            android:text="J1 : 0"
-            android:textSize="18sp"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/textScoreP2"
-            android:text="J2 : 0"
-            android:textSize="18sp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <GridLayout
-        android:id="@+id/gridMemoryDual"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="4"
-        android:rowCount="6"
-        android:paddingTop="16dp"/>
-</LinearLayout>
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:weightSum="3">
+            <TextView
+                android:id="@+id/textScoreP1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="P1: 0"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?attr/textPrimary"
+                android:background="@color/correct"
+                android:gravity="start"/>
+            <TextView
+                android:id="@+id/textTurn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Player : 0"
+                android:textSize="18sp"
+                android:textColor="?attr/textPrimary"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/textScoreP2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="P2: 0"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?attr/textPrimary"
+                android:background="@color/wrong"
+                android:gravity="end"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <!-- GRID MEMORY GAME -->
+    <FrameLayout
+        android:id="@+id/memoryContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp">
+
+        <!-- GRID -->
+        <GridLayout
+            android:id="@+id/gridMemory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="4"
+            android:rowCount="6"
+            android:useDefaultMargins="true"
+            android:alignmentMode="alignMargins" />
+
+        <!-- OVERLAY COMBO -->
+        <TextView
+            android:id="@+id/textCombo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@id/gridMemory"
+            android:layout_marginTop="20dp"
+            android:padding="8dp"
+            android:text="🔥 COMBO x2 !"
+            android:textColor="@color/gold_accent"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:elevation="8dp"/>
+    </FrameLayout>
+
+
+</RelativeLayout>
