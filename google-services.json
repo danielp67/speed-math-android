@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "122502656004",
+    "project_id": "speed-math-online",
+    "storage_bucket": "speed-math-online.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122502656004:android:d14749450449202f890551",
+        "android_client_info": {
+          "package_name": "com.example.speedMath"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlps3K5K-TPyH_UohEToCWMLGr36K6qxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
