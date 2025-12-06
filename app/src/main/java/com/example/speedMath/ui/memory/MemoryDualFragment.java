@@ -12,6 +12,8 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.BaseGameFragment;
@@ -39,6 +41,9 @@ public class MemoryDualFragment extends BaseGameFragment {
     private int scoreP1 = 0, scoreP2 = 0;
     private boolean busy = false;
     private final Handler handler = new Handler();
+    private View endOverlay;
+    private TextView textWinner;
+    private Button btnReplay;
 
     private GameTimer gameTimer;
     private FeedbackManager feedbackManager;
@@ -57,6 +62,15 @@ public class MemoryDualFragment extends BaseGameFragment {
         textScoreP2 = root.findViewById(R.id.textScoreP2);
         textCombo = root.findViewById(R.id.textCombo);
         grid = root.findViewById(R.id.gridMemory);
+        endOverlay = root.findViewById(R.id.endOverlay);
+        textWinner = root.findViewById(R.id.textWinner);
+        btnReplay = root.findViewById(R.id.btnReplay);
+
+        btnReplay.setOnClickListener(v ->
+        {
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.navigation_home);
+        });
 
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
@@ -211,6 +225,11 @@ public class MemoryDualFragment extends BaseGameFragment {
         firstIndex = -1;
         secondIndex = -1;
 
+        if (isGameFinished()) {
+            showEndScreen();
+            return;
+        }
+
         updateUI();
         busy = false;
     }
@@ -224,4 +243,28 @@ public class MemoryDualFragment extends BaseGameFragment {
         textScoreP1.setText("P1 : " + scoreP1);
         textScoreP2.setText("P2 : " + scoreP2);
     }
+
+    private boolean isGameFinished() {
+        for (Card c : cards) {
+            if (!c.isMatched()) return false;
+        }
+        return true;
+    }
+
+    private void showEndScreen() {
+        // Stop timer
+        gameTimer.stop();
+
+        String winner;
+        if (scoreP1 > scoreP2) winner = "🎉 Player 1 win !";
+        else if (scoreP2 > scoreP1) winner = "🎉 Player 2 win !";
+        else winner = "🤝 Draw !";
+
+        textWinner.setText(winner);
+
+        endOverlay.setVisibility(View.VISIBLE);
+        endOverlay.setAlpha(0f);
+        endOverlay.animate().alpha(1f).setDuration(400).start();
+    }
+
 }

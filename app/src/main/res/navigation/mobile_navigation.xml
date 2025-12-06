@@ -54,7 +54,7 @@
     <fragment
         android:id="@+id/memoryDualFragment"
         android:name="com.example.speedMath.ui.memory.MemoryDualFragment"
-        android:label="@string/action_memory"
+        android:label="@string/action_memory_dual"
         tools:layout="@layout/fragment_memory_dual"/>
 
     <fragment
