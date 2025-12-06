@@ -1,7 +1,6 @@
 package com.example.speedMath.ui.arcade;
 
 import android.os.Bundle;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.FeedbackManager;
-import com.example.speedMath.core.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
