@@ -40,5 +40,9 @@
         <!-- Buttons -->
         <color name="button_bg">#1E88E5</color>
         <color name="button_text">#FFFFFF</color>
+
+        <!-- Check colors -->
+        <color name="correct">#A5D6A7</color>
+        <color name="wrong">#FFCDD2</color>
     </resources>
 

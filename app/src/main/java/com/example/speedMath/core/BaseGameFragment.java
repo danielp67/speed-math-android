@@ -32,6 +32,7 @@ public abstract class BaseGameFragment extends Fragment {
         ((MainActivity) requireActivity()).setNavigationEnabled(true);
         ((MainActivity) requireActivity()).animateNavigation(true);
         if (gameTimer != null) gameTimer.stop();
+        if (feedbackManager != null) feedbackManager.release();
     }
 
     @Override

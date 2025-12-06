@@ -1,10 +1,12 @@
 package com.example.speedMath.utils;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.content.Context;
+import android.widget.Button;
 
 public class AnimUtils {
 
@@ -89,29 +91,63 @@ public class AnimUtils {
                 .start();
     }
 
-    // Flip 3D animation pour une carte (recto → verso ou inverse)
-// On peut passer un callback (Runnable) pour exécuter du code au milieu du flip
-    public static void flipCard(View card, Runnable midAction) {
+// ----- 3D Flip Animations -----
 
-        // Première partie : rotation 0 → 90°
-        card.animate()
-                .rotationY(90f)
-                .setDuration(150)
-                .withEndAction(() -> {
+    public static void flipToFront(Button btn, String frontText, Runnable onComplete) {
+        if (btn == null) {
+            if (onComplete != null) onComplete.run();
+            return;
+        }
 
-                    // Au milieu de la rotation : on change le contenu
-                    if (midAction != null) midAction.run();
+        ObjectAnimator rot1 = ObjectAnimator.ofFloat(btn, "rotationY", 0f, 90f);
+        rot1.setDuration(120);
 
-                    // Remet la rotation à 270° pour éviter un effet miroir
-                    card.setRotationY(-90f);
+        rot1.addListener(new Animator.AnimatorListener() {
+            @Override public void onAnimationStart(Animator animation) {}
 
-                    // Deuxième partie : rotation 270° → 360°
-                    card.animate()
-                            .rotationY(0f)
-                            .setDuration(150)
-                            .start();
-                })
-                .start();
+            @Override public void onAnimationEnd(Animator animation) {
+                // Changer le contenu (face visible)
+                btn.setText(frontText);
+
+                ObjectAnimator rot2 = ObjectAnimator.ofFloat(btn, "rotationY", -90f, 0f);
+                rot2.setDuration(120);
+                rot2.start();
+
+                if (onComplete != null) onComplete.run();
+            }
+
+            @Override public void onAnimationCancel(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {}
+        });
+
+        rot1.start();
     }
+
+
+    public static void flipToBack(Button btn) {
+        if (btn == null) return;
+
+        ObjectAnimator rot1 = ObjectAnimator.ofFloat(btn, "rotationY", 0f, 90f);
+        rot1.setDuration(120);
+
+        rot1.addListener(new Animator.AnimatorListener() {
+            @Override public void onAnimationStart(Animator animation) {}
+
+            @Override public void onAnimationEnd(Animator animation) {
+                // Face cachée
+                btn.setText("");
+
+                ObjectAnimator rot2 = ObjectAnimator.ofFloat(btn, "rotationY", -90f, 0f);
+                rot2.setDuration(120);
+                rot2.start();
+            }
+
+            @Override public void onAnimationCancel(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {}
+        });
+
+        rot1.start();
+    }
+
 
 }

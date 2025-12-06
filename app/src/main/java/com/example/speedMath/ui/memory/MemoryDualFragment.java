@@ -1,5 +1,7 @@
 package com.example.speedMath.ui.memory;
 
+import static androidx.core.content.ContextCompat.getColor;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -36,9 +38,6 @@ public class MemoryDualFragment extends BaseGameFragment {
 
     private GameTimer gameTimer;
     private FeedbackManager feedbackManager;
-
-    private final int COLOR_P1 = 0xFF4CAF50; // vert
-    private final int COLOR_P2 = 0xFFF44336; // rouge
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -139,12 +138,12 @@ public class MemoryDualFragment extends BaseGameFragment {
 
             if (playerTurn == 1) {
                 scoreP1++;
-                buttons.get(firstIndex).setBackgroundColor(COLOR_P1);
-                buttons.get(secondIndex).setBackgroundColor(COLOR_P1);
+                buttons.get(firstIndex).setBackgroundColor(getColor(getContext(), R.color.correct));
+                buttons.get(secondIndex).setBackgroundColor(getColor(getContext(), R.color.correct));
             } else {
                 scoreP2++;
-                buttons.get(firstIndex).setBackgroundColor(COLOR_P2);
-                buttons.get(secondIndex).setBackgroundColor(COLOR_P2);
+                buttons.get(firstIndex).setBackgroundColor(getColor(getContext(), R.color.wrong));
+                buttons.get(secondIndex).setBackgroundColor(getColor(getContext(), R.color.wrong));
             }
 
         } else {

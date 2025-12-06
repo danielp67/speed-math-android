@@ -1,8 +1,7 @@
 package com.example.speedMath.ui.memory;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
+import static androidx.core.content.ContextCompat.getColor;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.speedMath.R;
-import com.example.speedMath.ui.memory.Card;
+import com.example.speedMath.core.BaseGameFragment;
 import com.example.speedMath.core.FeedbackManager;
 import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.QuestionGenerator;
@@ -31,7 +30,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class MemoryFragment extends Fragment {
+public class MemoryFragment extends BaseGameFragment {
 
     private GridLayout grid;
     private TextView textMoves, textTimer, textScore, textCombo;
@@ -149,7 +148,7 @@ public class MemoryFragment extends Fragment {
         if (card.isFaceUp() || card.isMatched()) return;
 
         // flip to front (3D)
-        flipToFront(btn, card.getContent(), () -> {
+        AnimUtils.flipToFront(btn, card.getContent(), () -> {
             // after flip completed
             card.setFaceUp(true);
 
@@ -183,8 +182,8 @@ public class MemoryFragment extends Fragment {
                 // coloriser en vert (ou couleur joueur)
                 Button b1 = safeGetButton(firstIndex);
                 Button b2 = safeGetButton(secondIndex);
-                if (b1 != null) b1.setBackgroundColor(Color.parseColor("#A5D6A7")); // green
-                if (b2 != null) b2.setBackgroundColor(Color.parseColor("#A5D6A7"));
+                if (b1 != null) b1.setBackgroundColor(getColor(getContext(), R.color.correct));
+                if (b2 != null) b2.setBackgroundColor(getColor(getContext(), R.color.correct));
 
                 // scoring & combo
                 combo++;
@@ -216,8 +215,8 @@ public class MemoryFragment extends Fragment {
                 textCombo.setAlpha(0f);
 
                 // flip back with slight delay to let player see
-                if (b1 != null) flipToBack(b1);
-                if (b2 != null) flipToBack(b2);
+                if (b1 != null) AnimUtils.flipToBack(b1);
+                if (b2 != null) AnimUtils.flipToBack(b2);
 
                 // mark faceDown in model
                 firstCard.setFaceUp(false);
@@ -249,57 +248,4 @@ public class MemoryFragment extends Fragment {
         if (textScore != null) textScore.setText("Score: " + score);
     }
 
-    // ----- Flip animation helpers (3D) -----
-    // flip to front: rotate Y 0 -> 90 (hide), change text, rotate 270 -> 360 (show)
-    private void flipToFront(Button btn, String frontText, Runnable onComplete) {
-        if (btn == null) {
-            if (onComplete != null) onComplete.run();
-            return;
-        }
-
-        ObjectAnimator rot1 = ObjectAnimator.ofFloat(btn, "rotationY", 0f, 90f);
-        rot1.setDuration(120);
-        rot1.addListener(new Animator.AnimatorListener() {
-            @Override public void onAnimationStart(Animator animation) {}
-            @Override public void onAnimationEnd(Animator animation) {
-                // set front content
-                btn.setText(frontText);
-                // continue rotation from 270 to 360 (makes illusion of flipping)
-                ObjectAnimator rot2 = ObjectAnimator.ofFloat(btn, "rotationY", -90f, 0f);
-                rot2.setDuration(120);
-                rot2.start();
-                if (onComplete != null) onComplete.run();
-            }
-            @Override public void onAnimationCancel(Animator animation) {}
-            @Override public void onAnimationRepeat(Animator animation) {}
-        });
-        rot1.start();
-    }
-
-    // flip to back: rotate Y 0 -> 90 (hide), clear text, rotate -90 -> 0
-    private void flipToBack(Button btn) {
-        if (btn == null) return;
-
-        ObjectAnimator rot1 = ObjectAnimator.ofFloat(btn, "rotationY", 0f, 90f);
-        rot1.setDuration(120);
-        rot1.addListener(new Animator.AnimatorListener() {
-            @Override public void onAnimationStart(Animator animation) {}
-            @Override public void onAnimationEnd(Animator animation) {
-                btn.setText(""); // back side
-                ObjectAnimator rot2 = ObjectAnimator.ofFloat(btn, "rotationY", -90f, 0f);
-                rot2.setDuration(120);
-                rot2.start();
-            }
-            @Override public void onAnimationCancel(Animator animation) {}
-            @Override public void onAnimationRepeat(Animator animation) {}
-        });
-        rot1.start();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (gameTimer != null) gameTimer.stop();
-        if (feedbackManager != null) feedbackManager.release();
-    }
 }
