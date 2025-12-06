@@ -41,7 +41,6 @@ public class LevelFragment extends BaseGameFragment {
     private long targetScore;
     private int correctAnswer;
     private int score = 0;
-    private long elapsedMillis = 0;
 
     private QuestionGenerator questionGenerator;
     private PlayerManager playerManager;
@@ -180,7 +179,7 @@ public class LevelFragment extends BaseGameFragment {
             feedbackManager.playWrongSound();
             feedbackManager.wrongFeedback(textValidate);
         }
-        score =  (int) scoreManager.setScore(isCorrect, elapsedMillis);
+        score =  (int) scoreManager.setScore(isCorrect, gameTimer.getElapsedMillis());
         updateScore();
 
 
@@ -200,7 +199,7 @@ public class LevelFragment extends BaseGameFragment {
         textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
 
         if (gameTimer != null) gameTimer.stop();
-        score = (int) scoreManager.setFinalBonus(questionNbr, correctAnswerNbr, elapsedMillis);
+        score = (int) scoreManager.setFinalBonus(questionNbr, correctAnswerNbr, gameTimer.getElapsedMillis());
         updateScore();
 
         playerManager.setCurrentLevel(gameLevel);

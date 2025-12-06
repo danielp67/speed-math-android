@@ -10,18 +10,18 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
-import com.example.speedMath.MainActivity;
+import com.example.speedMath.core.BaseGameFragment;
 import com.example.speedMath.R;
-import com.example.speedMath.core.Card;
+import com.example.speedMath.core.FeedbackManager;
+import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.QuestionGenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MemoryFragment extends Fragment {
+public class MemoryFragment extends BaseGameFragment {
 
     private GridLayout grid;
     private TextView textMoves, textTimer;
@@ -30,22 +30,18 @@ public class MemoryFragment extends Fragment {
     private Card firstCard = null, secondCard = null;
     private int firstIndex = -1, secondIndex = -1;
     private int moves = 0;
-    private long elapsedTime = 0;
-    private Handler timerHandler = new Handler();
 
-    private Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            elapsedTime += 1;
-            textTimer.setText("Time: " + elapsedTime + "s");
-            timerHandler.postDelayed(this, 1000);
-        }
-    };
+    private GameTimer gameTimer;
+
+    private FeedbackManager feedbackManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_memory, container, false);
+
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
         textMoves = root.findViewById(R.id.textMoves);
         textTimer = root.findViewById(R.id.textTimer);
@@ -71,7 +67,12 @@ public class MemoryFragment extends Fragment {
             buttons.add(btn);
         }
 
-        timerHandler.postDelayed(timerRunnable, 1000);
+        // Timer
+        gameTimer = new GameTimer();
+        gameTimer.setListener((elapsed, formatted) -> {
+            if (textTimer != null) textTimer.setText(formatted);
+        });
+        gameTimer.start();
 
         return root;
     }
@@ -132,7 +133,7 @@ public class MemoryFragment extends Fragment {
             if (match) {
                 firstCard.setMatched(true);
                 secondCard.setMatched(true);
-                // Tu peux ajouter un flash correct ou un son ici
+                feedbackManager.playCorrectSound();
             } else {
                 firstCard.setFaceUp(false);
                 secondCard.setFaceUp(false);
@@ -147,23 +148,4 @@ public class MemoryFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) requireActivity()).setNavigationEnabled(false);
-        ((MainActivity) requireActivity()).animateNavigation(false);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((MainActivity) requireActivity()).setNavigationEnabled(true);
-        ((MainActivity) requireActivity()).animateNavigation(true);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        timerHandler.removeCallbacks(timerRunnable);
-    }
 }

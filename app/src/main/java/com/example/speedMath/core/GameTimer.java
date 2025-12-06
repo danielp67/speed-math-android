@@ -37,6 +37,9 @@ public class GameTimer {
         handler.removeCallbacks(tickRunnable);
     }
 
+    public long getElapsedMillis() {
+        return elapsedMillis;
+    }
     public void reset() {
         elapsedMillis = 0;
     }

@@ -1,4 +1,4 @@
-package com.example.speedMath.core;
+package com.example.speedMath.ui.memory;
 
 public class Card {
     public enum CardType { OPERATION, RESULT }
@@ -24,4 +24,9 @@ public class Card {
     public boolean isFaceUp() { return isFaceUp; }
     public void setFaceUp(boolean faceUp) { isFaceUp = faceUp; }
     public int getIndex() { return index; }
+
+    public void setBackGroundColor(int color) {
+
+
+    }
 }
