@@ -26,6 +26,9 @@
         <action
             android:id="@+id/action_navigation_home_to_memoryDualFragment"
             app:destination="@id/memoryDualFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_dailyChallengeFragment"
+            app:destination="@id/dailyChallengeFragment" />
     </fragment>
 
     <fragment
@@ -56,6 +59,11 @@
         android:name="com.example.speedMath.ui.memory.MemoryDualFragment"
         android:label="@string/action_memory_dual"
         tools:layout="@layout/fragment_memory_dual"/>
+    <fragment
+        android:id="@+id/dailyChallengeFragment"
+        android:name="com.example.speedMath.ui.memory.DailyChallengeFragment"
+        android:label="@string/action_daily_challenge"
+        tools:layout="@layout/fragment_daily_challenge"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"

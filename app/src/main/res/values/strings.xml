@@ -9,6 +9,7 @@
     <string name="action_qcm">Solo</string>
     <string name="action_memory">Memory</string>
     <string name="action_memory_dual">Memory Duo</string>
+    <string name="action_daily_challenge">Daily Challenge</string>
 
     <string name="title_add">Addition Suite</string>
     <string name="title_sub">Subtraction Suite</string>

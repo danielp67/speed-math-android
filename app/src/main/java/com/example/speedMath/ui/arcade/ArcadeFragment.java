@@ -37,6 +37,7 @@ public class ArcadeFragment extends Fragment {
         items.add(new ArcadeItem("👥", 16,"Battle", "🔢 👥", "DUAL"));
         items.add(new ArcadeItem("🧠", 16,"Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10,"Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
+        items.add(new ArcadeItem("\uD83C\uDF1F", 16, "Daily Challenge", "\uD83D\uDDD3\uFE0F \uD83C\uDF1F", "DAILY_CHALLENGE"));
         items.add(new ArcadeItem("+ - × ÷", 10,"All Suite", "+ - × ÷", "ALL"));
         items.add(new ArcadeItem("+", 16,"Addition Suite", "a + b", "ADD"));
         items.add(new ArcadeItem("-", 16,"Subtraction Suite", "a - b", "SUB"));
@@ -75,6 +76,10 @@ public class ArcadeFragment extends Fragment {
             case "MEMORY_DUO":
                 Navigation.findNavController(v)
                         .navigate(R.id.action_navigation_home_to_memoryDualFragment, args);
+                break;
+            case "DAILY_CHALLENGE":
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_navigation_home_to_dailyChallengeFragment, args);
                 break;
             default:
                 Navigation.findNavController(v)
