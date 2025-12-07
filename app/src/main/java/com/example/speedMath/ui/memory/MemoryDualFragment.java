@@ -151,23 +151,22 @@ public class MemoryDualFragment extends BaseGameFragment {
         Card card = cards.get(index);
         if (card.isFaceUp() || card.isMatched()) return;
 
-        // flip to front (3D)
-        AnimUtils.flipToFront(btn, card.getContent(), () -> {
-            // after flip completed
-            card.setFaceUp(true);
 
-            if (firstCard == null) {
-                firstCard = card;
-                firstIndex = index;
-            } else if (secondCard == null && index != firstIndex) {
-                secondCard = card;
-                secondIndex = index;
+        AnimUtils.flipToFront(btn, card.getContent());
 
-                // disable further clicks while checking
-                busy = true;
-                handler.postDelayed(this::checkMatch, 500);
+        card.setFaceUp(true);
+
+        if (firstCard == null) {
+            firstCard = card;
+            firstIndex = index;
+        } else if (secondCard == null && index != firstIndex) {
+            secondCard = card;
+            secondIndex = index;
+            for (Button button : buttons) {
+                button.setClickable(false);
             }
-        });
+            handler.postDelayed(this::checkMatch, 400);
+        }
     }
 
     private void checkMatch() {
@@ -220,16 +219,20 @@ public class MemoryDualFragment extends BaseGameFragment {
             playerTurn = (playerTurn == 1 ? 2 : 1);
         }
 
-        firstCard = null;
-        secondCard = null;
-        firstIndex = -1;
-        secondIndex = -1;
 
         if (isGameFinished()) {
             showEndScreen();
             return;
         }
 
+        firstCard = null;
+        secondCard = null;
+        firstIndex = -1;
+        secondIndex = -1;
+
+        for (Button button : buttons) {
+            button.setClickable(true);
+        }
         updateUI();
         busy = false;
     }

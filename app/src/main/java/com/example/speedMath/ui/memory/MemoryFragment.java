@@ -118,7 +118,6 @@ public class MemoryFragment extends BaseGameFragment {
     private List<Card> generateCards() {
         List<Card> list = new ArrayList<>();
         Set<Integer> usedResults = new HashSet<>();
-        Random random = new Random();
         QuestionGenerator generator = new QuestionGenerator(50, 2, false, true, true, true, true, true);
 
         int pairIndex = 0;
@@ -148,24 +147,25 @@ public class MemoryFragment extends BaseGameFragment {
         if (card.isFaceUp() || card.isMatched()) return;
 
         // flip to front (3D)
-        AnimUtils.flipToFront(btn, card.getContent(), () -> {
-            // after flip completed
-            card.setFaceUp(true);
 
-            if (firstCard == null) {
-                firstCard = card;
-                firstIndex = index;
-            } else if (secondCard == null && index != firstIndex) {
-                secondCard = card;
-                secondIndex = index;
-                moves++;
-                updateMoves();
+        AnimUtils.flipToFront(btn, card.getContent());
 
-                // disable further clicks while checking
-                busy = true;
-                handler.postDelayed(this::checkMatch, 500);
+        card.setFaceUp(true);
+        moves++;
+        updateMoves();
+
+        // selection
+        if (firstCard == null) {
+            firstCard = card;
+            firstIndex = index;
+        } else if (secondCard == null && index != firstIndex) {
+            secondCard = card;
+            secondIndex = index;
+            for (Button button : buttons) {
+                button.setClickable(false);
             }
-        });
+            handler.postDelayed(this::checkMatch, 400);
+        }
     }
 
     private void checkMatch() {
@@ -229,6 +229,9 @@ public class MemoryFragment extends BaseGameFragment {
             firstIndex = -1;
             secondIndex = -1;
             // unlock clicks after animations done
+            for (Button button : buttons) {
+                button.setClickable(true);
+            }
             handler.postDelayed(() -> busy = false, 350);
         }
     }
