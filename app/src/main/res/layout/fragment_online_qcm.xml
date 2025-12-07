@@ -135,4 +135,11 @@
             android:textStyle="bold"
             android:gravity="center"/>
     </LinearLayout>
+        <Button
+            android:id="@+id/btnQuit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:text="QUIT"/>
+
 </LinearLayout>

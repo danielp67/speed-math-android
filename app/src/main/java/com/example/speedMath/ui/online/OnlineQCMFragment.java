@@ -2,16 +2,18 @@ package com.example.speedMath.ui.online;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
@@ -21,32 +23,34 @@ import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
 import com.example.speedMath.utils.AnimUtils;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Collections;
 
 public class OnlineQCMFragment extends BaseGameFragment {
 
+    private static final String TAG = "OnlineQCMFragment";
     private String matchId;
-    private String myUid;
-    private String opponentUid;
     private String opponentPseudo, player;
     private DatabaseReference matchRef;
+    private ValueEventListener matchListener;
+    private boolean isGameFinished = false;
 
     private TextView textQuestion, textResult, textTimer, textScoreRight;
     private TextView textOpponentName, textOpponentScore;
     private CardView card1, card2, card3, card4;
     private TextView t1, t2, t3, t4;
     private int correctAnswer, nbQuestions, arcadeDifficulty;
-    private long elapsedMillis = 0;
     private QuestionGenerator questionGenerator;
     private GameTimer gameTimer;
     private PlayerManager playerManager;
-    private String gameMode;
     private int score = 0;
     private TextView textCombo;
     private int combo = 0;
+    private Button btnQuit;
 
     public OnlineQCMFragment() {
         // Required empty constructor
@@ -68,32 +72,16 @@ public class OnlineQCMFragment extends BaseGameFragment {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
             matchId = getArguments().getString("matchId");
-            myUid = getArguments().getString("myUid");
-            opponentUid = getArguments().getString("opponentUid");
             opponentPseudo = getArguments().getString("opponentPseudo");
             player = getArguments().getString("player");
 
         }
         matchRef = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
 
-        gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
         playerManager = PlayerManager.getInstance(requireContext());
         arcadeDifficulty = playerManager.getArcadeDifficulty();
-        //nbQuestions = playerManager.getNbQuestions();
-        nbQuestions = 0;
-        switch (nbQuestions) {
-            case 1:
-                nbQuestions = 10;
-                break;
-            case 2:
-                nbQuestions = 20;
-                break;
-            case 3:
-                nbQuestions = 25;
-                break;
-            default:
-                nbQuestions = 5;
-        }
+        nbQuestions = 5; // Default number of questions for an online match
+
         // UI references
         textQuestion = view.findViewById(R.id.textQuestion);
         textResult = view.findViewById(R.id.textResult);
@@ -106,8 +94,13 @@ public class OnlineQCMFragment extends BaseGameFragment {
         textOpponentName.setText(opponentPseudo);
         textOpponentScore = view.findViewById(R.id.textOpponentScore);
         textOpponentScore.setText("0");
+        btnQuit = view.findViewById(R.id.btnQuit);
 
-
+        btnQuit.setOnClickListener(v -> {
+            if (getView() != null) {
+                Navigation.findNavController(getView()).navigate(R.id.navigation_home);
+                }
+            });
 
 
         card1 = view.findViewById(R.id.cardOption1);
@@ -143,7 +136,82 @@ public class OnlineQCMFragment extends BaseGameFragment {
                 true,
                 true
         );
+        setupMatchListener();
         generateQuestion();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (matchListener != null) {
+            matchRef.removeEventListener(matchListener);
+        }
+        if (gameTimer != null) {
+            gameTimer.stop();
+        }
+    }
+
+    private void setupMatchListener() {
+        matchListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isGameFinished || !snapshot.exists()) {
+                    return;
+                }
+
+                // Update opponent score on our screen
+                String opponentScoreField = player.equals("P1") ? "p2_score" : "p1_score";
+                if (snapshot.hasChild(opponentScoreField)) {
+                    Long opponentScoreValue = snapshot.child(opponentScoreField).getValue(Long.class);
+                    if (opponentScoreValue != null) {
+                        textOpponentScore.setText(String.valueOf(opponentScoreValue));
+                    }
+                }
+
+                // Check if both players have finished
+                Boolean p1Finished = snapshot.child("p1_finished").getValue(Boolean.class);
+                Boolean p2Finished = snapshot.child("p2_finished").getValue(Boolean.class);
+
+                if ((p1Finished != null && p1Finished) || (p2Finished != null && p2Finished)) {
+                    isGameFinished = true;
+                    determineWinner(snapshot);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Database error: " + error.getMessage());
+            }
+        };
+        matchRef.addValueEventListener(matchListener);
+    }
+
+    private void determineWinner(DataSnapshot snapshot) {
+        gameTimer.stop();
+        setCardsClickable(false);
+
+        Long p1Score = snapshot.child("p1_score").getValue(Long.class);
+        Long p2Score = snapshot.child("p2_score").getValue(Long.class);
+
+        long myFinalScore = player.equals("P1") ? (p1Score != null ? p1Score : 0) : (p2Score != null ? p2Score : 0);
+        long opponentFinalScore = player.equals("P1") ? (p2Score != null ? p2Score : 0) : (p1Score != null ? p1Score : 0);
+
+        String result;
+        if (myFinalScore > opponentFinalScore) {
+            result = "🎉 Gagné !";
+        } else if (myFinalScore < opponentFinalScore) {
+            result = "💀 Perdu !";
+        } else {
+            result = "⚖️ Égalité !";
+        }
+        textResult.setText(result);
+
+        // Navigate back to home after a delay
+      /*  new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (getView() != null) {
+                Navigation.findNavController(getView()).navigate(R.id.navigation_home);
+            }
+        }, 3000);*/
     }
 
     private void generateQuestion() {
@@ -174,8 +242,6 @@ public class OnlineQCMFragment extends BaseGameFragment {
         t4.setText(String.valueOf(q.answersChoice.get(3)));
     }
 
-
-    // Handle user click
     private void checkAnswer(TextView selected) {
         setCardsClickable(false);
 
@@ -200,36 +266,27 @@ public class OnlineQCMFragment extends BaseGameFragment {
         }
 
         if (score >= nbQuestions) {
-            levelCompleted();
+            playerFinished();
         } else {
-            selected.postDelayed(this::generateQuestion, 1000);
+            new Handler(Looper.getMainLooper()).postDelayed(this::generateQuestion, 1000);
         }
+    }
+
+    private void playerFinished() {
+        gameTimer.stop();
+        setCardsClickable(false);
+        textResult.setText("Waiting for opponent...");
+        String playerFinishedField = player.equals("P1") ? "p1_finished" : "p2_finished";
+        matchRef.child(playerFinishedField).setValue(true);
+        matchRef.child("state").setValue("finished");
     }
 
     private void updateScore() {
         if (textScoreRight != null) {
-            // playerManager.setCorrectAnswersStreak(gameMode, score);
             textScoreRight.setText(score + "/" + nbQuestions);
+            String playerScoreField = player.equals("P1") ? "p1_score" : "p2_score";
+            matchRef.child(playerScoreField).setValue(score);
         }
-    }
-
-    private void levelCompleted() {
-        // Envoi du score à Firebase
-      String player_score = player.equals("P1") ? "p1_score" : "p2_score";
-      String opponent_score = player.equals("P1") ? "p2_score" : "p1_score";
-      matchRef.child("state").setValue("finished");
-        matchRef.child(player_score).setValue(score).addOnCompleteListener(task -> {
-            // Lecture du score de l'adversaire
-            matchRef.child(opponent_score).get().addOnCompleteListener(task2 -> {
-                Integer opponentScore = 0;
-                if (task2.getResult().getValue() != null) {
-                    opponentScore = Integer.parseInt(task2.getResult().getValue().toString());
-                }
-                String result = score > opponentScore ? "🎉 Gagné !" : (score < opponentScore ? "💀 Perdu !" : "⚖️ Égalité !");
-                TextView textResult = requireView().findViewById(R.id.textResult);
-                textResult.setText(result);
-            });
-        });
     }
 
     // UI helpers
@@ -267,5 +324,3 @@ public class OnlineQCMFragment extends BaseGameFragment {
     }
 
 }
-
-
