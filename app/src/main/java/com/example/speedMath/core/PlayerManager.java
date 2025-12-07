@@ -187,10 +187,29 @@ public class PlayerManager {
     }
 
     public String getPseudo() {
-        return null;
+        String pseudo = prefs.getString("pseudo", "");
+        if (!pseudo.isEmpty()) {
+            return pseudo;
+        }
+        return "";
     }
 
-    public String getPlayerId() {
-        return null;
+    public void setPseudo(String pseudo) {
+        prefs.edit().putString("pseudo", pseudo).apply();
+    }
+
+    public String getUid() {
+        return prefs.getString("uid", "");
+    }
+
+    public void setUid(String uid) {
+        prefs.edit().putString("uid", uid).apply();
+    }
+    public int getPoints() {
+        return prefs.getInt("points", 0);
+    }
+
+    public void setPoints(int points) {
+        prefs.edit().putInt("points", points).apply();
     }
 }

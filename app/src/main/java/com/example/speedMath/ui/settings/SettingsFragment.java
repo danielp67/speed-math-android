@@ -42,7 +42,6 @@ public class SettingsFragment extends Fragment {
     private EditText editPseudo;
     private ImageView pseudoStatus;
     private Button btnSavePseudo;
-    private SharedPreferences prefs;
     private FirebaseAuth mAuth;
     private DatabaseReference playersRef;
     private String currentUid;
@@ -84,7 +83,7 @@ public class SettingsFragment extends Fragment {
 
         // --- Initialiser Spinners ---
         ArrayAdapter<String> adapterDifficulty = new ArrayAdapter<>(
-                getContext(),
+                requireContext(),
                 android.R.layout.simple_spinner_item,
                 new String[]{"Adaptive", "Easy", "Medium", "Hard", "Extreme"}
         );
@@ -93,7 +92,7 @@ public class SettingsFragment extends Fragment {
         spinnerDifficulty.setSelection(playerManager.getArcadeDifficulty());
 
         ArrayAdapter<Integer> adapterNbQuestions = new ArrayAdapter<>(
-                getContext(),
+                requireContext(),
                 android.R.layout.simple_spinner_item,
                 new Integer[]{5, 10, 20, 25}
         );
@@ -188,8 +187,6 @@ public class SettingsFragment extends Fragment {
         pseudoStatus = root.findViewById(R.id.pseudoStatus);
         btnSavePseudo = root.findViewById(R.id.btnSavePseudo);
 
-        prefs = requireContext().getSharedPreferences("SpeedMathPrefs", Context.MODE_PRIVATE);
-
         // Firebase
         mAuth = FirebaseAuth.getInstance();
         playersRef = FirebaseDatabase.getInstance().getReference("players");
@@ -226,15 +223,15 @@ public class SettingsFragment extends Fragment {
         playerManager.setNbQuestions(0);
 
         // Réinitialiser l'UI (Switch + Spinners)
-        SwitchCompat switchDark = getView().findViewById(R.id.switchDark);
-        SwitchCompat switchSound = getView().findViewById(R.id.switchSound);
-        SwitchCompat switchMusic = getView().findViewById(R.id.switchMusic);
-        SwitchCompat switchVibration = getView().findViewById(R.id.switchVibration);
-        SwitchCompat switchAnimation = getView().findViewById(R.id.switchAnimations);
-        SwitchCompat switchHaptic = getView().findViewById(R.id.switchHaptic);
+        SwitchCompat switchDark = requireView().findViewById(R.id.switchDark);
+        SwitchCompat switchSound = requireView().findViewById(R.id.switchSound);
+        SwitchCompat switchMusic = requireView().findViewById(R.id.switchMusic);
+        SwitchCompat switchVibration = requireView().findViewById(R.id.switchVibration);
+        SwitchCompat switchAnimation = requireView().findViewById(R.id.switchAnimations);
+        SwitchCompat switchHaptic = requireView().findViewById(R.id.switchHaptic);
 
-        Spinner spinnerDifficulty = getView().findViewById(R.id.spinnerDifficulty);
-        Spinner spinnerNbQuestions = getView().findViewById(R.id.spinnerNbQuestions);
+        Spinner spinnerDifficulty = requireView().findViewById(R.id.spinnerDifficulty);
+        Spinner spinnerNbQuestions = requireView().findViewById(R.id.spinnerNbQuestions);
 
         // Switch
         switchDark.setChecked(playerManager.isDarkModeEnabled());
@@ -260,7 +257,7 @@ public class SettingsFragment extends Fragment {
                 if (user != null) {
                     currentUid = user.getUid();
                     // Si déjà pseudo sauvegardé, on l'affiche
-                    String savedPseudo = prefs.getString("pseudo", "");
+                    String savedPseudo =  playerManager.getPseudo();
                     if (!savedPseudo.isEmpty()) {
                         editPseudo.setText(savedPseudo);
                         pseudoStatus.setImageResource(R.drawable.circle_check_full);
@@ -300,7 +297,7 @@ public class SettingsFragment extends Fragment {
     private void savePseudo() {
         String pseudo = editPseudo.getText().toString().trim();
         if (pseudo.isEmpty()) {
-            Toast.makeText(getContext(), "You must enter a pseudo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "You must enter an available pseudo", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -316,20 +313,22 @@ public class SettingsFragment extends Fragment {
                     }
                 }
                 if (exists) {
-                    Toast.makeText(getContext(), "Pseudo déjà utilisé", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Account already exists", Toast.LENGTH_SHORT).show();
                     pseudoStatus.setImageResource(R.drawable.circle_xmark_full);
                 } else {
                     // Sauvegarde Firebase
                     Map<String, Object> data = new HashMap<>();
                     data.put("pseudo", pseudo);
                     data.put("uid", currentUid);
+                    data.put("points", 0);
                     playersRef.child(currentUid).updateChildren(data);
 
                     // Sauvegarde SharedPreferences
-                    prefs.edit().putString("pseudo", pseudo).apply();
-                    prefs.edit().putString("uid", currentUid).apply();
+                    playerManager.setPseudo(pseudo);
+                    playerManager.setUid(currentUid);
+                    playerManager.setPoints(0);
 
-                    Toast.makeText(getContext(), "Pseudo enregistré ✅", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Account saved ✅", Toast.LENGTH_SHORT).show();
                     pseudoStatus.setImageResource(R.drawable.circle_check_full);
                 }
             }
