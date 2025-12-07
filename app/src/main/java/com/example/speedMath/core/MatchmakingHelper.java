@@ -1,127 +1,101 @@
 package com.example.speedMath.core;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.*;
 
 import java.util.HashMap;
 
 public class MatchmakingHelper {
 
-    public interface MatchCallback {
-        void onMatchFound(String matchId, String opponentUid, String opponentPseudo);
-    }
+    private static final String TAG = "MatchmakingHelper";
+    private DatabaseReference dbRef;
+    private String uid;
+    private String pseudo;
+    private MatchListener listener;
 
-    private final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-    private final String uid;
-    private final String pseudo;
-    private String waitingKey = null;
-    private boolean cancelled = false;
+    public interface MatchListener {
+        void onMatchFound(String matchId, String opponentUid, String opponentPseudo);
+        void onError(String message);
+    }
 
     public MatchmakingHelper(String uid, String pseudo) {
         this.uid = uid;
         this.pseudo = pseudo;
+        dbRef = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void cancel() {
-        cancelled = true;
-        if (waitingKey != null) {
-            db.child("waiting").child(waitingKey).removeValue();
-        }
+    public void setMatchListener(MatchListener listener) {
+        this.listener = listener;
     }
 
-    public void findMatch(MatchCallback callback) {
+    public void findMatch() {
+        DatabaseReference waitingRef = dbRef.child("waiting");
 
-        // 1) Chercher un adversaire
-        db.child("waiting").limitToFirst(1).get().addOnCompleteListener(task -> {
+        // Ajout du joueur à la file d'attente
+        String waitingKey = waitingRef.push().getKey();
+        long ts = System.currentTimeMillis();
+        HashMap<String, Object> playerData = new HashMap<>();
+        playerData.put("uid", uid);
+        playerData.put("pseudo", pseudo);
+        playerData.put("ts", ts);
 
-            if (!task.isSuccessful() || cancelled) return;
-
-            DataSnapshot snap = task.getResult();
-
-            // 1A) SI IL Y A UN JOUEUR EN ATTENTE
-            if (snap.exists()) {
-                DataSnapshot first = snap.getChildren().iterator().next();
-
-                String opponentUid = first.child("uid").getValue(String.class);
-                String opponentPseudo = first.child("pseudo").getValue(String.class);
-
-                // On ne se matche pas soi-même
-                if (opponentUid != null && opponentUid.equals(uid)) return;
-
-                // Créer match
-                String matchId = db.child("matches").push().getKey();
-
-                HashMap<String, Object> p1 = new HashMap<>();
-                p1.put("uid", uid);
-                p1.put("pseudo", pseudo);
-
-                HashMap<String, Object> p2 = new HashMap<>();
-                p2.put("uid", opponentUid);
-                p2.put("pseudo", opponentPseudo);
-
-                HashMap<String, Object> create = new HashMap<>();
-                create.put("p1", p1);
-                create.put("p2", p2);
-                create.put("state", "playing");
-
-
-                db.child("matches").child(matchId).setValue(create);
-
-                db.child("waiting").child(first.getKey()).removeValue();
-
-                if (cancelled) return;
-
-                callback.onMatchFound(matchId, opponentUid, opponentPseudo);
-            }
-
-            // 1B) Sinon : on s'ajoute à la liste d'attente
-            else {
-                waitingKey = db.child("waiting").push().getKey();
-
-                HashMap<String, Object> data = new HashMap<>();
-                data.put("uid", uid);
-                data.put("pseudo", pseudo);
-                data.put("ts", System.currentTimeMillis());
-
-                db.child("waiting").child(waitingKey).setValue(data);
-
-                // on écoute pour voir si quelqu'un nous matche
-                waitForMatch(callback);
-            }
-
-        });
-    }
-
-    private void waitForMatch(MatchCallback callback) {
-
-        db.child("matches").addValueEventListener(new com.google.firebase.database.ValueEventListener() {
-            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if (cancelled) return;
-
-                for (DataSnapshot m : snapshot.getChildren()) {
-                    String p1 = m.child("p1").child("uid").getValue(String.class);
-                    String p2 = m.child("p2").child("uid").getValue(String.class);
-
-                    if (uid.equals(p1) || uid.equals(p2)) {
-
-                        String opponentUid = uid.equals(p1) ? p2 : p1;
-                        String opponentPseudo = uid.equals(p1)
-                                ? m.child("p2").child("pseudo").getValue(String.class)
-                                : m.child("p1").child("pseudo").getValue(String.class);
-
-                        callback.onMatchFound(m.getKey(), opponentUid, opponentPseudo);
+        waitingRef.child(waitingKey).setValue(playerData)
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        if (listener != null) listener.onError("Erreur ajout à la file");
                         return;
                     }
-                }
-            }
+                    // Ecoute la file d'attente pour trouver un adversaire
+                    waitingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot snap : snapshot.getChildren()) {
+                                HashMap<String, Object> p = (HashMap<String, Object>) snap.getValue();
+                                if (p == null) continue;
+                                String otherUid = (String) p.get("uid");
+                                String otherPseudo = (String) p.get("pseudo");
+                                if (!otherUid.equals(uid)) {
+                                    // Match trouvé, créer match
+                                    createMatch(otherUid, otherPseudo);
+                                    waitingRef.child(waitingKey).removeValue(); // supprime moi-même
+                                    waitingRef.child(snap.getKey()).removeValue(); // supprime adversaire
+                                    return;
+                                }
+                            }
+                        }
 
-            @Override public void onCancelled(@NonNull DatabaseError error) { }
-        });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            if (listener != null) listener.onError(error.getMessage());
+                        }
+                    });
+                });
+    }
+
+    private void createMatch(String opponentUid, String opponentPseudo) {
+        String matchId = dbRef.child("matches").push().getKey();
+        if (matchId == null) {
+            if (listener != null) listener.onError("Impossible de créer le match");
+            return;
+        }
+
+        HashMap<String, Object> matchData = new HashMap<>();
+        matchData.put("p1_uid", uid);
+        matchData.put("p1_pseudo", pseudo);
+        matchData.put("p2_uid", opponentUid);
+        matchData.put("p2_pseudo", opponentPseudo);
+        matchData.put("state", "playing");
+        matchData.put("p1_score", 0);
+        matchData.put("p2_score", 0);
+
+        dbRef.child("matches").child(matchId).setValue(matchData)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && listener != null) {
+                        listener.onMatchFound(matchId, opponentUid, opponentPseudo);
+                    } else if (listener != null) {
+                        listener.onError("Erreur création match");
+                    }
+                });
     }
 }
