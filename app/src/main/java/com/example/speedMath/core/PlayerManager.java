@@ -185,4 +185,12 @@ public class PlayerManager {
     public int getNbQuestions() {
         return prefs.getInt(KEY_NB_QUESTIONS, 0);
     }
+
+    public String getPseudo() {
+        return null;
+    }
+
+    public String getPlayerId() {
+        return null;
+    }
 }

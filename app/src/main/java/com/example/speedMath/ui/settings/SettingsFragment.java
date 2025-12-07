@@ -1,13 +1,21 @@
 package com.example.speedMath.ui.settings;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -17,11 +25,28 @@ import androidx.fragment.app.Fragment;
 import com.example.speedMath.R;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.databinding.FragmentSettingsBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;
     private PlayerManager playerManager;
+
+    private EditText editPseudo;
+    private ImageView pseudoStatus;
+    private Button btnSavePseudo;
+    private SharedPreferences prefs;
+    private FirebaseAuth mAuth;
+    private DatabaseReference playersRef;
+    private String currentUid;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -159,6 +184,32 @@ public class SettingsFragment extends Fragment {
         });
 
 
+        editPseudo = root.findViewById(R.id.editPseudo);
+        pseudoStatus = root.findViewById(R.id.pseudoStatus);
+        btnSavePseudo = root.findViewById(R.id.btnSavePseudo);
+
+        prefs = requireContext().getSharedPreferences("SpeedMathPrefs", Context.MODE_PRIVATE);
+
+        // Firebase
+        mAuth = FirebaseAuth.getInstance();
+        playersRef = FirebaseDatabase.getInstance().getReference("players");
+
+        signInAnonymously();
+
+        // Vérification instantanée du pseudo
+        editPseudo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkPseudoAvailable(s.toString());
+            }
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+
+        btnSavePseudo.setOnClickListener(v -> savePseudo());
+
         return root;
     }
 
@@ -201,6 +252,89 @@ public class SettingsFragment extends Fragment {
         applyTheme(playerManager.isDarkModeEnabled());
     }
 
+
+    private void signInAnonymously() {
+        mAuth.signInAnonymously().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    currentUid = user.getUid();
+                    // Si déjà pseudo sauvegardé, on l'affiche
+                    String savedPseudo = prefs.getString("pseudo", "");
+                    if (!savedPseudo.isEmpty()) {
+                        editPseudo.setText(savedPseudo);
+                        pseudoStatus.setImageResource(R.drawable.circle_check_full);
+                    }
+                }
+            } else {
+                Toast.makeText(getContext(), "Firebase Auth failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void checkPseudoAvailable(String pseudo) {
+        if (pseudo.isEmpty()) {
+            pseudoStatus.setImageResource(R.drawable.circle_xmark_full);
+            return;
+        }
+
+        playersRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                boolean exists = false;
+                for (DataSnapshot snap : task.getResult().getChildren()) {
+                    String existingPseudo = snap.child("pseudo").getValue(String.class);
+                    if (pseudo.equalsIgnoreCase(existingPseudo) && !snap.getKey().equals(currentUid)) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (exists) {
+                    pseudoStatus.setImageResource(R.drawable.circle_xmark_full);
+                } else {
+                    pseudoStatus.setImageResource(R.drawable.circle_check_full);
+                }
+            }
+        });
+    }
+
+    private void savePseudo() {
+        String pseudo = editPseudo.getText().toString().trim();
+        if (pseudo.isEmpty()) {
+            Toast.makeText(getContext(), "You must enter a pseudo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Vérification finale
+        playersRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                boolean exists = false;
+                for (DataSnapshot snap : task.getResult().getChildren()) {
+                    String existingPseudo = snap.child("pseudo").getValue(String.class);
+                    if (pseudo.equalsIgnoreCase(existingPseudo) && !snap.getKey().equals(currentUid)) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (exists) {
+                    Toast.makeText(getContext(), "Pseudo déjà utilisé", Toast.LENGTH_SHORT).show();
+                    pseudoStatus.setImageResource(R.drawable.circle_xmark_full);
+                } else {
+                    // Sauvegarde Firebase
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("pseudo", pseudo);
+                    data.put("uid", currentUid);
+                    playersRef.child(currentUid).updateChildren(data);
+
+                    // Sauvegarde SharedPreferences
+                    prefs.edit().putString("pseudo", pseudo).apply();
+                    prefs.edit().putString("uid", currentUid).apply();
+
+                    Toast.makeText(getContext(), "Pseudo enregistré ✅", Toast.LENGTH_SHORT).show();
+                    pseudoStatus.setImageResource(R.drawable.circle_check_full);
+                }
+            }
+        });
+    }
 
     @Override
     public void onDestroyView() {

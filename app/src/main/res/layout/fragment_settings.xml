@@ -14,6 +14,63 @@
         android:paddingHorizontal="@dimen/dp_16"
         android:paddingBottom="@dimen/dp_64">
 
+        <!-- ===== CARD PSEUDO ===== -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="12dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/titlePseudo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pseudo"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:id="@+id/editPseudo"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:hint="Entrez votre pseudo"
+                        android:maxLength="15"
+                        android:inputType="textPersonName"/>
+
+                    <ImageView
+                        android:id="@+id/pseudoStatus"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="8dp"
+                        android:contentDescription="Status pseudo"
+                        android:src="@drawable/circle_xmark_full"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnSavePseudo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Enregistrer"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="12dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <!-- ===== CARD DIFFICULTY ===== -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -98,7 +155,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-
         <!-- ===== CARD EFFECTS ===== -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -167,7 +223,6 @@
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
 
         <!-- ===== CARD DANGER ZONE ===== -->
         <androidx.cardview.widget.CardView

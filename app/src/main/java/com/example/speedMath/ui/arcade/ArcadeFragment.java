@@ -35,6 +35,7 @@ public class ArcadeFragment extends Fragment {
         List<ArcadeItem> items = new ArrayList<>();
         items.add(new ArcadeItem("👤", 16,"Solo", "🔢 👤", "QCM"));
         items.add(new ArcadeItem("👥", 16,"Battle", "🔢 👥", "DUAL"));
+        items.add(new ArcadeItem("\uD83C\uDF10", 16,"Online", "\uD83C\uDF10 👥", "ONLINE"));
         items.add(new ArcadeItem("🧠", 16,"Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10,"Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
         items.add(new ArcadeItem("\uD83C\uDF1F", 16, "Daily Challenge", "\uD83D\uDDD3\uFE0F \uD83C\uDF1F", "DAILY_CHALLENGE"));
@@ -67,6 +68,11 @@ public class ArcadeFragment extends Fragment {
             case "DUAL":
                 Navigation.findNavController(v)
                         .navigate(R.id.action_navigation_home_to_dualFragment, args);
+                break;
+
+            case "ONLINE":
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_navigation_home_to_onlineQCMFragment, args);
                 break;
 
             case "MEMORY":

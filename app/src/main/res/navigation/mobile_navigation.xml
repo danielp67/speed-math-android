@@ -21,6 +21,9 @@
             android:id="@+id/action_navigation_home_to_dualFragment"
             app:destination="@id/dualFragment" />
         <action
+            android:id="@+id/action_navigation_home_to_onlineQCMFragment"
+            app:destination="@id/onlineQCMFragment" />
+        <action
             android:id="@+id/action_navigation_home_to_memoryFragment"
             app:destination="@id/memoryFragment" />
         <action
@@ -48,6 +51,11 @@
         android:name="com.example.speedMath.ui.dual.DualFragment"
         android:label="@string/action_dual"
         tools:layout="@layout/fragment_dual"/>
+    <fragment
+        android:id="@+id/onlineQCMFragment"
+        android:name="com.example.speedMath.ui.dual.OnlineQCMFragment"
+        android:label="@string/action_qcm_online"
+        tools:layout="@layout/fragment_qcm_online"/>
 
     <fragment
         android:id="@+id/memoryFragment"
