@@ -169,10 +169,8 @@ public class OnlineQCMFragment extends BaseGameFragment {
                 }
 
                 // Check if both players have finished
-                Boolean p1Finished = snapshot.child("p1_finished").getValue(Boolean.class);
-                Boolean p2Finished = snapshot.child("p2_finished").getValue(Boolean.class);
-
-                if ((p1Finished != null && p1Finished) || (p2Finished != null && p2Finished)) {
+                String state = snapshot.child("state").getValue(String.class);
+                if ((state != null && state.equals("finished"))) {
                     isGameFinished = true;
                     determineWinner(snapshot);
                 }
@@ -276,8 +274,8 @@ public class OnlineQCMFragment extends BaseGameFragment {
         gameTimer.stop();
         setCardsClickable(false);
         textResult.setText("Waiting for opponent...");
-        String playerFinishedField = player.equals("P1") ? "p1_finished" : "p2_finished";
-        matchRef.child(playerFinishedField).setValue(true);
+        String winnerField = player.equals("P1") ? "p1" : "p2";
+        matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
     }
 
