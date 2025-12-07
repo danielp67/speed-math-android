@@ -1,203 +1,140 @@
 package com.example.speedMath.core;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.*;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MatchmakingHelper {
+
     private static final String TAG = "MatchmakingHelper";
-
-    private final DatabaseReference db;
-    private final String uid;
-    private final String pseudo;
-
-    // key push dans /waiting pour pouvoir supprimer plus tard
-    private String waitingKey = null;
-    private DatabaseReference waitingRef;
-    private ChildEventListener waitingListener;
-
-    // évite double création de match
-    private final AtomicBoolean matched = new AtomicBoolean(false);
-
+    private DatabaseReference dbRef;
+    private String uid;
+    private String pseudo;
     private MatchListener listener;
+    private String waitingKey;
+    private ValueEventListener waitingListener;
+    private boolean isMatchFound = false;
 
     public interface MatchListener {
         void onMatchFound(String matchId, String opponentUid, String opponentPseudo);
         void onError(String message);
     }
 
-    public MatchmakingHelper(@NonNull String uid, @NonNull String pseudo) {
+    public MatchmakingHelper(String uid, String pseudo) {
         this.uid = uid;
         this.pseudo = pseudo;
-        this.db = FirebaseDatabase.getInstance().getReference();
+        dbRef = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void setMatchListener(@Nullable MatchListener l) {
-        this.listener = l;
+    public void setMatchListener(MatchListener listener) {
+        this.listener = listener;
     }
 
-    /**
-     * Inscrit le joueur dans /waiting et écoute les autres joueurs pour créer un match 1v1.
-     */
     public void findMatch() {
-        if (matched.get()) return;
+        isMatchFound = false;
+        DatabaseReference waitingRef = dbRef.child("waiting");
 
-        waitingRef = db.child("waiting");
-
-        // crée une entrée push (waitingKey)
         waitingKey = waitingRef.push().getKey();
-        if (waitingKey == null) {
-            if (listener != null) listener.onError("Impossible d'obtenir waitingKey");
-            return;
-        }
-
         long ts = System.currentTimeMillis();
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("uid", uid);
-        payload.put("pseudo", pseudo);
-        payload.put("ts", ts);
+        HashMap<String, Object> playerData = new HashMap<>();
+        playerData.put("uid", uid);
+        playerData.put("pseudo", pseudo);
+        playerData.put("ts", ts);
 
-        waitingRef.child(waitingKey).setValue(payload)
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        if (listener != null) listener.onError("Erreur ajout à la file");
+        waitingRef.child(waitingKey).setValue(playerData).addOnFailureListener(e -> {
+            if (listener != null) listener.onError("Erreur ajout à la file");
+        });
+
+        waitingListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isMatchFound || snapshot.getChildrenCount() < 2) {
+                    return;
+                }
+
+                DataSnapshot opponentSnap = null;
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    if (!snap.getKey().equals(waitingKey)) {
+                        opponentSnap = snap;
+                        break;
+                    }
+                }
+
+                if (opponentSnap != null) {
+                    isMatchFound = true;
+                    if (waitingListener != null) {
+                        waitingRef.removeEventListener(waitingListener);
+                    }
+
+                    String opponentUid = opponentSnap.child("uid").getValue(String.class);
+                    String opponentPseudo = opponentSnap.child("pseudo").getValue(String.class);
+
+                    if (opponentUid == null) { // data inconsistency
+                        isMatchFound = false; // reset and try again
                         return;
                     }
-                    // on écoute les nouveaux enfants pour détecter un adversaire
-                    attachWaitingListener();
-                })
-                .addOnFailureListener(e -> {
-                    if (listener != null) listener.onError("Erreur ajout: " + e.getMessage());
-                });
-    }
 
-    private void attachWaitingListener() {
-        if (waitingRef == null) waitingRef = db.child("waiting");
+                    String matchId;
+                    if (uid.compareTo(opponentUid) < 0) {
+                        matchId = uid + "_" + opponentUid;
+                        // I create the match and cleanup
+                        createMatchWithId(matchId, uid, pseudo, opponentUid, opponentPseudo);
+                        waitingRef.child(waitingKey).removeValue();
+                        waitingRef.child(opponentSnap.getKey()).removeValue();
+                    } else {
+                        matchId = opponentUid + "_" + uid;
+                    }
 
-        // Defensive: si listener déjà attaché, ne pas ré-attacher
-        if (waitingListener != null) return;
-
-        waitingListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                if (matched.get()) return;
-
-                // Récupère les données
-                String otherKey = snapshot.getKey();
-                if (otherKey == null) return;
-
-                // Si c'est nous, on ignore
-                if (otherKey.equals(waitingKey)) return;
-
-                Object oUid = snapshot.child("uid").getValue();
-                Object oPseudo = snapshot.child("pseudo").getValue();
-
-                if (oUid == null || oPseudo == null) return;
-
-                String otherUid = oUid.toString();
-                String otherPseudo = oPseudo.toString();
-
-                // Safety: ne pas matcher contre soi
-                if (otherUid.equals(uid)) return;
-
-                // marque comme matched (atomic) pour éviter double création
-                if (!matched.compareAndSet(false, true)) return;
-
-                // retirer les deux entrées waiting (la nôtre et celle de l'autre)
-                // et créer le match
-                createMatchWithOpponent(otherUid, otherPseudo, otherKey);
+                    if (listener != null) {
+                        listener.onMatchFound(matchId, opponentUid, opponentPseudo);
+                    }
+                }
             }
 
-            @Override public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-            @Override public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
-            @Override public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-            @Override public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(TAG, "Waiting listener cancelled: " + error.getMessage());
-                if (listener != null) listener.onError(error.getMessage());
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Matchmaking cancelled: " + error.getMessage());
+                if (listener != null) {
+                    listener.onError(error.getMessage());
+                }
             }
         };
-
-        waitingRef.addChildEventListener(waitingListener);
+        waitingRef.addValueEventListener(waitingListener);
     }
 
-    private void createMatchWithOpponent(String opponentUid, String opponentPseudo, String opponentWaitingKey) {
-        // remove waiting entries (not strictly necessary before creating match but good hygiene)
-        if (waitingRef != null) {
-            // remove opponent entry and our own entry
-            waitingRef.child(opponentWaitingKey).removeValue();
-            if (waitingKey != null) waitingRef.child(waitingKey).removeValue();
+    public void cancelMatchmaking() {
+        DatabaseReference waitingRef = dbRef.child("waiting");
+        if (waitingListener != null) {
+            waitingRef.removeEventListener(waitingListener);
+            waitingListener = null;
         }
+        if (waitingKey != null) {
+            Log.d(TAG, "Cancelling matchmaking, removing user from waiting list.");
+            waitingRef.child(waitingKey).removeValue();
+            waitingKey = null;
+        }
+    }
 
-        // create match node
-        String matchId = db.child("matches").push().getKey();
+    private void createMatchWithId(String matchId, String p1Uid, String p1Pseudo, String p2Uid, String p2Pseudo) {
         if (matchId == null) {
-            if (listener != null) listener.onError("Impossible de créer matchId");
+            if (listener != null) listener.onError("Impossible to create match");
             return;
         }
 
-        Map<String, Object> match = new HashMap<>();
-        match.put("p1_uid", uid);
-        match.put("p1_pseudo", pseudo);
-        match.put("p2_uid", opponentUid);
-        match.put("p2_pseudo", opponentPseudo);
-        match.put("state", "playing");
-        match.put("p1_score", 0);
-        match.put("p2_score", 0);
-        match.put("ts", System.currentTimeMillis());
+        HashMap<String, Object> matchData = new HashMap<>();
+        matchData.put("p1_uid", p1Uid);
+        matchData.put("p1_pseudo", p1Pseudo);
+        matchData.put("p2_uid", p2Uid);
+        matchData.put("p2_pseudo", p2Pseudo);
+        matchData.put("state", "playing");
+        matchData.put("p1_score", 0);
+        matchData.put("p2_score", 0);
 
-        db.child("matches").child(matchId).setValue(match)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // notify listener
-                        if (listener != null) listener.onMatchFound(matchId, opponentUid, opponentPseudo);
-                        // cleanup local waiting entry and listeners
-                        cleanupWaiting();
-                    } else {
-                        if (listener != null) listener.onError("Erreur création match");
-                        matched.set(false); // rollback possible
-                    }
-                })
+        dbRef.child("matches").child(matchId).setValue(matchData)
                 .addOnFailureListener(e -> {
-                    if (listener != null) listener.onError("Erreur creation match: " + e.getMessage());
-                    matched.set(false);
+                    if (listener != null) listener.onError("Erreur création match");
                 });
-    }
-
-    /**
-     * Annule la recherche de match : supprime l'entrée waiting et détache les listeners.
-     * Appeler depuis UI quand user annule / back / onDestroyView.
-     */
-    public void cancel() {
-        // marque matched pour éviter race
-        matched.set(true);
-        cleanupWaiting();
-    }
-
-    private void cleanupWaiting() {
-        try {
-            if (waitingRef != null && waitingKey != null) {
-                waitingRef.child(waitingKey).removeValue();
-            }
-            if (waitingRef != null && waitingListener != null) {
-                waitingRef.removeEventListener(waitingListener);
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "cleanupWaiting failed: " + e.getMessage());
-        } finally {
-            waitingKey = null;
-            waitingListener = null;
-            waitingRef = null;
-        }
     }
 }

@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.MatchmakingHelper;
+import com.example.speedMath.core.PlayerManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class WaitingRoomFragment extends Fragment {
@@ -24,7 +25,8 @@ public class WaitingRoomFragment extends Fragment {
     private ProgressBar progressBar;
     private Button btnCancel;
     private MatchmakingHelper matchmakingHelper;
-    private boolean matchStarted = false; // pour éviter double callback
+    private boolean matchStarted = false;
+    private PlayerManager playerManager;
 
     @Nullable
     @Override
@@ -43,8 +45,9 @@ public class WaitingRoomFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         btnCancel = view.findViewById(R.id.btnCancel);
 
+        playerManager = PlayerManager.getInstance(requireContext());
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String pseudo = getArguments() != null ? getArguments().getString("pseudo") : "Player";
+        String pseudo = playerManager.getPseudo();
 
         // create helper and listener
         matchmakingHelper = new MatchmakingHelper(uid, pseudo);
@@ -55,13 +58,20 @@ public class WaitingRoomFragment extends Fragment {
                 matchStarted = true;
 
                 // Optionnel : cancel pour être sûr que waiting est propre
-                matchmakingHelper.cancel();
+                matchmakingHelper.cancelMatchmaking();
 
                 Bundle bundle = new Bundle();
                 bundle.putString("matchId", matchId);
                 bundle.putString("myUid", uid);
                 bundle.putString("opponentUid", opponentUid);
                 bundle.putString("opponentPseudo", opponentPseudo);
+                // need to know if we are player 1 or 2
+                if (uid.compareTo(opponentUid) < 0) {
+                    bundle.putString("player", "P1");
+                } else {
+                    bundle.putString("player", "P2");
+                }
+
 
                 // navigation vers le fragment online (QCM)
                 Navigation.findNavController(requireView())
@@ -70,22 +80,22 @@ public class WaitingRoomFragment extends Fragment {
 
             @Override
             public void onError(String message) {
-                textStatus.setText("Erreur : " + message);
+                textStatus.setText("Error : " + message);
                 progressBar.setVisibility(View.GONE);
             }
         });
 
-        textStatus.setText("Recherche d'un adversaire…");
+        textStatus.setText("Searching for a match…");
         progressBar.setVisibility(View.VISIBLE);
 
         matchmakingHelper.findMatch();
 
         // bouton annuler
         btnCancel.setOnClickListener(v -> {
-            textStatus.setText("Recherche annulée");
+            textStatus.setText("Match cancelled");
             progressBar.setVisibility(View.GONE);
             // supprime entry waiting
-            if (matchmakingHelper != null) matchmakingHelper.cancel();
+            if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
             // revient en arrière
             Navigation.findNavController(requireView()).navigateUp();
         });
@@ -96,7 +106,7 @@ public class WaitingRoomFragment extends Fragment {
                 new OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
-                        if (matchmakingHelper != null) matchmakingHelper.cancel();
+                        if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
                         setEnabled(false);
                         requireActivity().onBackPressed();
                     }
@@ -108,7 +118,7 @@ public class WaitingRoomFragment extends Fragment {
         super.onDestroyView();
         // assure cleanup si le fragment est détruit
         if (matchmakingHelper != null) {
-            matchmakingHelper.cancel();
+            matchmakingHelper.cancelMatchmaking();
         }
     }
 }
