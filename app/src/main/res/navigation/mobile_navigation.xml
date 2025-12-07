@@ -21,8 +21,8 @@
             android:id="@+id/action_navigation_home_to_dualFragment"
             app:destination="@id/dualFragment" />
         <action
-            android:id="@+id/action_navigation_home_to_onlineQCMFragment"
-            app:destination="@id/onlineQCMFragment" />
+            android:id="@+id/action_navigation_home_to_waitingRoomFragment"
+            app:destination="@id/waitingRoomFragment" />
         <action
             android:id="@+id/action_navigation_home_to_memoryFragment"
             app:destination="@id/memoryFragment" />
@@ -49,13 +49,13 @@
         android:label="@string/action_dual"
         tools:layout="@layout/fragment_dual"/>
     <fragment
-        android:id="@+id/onlineQCMFragment"
-        android:name="com.example.speedMath.ui.online.OnlineQCMFragment"
+        android:id="@+id/waitingRoomFragment"
+        android:name="com.example.speedMath.ui.online.WaitingRoomFragment"
         android:label="@string/action_qcm_online"
-        tools:layout="@layout/fragment_online_qcm">
+        tools:layout="@layout/fragment_waiting_room">
         <action
-            android:id="@+id/action_onlineQCMFragment_to_onlineQCMGameFragment"
-            app:destination="@id/onlineQCMGameFragment" />
+            android:id="@+id/action_waitingRoomFragment_to_onlineQCMFragment"
+            app:destination="@id/onlineQCMFragment" />
     </fragment>
 
     <fragment
@@ -70,11 +70,10 @@
         tools:layout="@layout/fragment_memory_dual"/>
 
     <fragment
-        android:id="@+id/onlineQCMGameFragment"
-        android:name="com.example.speedMath.ui.online.OnlineQCMGameFragment"
-        android:label="Online QCM Game"
-        tools:layout="@layout/fragment_online_qcm_game"/>
-
+        android:id="@+id/onlineQCMFragment"
+        android:name="com.example.speedMath.ui.online.OnlineQCMFragment"
+        android:label="@string/action_qcm_online"
+        tools:layout="@layout/fragment_online_qcm"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"

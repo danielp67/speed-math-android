@@ -71,7 +71,7 @@ public class ArcadeFragment extends Fragment {
 
             case "ONLINE":
                 Navigation.findNavController(v)
-                        .navigate(R.id.action_navigation_home_to_onlineQCMFragment, args);
+                        .navigate(R.id.action_navigation_home_to_waitingRoomFragment, args);
                 break;
 
             case "MEMORY":
