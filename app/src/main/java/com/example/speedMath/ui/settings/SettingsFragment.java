@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ public class SettingsFragment extends Fragment {
     private ImageView pseudoStatus;
     private Button btnSavePseudo;
     private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
     private DatabaseReference playersRef;
     private String currentUid;
 
@@ -173,10 +175,12 @@ public class SettingsFragment extends Fragment {
             }
 
             new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                    .setTitle("Delete all settings and scores ?")
+                    .setTitle("Delete all datas and account ?")
                     .setMessage("Are you sure ?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         resetAllSettings();
+
+                        Toast.makeText(getContext(), "Settings reset ✅", Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton("No", null)
                     .show();
@@ -221,6 +225,17 @@ public class SettingsFragment extends Fragment {
         playerManager.setHapticEnabled(true);
         playerManager.setArcadeDifficulty(0);
         playerManager.setNbQuestions(0);
+        playerManager.setOnlinePseudo("");
+        playerManager.setOnlineUid("");
+        playerManager.setOnlineScore(0);
+        playerManager.setOnlinePlayedMatches(0);
+        playerManager.setOnlineWins(0);
+        playerManager.setOnlineLosses(0);
+        playerManager.setOnlineDraws(0);
+        playerManager.setCurrentLevel(0);
+        playerManager.setLastPlayedLevel(0);
+        editPseudo.setText("");
+
 
         // Réinitialiser l'UI (Switch + Spinners)
         SwitchCompat switchDark = requireView().findViewById(R.id.switchDark);
@@ -247,17 +262,21 @@ public class SettingsFragment extends Fragment {
 
         // Appliquer thème
         applyTheme(playerManager.isDarkModeEnabled());
+
+        // Firebase delete from players list
+        playersRef = FirebaseDatabase.getInstance().getReference("players");
+        playersRef.child(currentUid).removeValue();
+
     }
 
 
     private void signInAnonymously() {
         mAuth.signInAnonymously().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                FirebaseUser user = mAuth.getCurrentUser();
-                if (user != null) {
-                    currentUid = user.getUid();
-                    // Si déjà pseudo sauvegardé, on l'affiche
-                    String savedPseudo =  playerManager.getPseudo();
+                 currentUser = mAuth.getCurrentUser();
+                if (currentUser != null) {
+                    currentUid = currentUser.getUid();
+                    String savedPseudo =  playerManager.getOnlinePseudo();
                     if (!savedPseudo.isEmpty()) {
                         editPseudo.setText(savedPseudo);
                         pseudoStatus.setImageResource(R.drawable.circle_check_full);
@@ -301,6 +320,8 @@ public class SettingsFragment extends Fragment {
             return;
         }
 
+        // A user is new if they don't have a locally saved pseudo.
+        final boolean isNewPlayer = playerManager.getOnlineUid().isEmpty();
         // Vérification finale
         playersRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -320,13 +341,20 @@ public class SettingsFragment extends Fragment {
                     Map<String, Object> data = new HashMap<>();
                     data.put("pseudo", pseudo);
                     data.put("uid", currentUid);
-                    data.put("points", 0);
+
+                    if (isNewPlayer) {
+                        data.put("points", 0);
+                        data.put("matches_played", 0);
+                        data.put("matches_won", 0);
+                        data.put("matches_drawn", 0);
+                        data.put("matches_lost", 0);
+                    }
+
                     playersRef.child(currentUid).updateChildren(data);
 
                     // Sauvegarde SharedPreferences
-                    playerManager.setPseudo(pseudo);
-                    playerManager.setUid(currentUid);
-                    playerManager.setPoints(0);
+                    playerManager.setOnlinePseudo(pseudo);
+                    playerManager.setOnlineUid(currentUid);
 
                     Toast.makeText(getContext(), "Account saved ✅", Toast.LENGTH_SHORT).show();
                     pseudoStatus.setImageResource(R.drawable.circle_check_full);

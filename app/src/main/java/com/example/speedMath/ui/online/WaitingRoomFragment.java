@@ -47,7 +47,7 @@ public class WaitingRoomFragment extends Fragment {
 
         playerManager = PlayerManager.getInstance(requireContext());
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String pseudo = playerManager.getPseudo();
+        String pseudo = playerManager.getOnlinePseudo();
 
         // create helper and listener
         matchmakingHelper = new MatchmakingHelper(uid, pseudo);

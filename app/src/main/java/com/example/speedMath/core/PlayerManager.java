@@ -24,6 +24,14 @@ public class PlayerManager {
     private static final String KEY_HAPTIC = "haptic";
     private static final String KEY_ARCADE_DIFFICULTY = "arcade_difficulty";
     private static final String KEY_NB_QUESTIONS = "nb_questions";
+
+    private static final String KEY_ONLINE_UID = "online_uid";
+    private static final String KEY_ONLINE_PSEUDO = "online_pseudo";
+    private static final String KEY_ONLINE_SCORE = "online_score";
+    private static final String KEY_ONLINE_PLAYED_MATCHES = "online_played_matches";
+    private static final String KEY_ONLINE_WINS = "online_wins";
+    private static final String KEY_ONLINE_LOSSES = "online_losses";
+    private static final String KEY_ONLINE_DRAWS = "online_draws";
     private MediaPlayer backgroundMusic = null;
     private SharedPreferences prefs;
     private Context context;
@@ -186,30 +194,62 @@ public class PlayerManager {
         return prefs.getInt(KEY_NB_QUESTIONS, 0);
     }
 
-    public String getPseudo() {
-        String pseudo = prefs.getString("pseudo", "");
-        if (!pseudo.isEmpty()) {
-            return pseudo;
-        }
-        return "";
+
+    // ========================= Online Stats =========================
+
+    public String getOnlinePseudo() {
+        return prefs.getString(KEY_ONLINE_PSEUDO, "");
     }
 
-    public void setPseudo(String pseudo) {
-        prefs.edit().putString("pseudo", pseudo).apply();
+    public void setOnlinePseudo(String pseudo) {
+        prefs.edit().putString(KEY_ONLINE_PSEUDO, pseudo).apply();
     }
 
-    public String getUid() {
-        return prefs.getString("uid", "");
+    public String getOnlineUid() {
+        return prefs.getString(KEY_ONLINE_UID, "");
     }
 
-    public void setUid(String uid) {
-        prefs.edit().putString("uid", uid).apply();
-    }
-    public int getPoints() {
-        return prefs.getInt("points", 0);
+    public void setOnlineUid(String uid) {
+        prefs.edit().putString(KEY_ONLINE_UID, uid).apply();
     }
 
-    public void setPoints(int points) {
-        prefs.edit().putInt("points", points).apply();
+
+    public int getOnlineScore() {
+        return prefs.getInt(KEY_ONLINE_SCORE, 0);
     }
+
+    public void setOnlineScore(int points) {
+        prefs.edit().putInt(KEY_ONLINE_SCORE, points).apply();
+    }
+
+    public int getOnlinePlayedMatches() {
+        return prefs.getInt(KEY_ONLINE_PLAYED_MATCHES, 0);
+    }
+
+    public void setOnlinePlayedMatches(int matches) {
+        prefs.edit().putInt(KEY_ONLINE_PLAYED_MATCHES, matches).apply();
+    }
+    public int getOnlineWins() {
+        return prefs.getInt(KEY_ONLINE_WINS, 0);
+    }
+    public void setOnlineWins(int wins) {
+        prefs.edit().putInt(KEY_ONLINE_WINS, wins).apply();
+    }
+
+    public int getOnlineLosses() {
+        return prefs.getInt(KEY_ONLINE_LOSSES, 0);
+    }
+
+    public void setOnlineLosses(int losses) {
+        prefs.edit().putInt(KEY_ONLINE_LOSSES, losses).apply();
+    }
+
+    public int getOnlineDraws() {
+        return prefs.getInt(KEY_ONLINE_DRAWS, 0);
+    }
+
+    public void setOnlineDraws(int draws) {
+        prefs.edit().putInt(KEY_ONLINE_DRAWS, draws).apply();
+    }
+
 }

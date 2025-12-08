@@ -32,7 +32,7 @@
                     android:id="@+id/titlePseudo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pseudo"
+                    android:text="Account"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_marginBottom="12dp"/>
@@ -48,7 +48,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:hint="Entrez votre pseudo"
+                        android:hint="your pseudo"
                         android:maxLength="15"
                         android:inputType="textPersonName"/>
 
@@ -65,7 +65,7 @@
                     android:id="@+id/btnSavePseudo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Enregistrer"
+                    android:text="Save"
                     android:textAllCaps="false"
                     android:layout_marginTop="12dp"/>
             </LinearLayout>
@@ -251,7 +251,7 @@
                     android:id="@+id/btnResetScore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/resetAllScores"
+                    android:text="@string/deleteAllData"
                     android:textAllCaps="false"
                     android:backgroundTint="#D32F2F"
                     android:textColor="@android:color/white"/>
