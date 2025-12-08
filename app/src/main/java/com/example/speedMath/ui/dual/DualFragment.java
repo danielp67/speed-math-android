@@ -298,12 +298,12 @@ public class DualFragment extends BaseGameFragment {
         if (gameTimer != null) gameTimer.stop();
 
         // win
-        n1TextResult.setText("🎉 You win !");
+        n1TextResult.setText(R.string.win_message);
         n1TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         n1TextResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
 
         // loose
-        n2TextResult.setText("You loose");
+        n2TextResult.setText(R.string.lose_message);
         n2TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
         n2TextResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
     }

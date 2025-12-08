@@ -97,10 +97,12 @@ public class OnlineQCMFragment extends BaseGameFragment {
         btnQuit = view.findViewById(R.id.btnQuit);
 
         btnQuit.setOnClickListener(v -> {
+            declareForfeitLoss(); // Déclaration défaite
             if (getView() != null) {
                 Navigation.findNavController(getView()).navigate(R.id.navigation_home);
-                }
-            });
+            }
+        });
+
 
 
         card1 = view.findViewById(R.id.cardOption1);
@@ -194,22 +196,16 @@ public class OnlineQCMFragment extends BaseGameFragment {
         long myFinalScore = player.equals("P1") ? (p1Score != null ? p1Score : 0) : (p2Score != null ? p2Score : 0);
         long opponentFinalScore = player.equals("P1") ? (p2Score != null ? p2Score : 0) : (p1Score != null ? p1Score : 0);
 
-        String result;
+        int result;
         if (myFinalScore > opponentFinalScore) {
-            result = "🎉 Gagné !";
+            result = R.string.win_message;
         } else if (myFinalScore < opponentFinalScore) {
-            result = "💀 Perdu !";
+            result = R.string.lose_message;
         } else {
-            result = "⚖️ Égalité !";
+            result = R.string.draw_message;
         }
         textResult.setText(result);
 
-        // Navigate back to home after a delay
-      /*  new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (getView() != null) {
-                Navigation.findNavController(getView()).navigate(R.id.navigation_home);
-            }
-        }, 3000);*/
     }
 
     private void generateQuestion() {
@@ -321,4 +317,30 @@ public class OnlineQCMFragment extends BaseGameFragment {
         card4.setClickable(clickable);
     }
 
+    private void declareForfeitLoss() {
+        if (isGameFinished) return; // si déjà fini, ne rien faire
+
+        Log.w(TAG, "Player quit the match → declaring forfeit loss.");
+
+        String winnerField = player.equals("P1") ? "p2" : "p1";
+        String opponentScoreField = player.equals("P1") ? "p2_score" : "p1_score";
+
+        // donner automatiquement le score maximum si tu veux
+        matchRef.child(opponentScoreField).setValue(nbQuestions);
+
+        matchRef.child("winner").setValue(winnerField);
+        matchRef.child("state").setValue("finished");
+
+        isGameFinished = true;
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (!isGameFinished && getActivity() != null && !getActivity().isChangingConfigurations()) {
+            declareForfeitLoss();
+        }
+    }
 }

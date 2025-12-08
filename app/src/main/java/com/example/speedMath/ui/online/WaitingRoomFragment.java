@@ -119,7 +119,7 @@ public class WaitingRoomFragment extends Fragment {
         View overlayView = getLayoutInflater().inflate(R.layout.countdown_overlay, overlayContainer, true);
         TextView textCountdown = overlayView.findViewById(R.id.textCountdown);
 
-        new CountDownTimer(4000, 1000) {
+        new CountDownTimer(3500, 1000) {
             public void onTick(long millisUntilFinished) {
                 long seconds = (millisUntilFinished / 1000) % 60;
                 if(seconds == 0) return;
