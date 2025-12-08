@@ -1,10 +1,12 @@
 package com.example.speedMath.ui.online;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ public class WaitingRoomFragment extends Fragment {
     private MatchmakingHelper matchmakingHelper;
     private boolean matchStarted = false;
     private PlayerManager playerManager;
+    private FrameLayout overlayContainer;
 
     @Nullable
     @Override
@@ -37,13 +40,13 @@ public class WaitingRoomFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view,
-                              @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         textStatus = view.findViewById(R.id.textStatus);
         progressBar = view.findViewById(R.id.progressBar);
         btnCancel = view.findViewById(R.id.btnCancel);
+        overlayContainer = view.findViewById(R.id.overlayContainer);
 
         playerManager = PlayerManager.getInstance(requireContext());
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -72,10 +75,8 @@ public class WaitingRoomFragment extends Fragment {
                     bundle.putString("player", "P2");
                 }
 
-
-                // navigation vers le fragment online (QCM)
-                Navigation.findNavController(requireView())
-                        .navigate(R.id.action_waitingRoomFragment_to_onlineQCMFragment, bundle);
+                // Show countdown overlay
+                showCountdownOverlay(bundle);
             }
 
             @Override
@@ -108,9 +109,32 @@ public class WaitingRoomFragment extends Fragment {
                     public void handleOnBackPressed() {
                         if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
                         setEnabled(false);
-                        requireActivity().onBackPressed();
+                        requireActivity().getOnBackPressedDispatcher().onBackPressed();
                     }
                 });
+    }
+
+    private void showCountdownOverlay(Bundle bundle) {
+        overlayContainer.setVisibility(View.VISIBLE);
+        View overlayView = getLayoutInflater().inflate(R.layout.countdown_overlay, overlayContainer, true);
+        TextView textCountdown = overlayView.findViewById(R.id.textCountdown);
+
+        new CountDownTimer(4000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                long seconds = (millisUntilFinished / 1000) % 60;
+                if(seconds == 0) return;
+                textCountdown.setText(String.valueOf(seconds));
+            }
+
+            public void onFinish() {
+                overlayContainer.setVisibility(View.GONE);
+                // navigation vers le fragment online (QCM)
+                if (getView() != null) {
+                    Navigation.findNavController(requireView())
+                            .navigate(R.id.action_waitingRoomFragment_to_onlineQCMFragment, bundle);
+                }
+            }
+        }.start();
     }
 
     @Override
