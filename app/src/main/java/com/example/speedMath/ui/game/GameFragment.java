@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -64,7 +65,7 @@ public class GameFragment extends BaseGameFragment {
         textScoreRight = root.findViewById(R.id.textScoreRight);
         textQuestion = root.findViewById(R.id.textQuestion);
         textLevelNumber = root.findViewById(R.id.textLevelNumber);
-        textLevelNumber.setText(" ⭐⭐⭐");
+        textLevelNumber.setText("☆☆☆☆☆");
         textResult = root.findViewById(R.id.textResult);
         textResult.setText("");
 
@@ -174,6 +175,7 @@ public class GameFragment extends BaseGameFragment {
         if (textScoreRight != null) {
             playerManager.setCorrectAnswersStreak(gameMode, score);
             textScoreRight.setText(score + "/" + playerManager.getCorrectAnswersStreak(gameMode));
+            updateStars(); // Met à jour les étoiles
         }
     }
 
@@ -193,4 +195,28 @@ public class GameFragment extends BaseGameFragment {
     }
 
 
+    private void updateStars() {
+        int filledStars = score / 5; // Nombre d'étoiles pleines (1 tous les 5 points)
+        int maxStars = 5; // Nombre total d'étoiles à afficher
+
+        StringBuilder stars = new StringBuilder();
+        for (int i = 0; i < maxStars; i++) {
+            stars.append(i < filledStars ? "⭐" : "☆");
+        }
+        textLevelNumber.setText(stars.toString());
+
+        // Animation si une nouvelle étoile est remplie
+        if (score % 5 == 0 && score > 0 && filledStars <= maxStars) {
+            AnimUtils.scaleAnimation(textLevelNumber);
+            feedbackManager.playLevelUpSound();
+        }
+
+        // Pour les niveaux > 25 (5 étoiles pleines), affiche "⭐ x N"
+        if (filledStars > maxStars) {
+            textLevelNumber.setText("⭐ x " + filledStars);
+            textLevelNumber.setTextSize(24);
+        }
+    }
+
 }
+

@@ -219,4 +219,20 @@ public class AnimUtils {
         view.startAnimation(anim);
     }
 
+    // Dans ta classe AnimUtils (ou directement dans GameFragment)
+    public static void scaleAnimation(View view) {
+        view.animate()
+                .scaleX(1.5f)
+                .scaleY(1.5f)
+                .setDuration(300)
+                .withEndAction(() -> {
+                    view.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(300)
+                            .start();
+                })
+                .start();
+    }
+
 }

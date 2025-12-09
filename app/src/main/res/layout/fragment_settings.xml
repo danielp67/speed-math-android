@@ -66,6 +66,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Save"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
                     android:textAllCaps="false"
                     android:layout_marginTop="12dp"/>
             </LinearLayout>
@@ -254,7 +256,8 @@
                     android:text="@string/deleteAllData"
                     android:textAllCaps="false"
                     android:backgroundTint="#D32F2F"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
