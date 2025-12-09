@@ -12,6 +12,8 @@ public class LevelGenerator {
         int levelNumber = 1;
         String[] advancedModes = {"ADD", "SUB", "MUL", "DIV", "ALL"};
 
+        for(int i = 0; i < 5; i++)
+        {
         for (String mode : advancedModes) {
             levelNumber = generateBlock(levels,
                     mode,
@@ -19,6 +21,7 @@ public class LevelGenerator {
                     10,      // 5 niveaux par mode (ajuste comme tu veux)
                     playerLevel
             );
+        }
         }
 
         return levels;

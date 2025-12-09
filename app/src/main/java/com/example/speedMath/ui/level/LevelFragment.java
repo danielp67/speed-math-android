@@ -145,6 +145,7 @@ public class LevelFragment extends BaseGameFragment {
     private void generateQuestion() {
         if(playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(textQuestion);
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
+        questionGenerator.setLevel(gameLevel);
         questionNbr++;
         textQuestion.setText(q.expression);
         correctAnswer = q.answer;
