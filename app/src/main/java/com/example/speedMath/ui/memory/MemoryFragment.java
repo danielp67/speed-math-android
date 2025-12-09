@@ -277,6 +277,7 @@ public class MemoryFragment extends BaseGameFragment {
     private void showEndScreen() {
         // Stop timer
         gameTimer.stop();
+        feedbackManager.playLevelUpSound();
 
         String winner = "🎉 You win !";
 

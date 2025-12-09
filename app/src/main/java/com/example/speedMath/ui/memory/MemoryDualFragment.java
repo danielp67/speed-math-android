@@ -257,6 +257,7 @@ public class MemoryDualFragment extends BaseGameFragment {
     private void showEndScreen() {
         // Stop timer
         gameTimer.stop();
+        feedbackManager.playLevelUpSound();
 
         String winner;
         if (scoreP1 > scoreP2) winner = "🎉 Player 1 win !";
