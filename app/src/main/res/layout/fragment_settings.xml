@@ -67,6 +67,7 @@
                     android:layout_height="wrap_content"
                     android:text="Save"
                     android:textColor="@color/white"
+                    android:backgroundTint="@color/blue_primary"
                     android:textStyle="bold"
                     android:textAllCaps="false"
                     android:layout_marginTop="12dp"/>
