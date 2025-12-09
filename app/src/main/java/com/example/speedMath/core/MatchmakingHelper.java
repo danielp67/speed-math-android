@@ -131,10 +131,13 @@ public class MatchmakingHelper {
         matchData.put("state", "playing");
         matchData.put("p1_score", 0);
         matchData.put("p2_score", 0);
+        matchData.put("winner", null);
+        matchData.put("timestamp", System.currentTimeMillis());
+
 
         dbRef.child("matches").child(matchId).setValue(matchData)
                 .addOnFailureListener(e -> {
-                    if (listener != null) listener.onError("Erreur création match");
+                    if (listener != null) listener.onError("Error creating match");
                 });
     }
 }
