@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.BaseGameFragment;
@@ -45,9 +47,10 @@ public class MemoryFragment extends BaseGameFragment {
     private int combo = 0;
 
     private boolean busy = false;
-
     private final Handler handler = new Handler();
-
+    private View endOverlay;
+    private TextView textWinner;
+    private Button btnReplay;
     private GameTimer gameTimer;
     private FeedbackManager feedbackManager;
 
@@ -61,6 +64,15 @@ public class MemoryFragment extends BaseGameFragment {
         textScore = root.findViewById(R.id.textScore);     // ajoute ce TextView dans ton layout
         textCombo = root.findViewById(R.id.textCombo);     // ajoute ce TextView dans ton layout
         grid = root.findViewById(R.id.gridMemory);
+        endOverlay = root.findViewById(R.id.endOverlay);
+        textWinner = root.findViewById(R.id.textWinner);
+        btnReplay = root.findViewById(R.id.btnReplay);
+
+        btnReplay.setOnClickListener(v ->
+        {
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.navigation_home);
+        });
 
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
@@ -169,7 +181,7 @@ public class MemoryFragment extends BaseGameFragment {
     }
 
     private void checkMatch() {
-        try {
+
             if (firstCard == null || secondCard == null) return;
 
             boolean match = firstCard.getIndex() == secondCard.getIndex();
@@ -222,7 +234,11 @@ public class MemoryFragment extends BaseGameFragment {
                 firstCard.setFaceUp(false);
                 secondCard.setFaceUp(false);
             }
-        } finally {
+
+        if (isGameFinished()) {
+            showEndScreen();
+            return;
+        }
             // reset selection
             firstCard = null;
             secondCard = null;
@@ -233,7 +249,7 @@ public class MemoryFragment extends BaseGameFragment {
                 button.setClickable(true);
             }
             handler.postDelayed(() -> busy = false, 350);
-        }
+
     }
 
     // safe getter to avoid IndexOutOfBounds when indices are -1
@@ -249,6 +265,25 @@ public class MemoryFragment extends BaseGameFragment {
 
     private void updateScore() {
         if (textScore != null) textScore.setText("Score: " + score);
+    }
+
+    private boolean isGameFinished() {
+        for (Card c : cards) {
+            if (!c.isMatched()) return false;
+        }
+        return true;
+    }
+
+    private void showEndScreen() {
+        // Stop timer
+        gameTimer.stop();
+
+        String winner = "🎉 You win !";
+
+        textWinner.setText(winner);
+        endOverlay.setVisibility(View.VISIBLE);
+        endOverlay.setAlpha(0f);
+        endOverlay.animate().alpha(1f).setDuration(400).start();
     }
 
 }
