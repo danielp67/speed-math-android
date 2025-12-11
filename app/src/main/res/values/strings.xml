@@ -61,6 +61,8 @@
     <string name="win_message">🎉 You win !</string>
     <string name="lose_message">You loose !</string>
     <string name="draw_message">Draw !</string>
+    <string name="play_again">Play again ?</string>
+    <string name="opponent">Opponent</string>
 
 
 </resources>

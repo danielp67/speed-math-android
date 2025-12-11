@@ -12,6 +12,8 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.speedMath.R;
@@ -37,6 +39,11 @@ public class QCMFragment extends BaseGameFragment {
     private int score = 0;
     private TextView textCombo;
     private int combo = 0;
+    private Button btnReplay;
+    private LinearLayout overlay;
+    private TextView textWinner;
+
+
     public QCMFragment() {
         // Required empty constructor
     }
@@ -80,6 +87,9 @@ public class QCMFragment extends BaseGameFragment {
         textScoreRight = view.findViewById(R.id.textScoreRight);
         textScoreRight.setText(score + "/" + nbQuestions);
         textCombo = view.findViewById(R.id.textCombo);
+        overlay = view.findViewById(R.id.localOverlay);
+        textWinner = view.findViewById(R.id.textWinner);
+        btnReplay = view.findViewById(R.id.btnReplay);
 
         card1 = view.findViewById(R.id.cardOption1);
         card2 = view.findViewById(R.id.cardOption2);
@@ -96,6 +106,11 @@ public class QCMFragment extends BaseGameFragment {
         card2.setOnClickListener(v -> checkAnswer(t2));
         card3.setOnClickListener(v -> checkAnswer(t3));
         card4.setOnClickListener(v -> checkAnswer(t4));
+
+        btnReplay.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.navigation_home);
+        });
 
         // Timer
         gameTimer = new GameTimer();
@@ -180,22 +195,14 @@ public class QCMFragment extends BaseGameFragment {
 
     private void updateScore() {
         if (textScoreRight != null) {
-           // playerManager.setCorrectAnswersStreak(gameMode, score);
             textScoreRight.setText(score + "/" + nbQuestions);
         }
     }
 
     private void levelCompleted() {
         setCardsClickable(false);
-        textResult.setText("🎉 You win !");
-        textResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
-        textResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
-
+        showEndGame();
         if (gameTimer != null) gameTimer.stop();
-        textResult.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_home);
-        });
     }
     // UI helpers
     private void highlightCorrect(TextView view) {
@@ -224,33 +231,6 @@ public class QCMFragment extends BaseGameFragment {
         card4.setCardBackgroundColor(Color.WHITE);
     }
 
-    private class CountUpTimer extends Thread {
-        private boolean running = true;
-
-        @Override
-        public void run() {
-            while (running) {
-                try {
-                    Thread.sleep(100);
-                    elapsedMillis += 100;
-                    if (!isAdded() || getActivity() == null) continue;
-                    getActivity().runOnUiThread(() -> textTimer.setText(formatTime(elapsedMillis)));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void stopTimer() { running = false; }
-    }
-
-    private String formatTime(long millis) {
-        int seconds = (int) (millis / 1000);
-        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
-
-        return String.format("%02d.%2d s", seconds, milliseconds);
-    }
-
     public void setCardsClickable(boolean clickable) {
         card1.setClickable(clickable);
         card2.setClickable(clickable);
@@ -258,4 +238,10 @@ public class QCMFragment extends BaseGameFragment {
         card4.setClickable(clickable);
     }
 
+    private void showEndGame() {
+        textWinner.setText(R.string.win_message);
+        overlay.setAlpha(0f);
+        overlay.setVisibility(View.VISIBLE);
+        overlay.animate().alpha(1f).setDuration(500).start();
+    }
 }

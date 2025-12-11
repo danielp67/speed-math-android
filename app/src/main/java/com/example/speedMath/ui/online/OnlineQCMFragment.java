@@ -6,14 +6,22 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.MenuProvider;
+import androidx.lifecycle.Lifecycle;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
@@ -50,7 +58,11 @@ public class OnlineQCMFragment extends BaseGameFragment {
     private int score = 0;
     private TextView textCombo;
     private int combo = 0;
-    private Button btnQuit;
+
+    private Button btnReplay;
+    private LinearLayout overlay;
+    private TextView textWinner;
+    private OnBackPressedCallback backPressedCallback;
 
     public OnlineQCMFragment() {
         // Required empty constructor
@@ -60,7 +72,19 @@ public class OnlineQCMFragment extends BaseGameFragment {
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {}
 
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == android.R.id.home) {
+                    handleBackOrUpNavigation();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
         return inflater.inflate(R.layout.fragment_online_qcm, container, false);
     }
 
@@ -94,16 +118,9 @@ public class OnlineQCMFragment extends BaseGameFragment {
         textOpponentName.setText(opponentPseudo);
         textOpponentScore = view.findViewById(R.id.textOpponentScore);
         textOpponentScore.setText("0");
-        btnQuit = view.findViewById(R.id.btnQuit);
-
-        btnQuit.setOnClickListener(v -> {
-            declareForfeitLoss(); // Déclaration défaite
-            if (getView() != null) {
-                Navigation.findNavController(getView()).navigate(R.id.navigation_home);
-            }
-        });
-
-
+        overlay = view.findViewById(R.id.localOverlay);
+        textWinner = view.findViewById(R.id.textWinner);
+        btnReplay = view.findViewById(R.id.btnReplay);
 
         card1 = view.findViewById(R.id.cardOption1);
         card2 = view.findViewById(R.id.cardOption2);
@@ -121,6 +138,17 @@ public class OnlineQCMFragment extends BaseGameFragment {
         card3.setOnClickListener(v -> checkAnswer(t3));
         card4.setOnClickListener(v -> checkAnswer(t4));
 
+        // Callback pour le bouton back
+        backPressedCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handleBackOrUpNavigation();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                backPressedCallback
+        );
         // Timer
         gameTimer = new GameTimer();
         gameTimer.setListener((elapsed, formatted) -> {
@@ -204,8 +232,15 @@ public class OnlineQCMFragment extends BaseGameFragment {
         } else {
             result = R.string.draw_message;
         }
-        textResult.setText(result);
 
+        overlay.setAlpha(0f);
+        overlay.setVisibility(View.VISIBLE);
+        overlay.animate().alpha(1f).setDuration(500).start();
+        textWinner.setText(result);
+        btnReplay.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.navigation_home);
+        });
     }
 
     private void generateQuestion() {
@@ -269,7 +304,6 @@ public class OnlineQCMFragment extends BaseGameFragment {
     private void playerFinished() {
         gameTimer.stop();
         setCardsClickable(false);
-        textResult.setText("Waiting for opponent...");
         String winnerField = player.equals("P1") ? "p1" : "p2";
         matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
@@ -318,14 +352,14 @@ public class OnlineQCMFragment extends BaseGameFragment {
     }
 
     private void declareForfeitLoss() {
-        if (isGameFinished) return; // si déjà fini, ne rien faire
+        if (isGameFinished) return; // if already finished, do nothing
 
         Log.w(TAG, "Player quit the match → declaring forfeit loss.");
 
         String winnerField = player.equals("P1") ? "p2" : "p1";
         String opponentScoreField = player.equals("P1") ? "p2_score" : "p1_score";
 
-        // donner automatiquement le score maximum si tu veux
+        // give the opponent a point
         matchRef.child(opponentScoreField).setValue(nbQuestions);
 
         matchRef.child("winner").setValue(winnerField);
@@ -335,12 +369,17 @@ public class OnlineQCMFragment extends BaseGameFragment {
     }
 
 
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        if (!isGameFinished && getActivity() != null && !getActivity().isChangingConfigurations()) {
-            declareForfeitLoss();
-        }
+    private void handleBackOrUpNavigation() {
+        declareForfeitLoss();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            try {
+                NavController nav = Navigation.findNavController(requireView());
+                nav.navigate(R.id.navigation_home);
+            } catch (Exception e) {
+                Log.e(TAG, "Error navigating", e);
+                requireActivity().finish();
+            }
+        }, 500);
     }
+
 }

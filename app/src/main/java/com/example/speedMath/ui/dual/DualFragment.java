@@ -5,12 +5,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
@@ -51,6 +57,10 @@ public class DualFragment extends BaseGameFragment {
     private Random random = new Random();
 
     private TextView p1TextCombo, p2TextCombo;
+
+    private LinearLayout p1Overlay, p2Overlay;
+    private TextView p1TextWinner, p2TextWinner;
+    private Button p1BtnReplay, p2BtnReplay;
     private int p1Combo = 0, p2Combo = 0;
     public DualFragment() {}
 
@@ -87,6 +97,9 @@ public class DualFragment extends BaseGameFragment {
         p1TextTimer = p1.findViewById(R.id.textTimer);
         p1TextScoreRight = p1.findViewById(R.id.textScoreRight);
         p1TextCombo = p1.findViewById(R.id.textCombo);
+        p1BtnReplay = p1.findViewById(R.id.btnReplay);
+        p1Overlay = p1.findViewById(R.id.localOverlay);
+        p1TextWinner = p1.findViewById(R.id.textWinner);
 
         p1Card1 = p1.findViewById(R.id.cardOption1);
         p1Card2 = p1.findViewById(R.id.cardOption2);
@@ -110,6 +123,12 @@ public class DualFragment extends BaseGameFragment {
         p1Texts.add(p1Text3);
         p1Texts.add(p1Text4);
 
+        p1BtnReplay.setOnClickListener(view ->
+        {
+            NavController navController = Navigation.findNavController(view);
+            navController.navigate(R.id.navigation_home);
+        });
+
 
         // ====================== INIT PLAYER 2 ======================
         View p2 = v.findViewById(R.id.viewPlayer2);
@@ -118,6 +137,9 @@ public class DualFragment extends BaseGameFragment {
         p2TextTimer = p2.findViewById(R.id.textTimer);
         p2TextScoreRight = p2.findViewById(R.id.textScoreRight);
         p2TextCombo = p2.findViewById(R.id.textCombo);
+        p2BtnReplay = p2.findViewById(R.id.btnReplay);
+        p2Overlay = p2.findViewById(R.id.localOverlay);
+        p2TextWinner = p2.findViewById(R.id.textWinner);
 
         p2Card1 = p2.findViewById(R.id.cardOption1);
         p2Card2 = p2.findViewById(R.id.cardOption2);
@@ -140,6 +162,12 @@ public class DualFragment extends BaseGameFragment {
         p2Texts.add(p2Text2);
         p2Texts.add(p2Text3);
         p2Texts.add(p2Text4);
+
+        p2BtnReplay.setOnClickListener(view ->
+                {
+                    NavController navController = Navigation.findNavController(view);
+                    navController.navigate(R.id.navigation_home);
+                });
 
         p1TextScoreRight.setText(getString(R.string.score_format, p1Score, nbQuestions));
         p2TextScoreRight.setText(getString(R.string.score_format, p2Score, nbQuestions));
@@ -253,7 +281,7 @@ public class DualFragment extends BaseGameFragment {
         }
 
         if (p1Score >= nbQuestions) {
-            levelCompleted(p1TextResult, p2TextResult);
+            levelCompleted();
         } else {
             selected.postDelayed(this::generateQuestionPlayer1, 1000);
         }
@@ -285,27 +313,17 @@ public class DualFragment extends BaseGameFragment {
         }
 
         if (p2Score >= nbQuestions) {
-             levelCompleted(p2TextResult, p1TextResult);
+             levelCompleted();
         } else {
             selected.postDelayed(this::generateQuestionPlayer2, 1000);
         }
     }
 
-    private void levelCompleted(TextView n1TextResult, TextView n2TextResult) {
+    private void levelCompleted() {
         setP1CardsClickable(false);
         setP2CardsClickable(false);
-
         if (gameTimer != null) gameTimer.stop();
-
-        // win
-        n1TextResult.setText(R.string.win_message);
-        n1TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
-        n1TextResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
-
-        // loose
-        n2TextResult.setText(R.string.lose_message);
-        n2TextResult.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
-        n2TextResult.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
+        showEndGame(p1Score, p2Score);
     }
     // =====================================================
     // HIGHLIGHT HELPERS
@@ -339,36 +357,6 @@ public class DualFragment extends BaseGameFragment {
         }
     }
 
-    private class CountUpTimer extends Thread {
-        private boolean running = true;
-
-        @Override
-        public void run() {
-            while (running) {
-                try {
-                    Thread.sleep(100);
-                    elapsedMillis += 100;
-                    if (!isAdded() || getActivity() == null) continue;
-                    getActivity().runOnUiThread(() -> {
-                        p1TextTimer.setText(formatTime(elapsedMillis));
-                        p2TextTimer.setText(formatTime(elapsedMillis));
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void stopTimer() { running = false; }
-    }
-
-    private String formatTime(long millis) {
-        int seconds = (int) (millis / 1000);
-        int milliseconds = (int) (millis % 1000) / 100; // centièmes (2 chiffres)
-
-        return String.format("%02d.%2d s", seconds, milliseconds);
-    }
-
     public void setP1CardsClickable(boolean clickable) {
         p1Card1.setClickable(clickable);
         p1Card2.setClickable(clickable);
@@ -381,6 +369,23 @@ public class DualFragment extends BaseGameFragment {
         p2Card2.setClickable(clickable);
         p2Card3.setClickable(clickable);
         p2Card4.setClickable(clickable);
+    }
+
+    private void showEndGame(int scorePlayer1, int scorePlayer2) {
+        boolean isP1Winner = scorePlayer1 > scorePlayer2;
+
+        p1TextWinner.setText(isP1Winner ? R.string.win_message : R.string.lose_message);
+        p2TextWinner.setText(isP1Winner ? R.string.lose_message : R.string.win_message);
+
+        // Animation pour le joueur 1
+        p1Overlay.setAlpha(0f);
+        p1Overlay.setVisibility(View.VISIBLE);
+        p1Overlay.animate().alpha(1f).setDuration(500).start();
+
+        // Animation pour le joueur 2
+        p2Overlay.setAlpha(0f);
+        p2Overlay.setVisibility(View.VISIBLE);
+        p2Overlay.animate().alpha(1f).setDuration(500).start();
     }
 
 }
