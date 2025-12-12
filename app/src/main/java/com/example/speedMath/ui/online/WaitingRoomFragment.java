@@ -2,6 +2,7 @@ package com.example.speedMath.ui.online;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -28,6 +30,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
+import com.example.speedMath.core.DailyMatchManager;
 import com.example.speedMath.core.MatchmakingHelper;
 import com.example.speedMath.core.PlayerManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,9 +69,15 @@ public class WaitingRoomFragment extends Fragment {
         overlayContainer = view.findViewById(R.id.overlayContainer);
 
         playerManager = PlayerManager.getInstance(requireContext());
+        DailyMatchManager.getInstance(requireContext()).checkDailyMatchLimit((canPlay, currentCount, limit) -> {
+            if (!canPlay) {
+                showDailyLimitReachedToast(currentCount, limit);
+                return;
+            }
+        });
+
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         pseudo = playerManager.getOnlinePseudo();
-
         // create helper and listener
         matchmakingHelper = new MatchmakingHelper(uid, pseudo);
         matchmakingHelper.setMatchListener(new MatchmakingHelper.MatchListener() {
@@ -76,6 +85,7 @@ public class WaitingRoomFragment extends Fragment {
             public void onMatchFound(String matchId, String opponentUid, String opponentPseudo) {
                 if (matchStarted) return;
                 matchStarted = true;
+                DailyMatchManager.getInstance(requireContext()).incrementDailyMatchCount();
 
                 // Callback pour le bouton back
                 backPressedCallback = new OnBackPressedCallback(true) {
@@ -122,7 +132,8 @@ public class WaitingRoomFragment extends Fragment {
             // supprime entry waiting
             if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
             // revient en arrière
-            Navigation.findNavController(requireView()).navigateUp();
+            NavController nav = Navigation.findNavController(requireView());
+            nav.navigate(R.id.navigation_home);
         });
 
         // backpress : on annule proprement
@@ -142,6 +153,7 @@ public class WaitingRoomFragment extends Fragment {
         overlayContainer.setVisibility(View.VISIBLE);
         View overlayView = getLayoutInflater().inflate(R.layout.countdown_overlay, overlayContainer, true);
         TextView textCountdown = overlayView.findViewById(R.id.textCountdown);
+        btnCancel.setVisibility(View.GONE);
 
         new CountDownTimer(3500, 1000) {
             public void onTick(long millisUntilFinished) {
@@ -199,5 +211,12 @@ public class WaitingRoomFragment extends Fragment {
                 requireActivity().finish();
             }
         }, 500);
+    }
+
+    private void showDailyLimitReachedToast(int currentCount, int limit) {
+        NavController nav = Navigation.findNavController(requireView());
+        nav.navigate(R.id.navigation_home);
+
+        Toast.makeText(requireContext(), "Daily Limit Reached : " + limit + " matches played.", Toast.LENGTH_SHORT).show();
     }
 }
