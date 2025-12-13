@@ -34,6 +34,7 @@ import com.example.speedMath.core.DailyMatchManager;
 import com.example.speedMath.core.MatchmakingHelper;
 import com.example.speedMath.core.PlayerManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -49,6 +50,8 @@ public class WaitingRoomFragment extends Fragment {
     private PlayerManager playerManager;
     private FrameLayout overlayContainer;
     private OnBackPressedCallback backPressedCallback;
+    private long points;
+    private long rank;
 
     @Nullable
     @Override
@@ -78,52 +81,84 @@ public class WaitingRoomFragment extends Fragment {
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         pseudo = playerManager.getOnlinePseudo();
-        // create helper and listener
-        matchmakingHelper = new MatchmakingHelper(uid, pseudo);
-        matchmakingHelper.setMatchListener(new MatchmakingHelper.MatchListener() {
-            @Override
-            public void onMatchFound(String matchId, String opponentUid, String opponentPseudo) {
-                if (matchStarted) return;
-                matchStarted = true;
-                DailyMatchManager.getInstance(requireContext()).incrementDailyMatchCount();
 
-                // Callback pour le bouton back
-                backPressedCallback = new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        handleBackOrUpNavigation(matchId,uid, opponentUid);
-                    }
-                };
-                // Optionnel : cancel pour être sûr que waiting est propre
-                matchmakingHelper.cancelMatchmaking();
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("players")
+                .child(uid);
 
-                Bundle bundle = new Bundle();
-                bundle.putString("matchId", matchId);
-                bundle.putString("myUid", uid);
-                bundle.putString("opponentUid", opponentUid);
-                bundle.putString("opponentPseudo", opponentPseudo);
-                // need to know if we are player 1 or 2
-                if (uid.compareTo(opponentUid) < 0) {
-                    bundle.putString("player", "P1");
-                } else {
-                    bundle.putString("player", "P2");
+        ref.get().addOnSuccessListener(snapshot -> {
+
+            long points = snapshot.child("points").getValue(Long.class) != null
+                    ? snapshot.child("points").getValue(Long.class)
+                    : 0;
+
+            long rank = snapshot.child("rank").getValue(Long.class) != null
+                    ? snapshot.child("rank").getValue(Long.class)
+                    : 999999;
+
+            // ✅ CRÉATION
+            matchmakingHelper = new MatchmakingHelper(uid, pseudo, points, rank);
+
+            // ✅ LISTENER
+            matchmakingHelper.setMatchListener(new MatchmakingHelper.MatchListener() {
+                @Override
+                public void onMatchFound(String matchId, String uid, String pseudo, long points, long rank, String opponentUid, String opponentPseudo, long opponentPoints, long opponentRank) {
+                    if (matchStarted) return;
+                    matchStarted = true;
+
+                    DailyMatchManager.getInstance(requireContext())
+                            .incrementDailyMatchCount();
+
+                    backPressedCallback = new OnBackPressedCallback(true) {
+                        @Override
+                        public void handleOnBackPressed() {
+                            handleBackOrUpNavigation(matchId, uid, opponentUid);
+                        }
+                    };
+
+                    matchmakingHelper.cancelMatchmaking();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("matchId", matchId);
+                    bundle.putString("myUid", uid);
+                    bundle.putString("myPseudo", pseudo);
+                    bundle.putLong("myPoints", points);
+                    bundle.putLong("myRank", rank);
+                    bundle.putString("opponentUid", opponentUid);
+                    bundle.putString("opponentPseudo", opponentPseudo);
+                    bundle.putLong("opponentPoints", opponentPoints);
+                    bundle.putLong("opponentRank", opponentRank);
+                    bundle.putString(
+                            "player",
+                            uid.compareTo(opponentUid) < 0 ? "P1" : "P2"
+                    );
+
+                    showCountdownOverlay(bundle);
                 }
 
-                // Show countdown overlay
-                showCountdownOverlay(bundle);
-            }
+                @Override
+                public void onError(String message) {
+                    textStatus.setText("Error : " + message);
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
 
-            @Override
-            public void onError(String message) {
-                textStatus.setText("Error : " + message);
-                progressBar.setVisibility(View.GONE);
-            }
+            // ✅ ICI ET SEULEMENT ICI
+            matchmakingHelper.findMatch();
+
+        }).addOnFailureListener(e -> {
+
+            // fallback sécurité
+            matchmakingHelper = new MatchmakingHelper(uid, pseudo, 0, 999999);
+            matchmakingHelper.findMatch();
         });
+
+
 
         textStatus.setText("Searching for a match…");
         progressBar.setVisibility(View.VISIBLE);
 
-        matchmakingHelper.findMatch();
+       // matchmakingHelper.findMatch();
 
         // bouton annuler
         btnCancel.setOnClickListener(v -> {

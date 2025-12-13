@@ -47,8 +47,8 @@ public class OnlineQCMFragment extends BaseGameFragment {
     private ValueEventListener matchListener;
     private boolean isGameFinished = false;
 
-    private TextView textQuestion, textResult, textTimer, textScoreRight;
-    private TextView textOpponentName, textOpponentScore;
+    private TextView textQuestion, textTimer, textMyScore, textMyPseudo, textMyStats;
+    private TextView textOpponentName, textOpponentScore, textOpponentStats;
     private CardView card1, card2, card3, card4;
     private TextView t1, t2, t3, t4;
     private int correctAnswer, nbQuestions, arcadeDifficulty;
@@ -63,6 +63,12 @@ public class OnlineQCMFragment extends BaseGameFragment {
     private LinearLayout overlay;
     private TextView textWinner;
     private OnBackPressedCallback backPressedCallback;
+    private String pseudo;
+    private long points;
+    private long rank;
+    private long opponentPoints;
+    private long opponentRank;
+
 
     public OnlineQCMFragment() {
         // Required empty constructor
@@ -96,9 +102,13 @@ public class OnlineQCMFragment extends BaseGameFragment {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
             matchId = getArguments().getString("matchId");
+            pseudo = getArguments().getString("myPseudo");
+            points = getArguments().getLong("myPoints");
+            rank = getArguments().getLong("myRank");
             opponentPseudo = getArguments().getString("opponentPseudo");
+            opponentPoints = getArguments().getLong("opponentPoints");
+            opponentRank = getArguments().getLong("opponentRank");
             player = getArguments().getString("player");
-
         }
         matchRef = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
 
@@ -108,16 +118,24 @@ public class OnlineQCMFragment extends BaseGameFragment {
 
         // UI references
         textQuestion = view.findViewById(R.id.textQuestion);
-        textResult = view.findViewById(R.id.textResult);
         textTimer = view.findViewById(R.id.textTimer);
-        textScoreRight = view.findViewById(R.id.textScoreRight);
-        textScoreRight.setText(score + "/" + nbQuestions);
+        textMyPseudo = view.findViewById(R.id.textMyPseudo);
+        textMyStats = view.findViewById(R.id.textMyStats);
+        textMyScore = view.findViewById(R.id.textMyScore);
+        textMyPseudo.setText(pseudo);
+        textMyScore.setText(String.valueOf(score));
+        textMyStats.setText(points + " pts  (#" + rank + ")");
+
         textCombo = view.findViewById(R.id.textCombo);
         textCombo.setAlpha(0);
+
         textOpponentName = view.findViewById(R.id.textOpponentName);
         textOpponentName.setText(opponentPseudo);
+        textOpponentStats = view.findViewById(R.id.textOpponentStats);
         textOpponentScore = view.findViewById(R.id.textOpponentScore);
         textOpponentScore.setText("0");
+        textOpponentStats.setText(opponentPoints + " pts  (#" + opponentRank + ")");
+
         overlay = view.findViewById(R.id.localOverlay);
         textWinner = view.findViewById(R.id.textWinner);
         btnReplay = view.findViewById(R.id.btnReplay);
@@ -247,7 +265,6 @@ public class OnlineQCMFragment extends BaseGameFragment {
         if (playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(textQuestion);
 
         resetCardColors();
-        textResult.setText("");
         setCardsClickable(true);
 
         if (arcadeDifficulty == 0) {
@@ -277,7 +294,6 @@ public class OnlineQCMFragment extends BaseGameFragment {
         int value = Integer.parseInt(selected.getText().toString());
 
         if (value == correctAnswer) {
-            textResult.setText("✅");
             highlightCorrect(selected);
             score++;
             updateScore();
@@ -289,7 +305,6 @@ public class OnlineQCMFragment extends BaseGameFragment {
         } else {
             combo = 0;
             textCombo.setAlpha(0);
-            textResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer();
         }
@@ -310,8 +325,8 @@ public class OnlineQCMFragment extends BaseGameFragment {
     }
 
     private void updateScore() {
-        if (textScoreRight != null) {
-            textScoreRight.setText(score + "/" + nbQuestions);
+        if (textMyScore != null) {
+            textMyScore.setText(String.valueOf(score));
             String playerScoreField = player.equals("P1") ? "p1_score" : "p2_score";
             matchRef.child(playerScoreField).setValue(score);
         }

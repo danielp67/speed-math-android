@@ -9,6 +9,8 @@ import java.util.HashMap;
 public class MatchmakingHelper {
 
     private static final String TAG = "MatchmakingHelper";
+    private long rank;
+    private long points;
     private DatabaseReference dbRef;
     private String uid;
     private String pseudo;
@@ -18,13 +20,15 @@ public class MatchmakingHelper {
     private boolean isMatchFound = false;
 
     public interface MatchListener {
-        void onMatchFound(String matchId, String opponentUid, String opponentPseudo);
+        void onMatchFound(String matchId, String uid, String pseudo, long points, long rank, String opponentUid, String opponentPseudo, long opponentPoints, long opponentRank);
         void onError(String message);
     }
 
-    public MatchmakingHelper(String uid, String pseudo) {
+    public MatchmakingHelper(String uid, String pseudo, long points, long rank) {
         this.uid = uid;
         this.pseudo = pseudo;
+        this.points = points;
+        this.rank = rank;
         dbRef = FirebaseDatabase.getInstance().getReference();
     }
 
@@ -41,6 +45,8 @@ public class MatchmakingHelper {
         HashMap<String, Object> playerData = new HashMap<>();
         playerData.put("uid", uid);
         playerData.put("pseudo", pseudo);
+        playerData.put("points", points);
+        playerData.put("rank", rank);
         playerData.put("ts", ts);
 
         waitingRef.child(waitingKey).setValue(playerData).addOnFailureListener(e -> {
@@ -70,6 +76,8 @@ public class MatchmakingHelper {
 
                     String opponentUid = opponentSnap.child("uid").getValue(String.class);
                     String opponentPseudo = opponentSnap.child("pseudo").getValue(String.class);
+                    long opponentPoints = opponentSnap.child("points").getValue(Long.class);
+                    long opponentRank = opponentSnap.child("rank").getValue(Long.class);
 
                     if (opponentUid == null) { // data inconsistency
                         isMatchFound = false; // reset and try again
@@ -80,7 +88,7 @@ public class MatchmakingHelper {
                     if (uid.compareTo(opponentUid) < 0) {
                         matchId = uid + "_" + opponentUid;
                         // I create the match and cleanup
-                        createMatchWithId(matchId, uid, pseudo, opponentUid, opponentPseudo);
+                        createMatchWithId(matchId, uid, pseudo, points, rank, opponentUid, opponentPseudo, opponentPoints, opponentRank);
                         waitingRef.child(waitingKey).removeValue();
                         waitingRef.child(opponentSnap.getKey()).removeValue();
                     } else {
@@ -88,7 +96,7 @@ public class MatchmakingHelper {
                     }
 
                     if (listener != null) {
-                        listener.onMatchFound(matchId, opponentUid, opponentPseudo);
+                        listener.onMatchFound(matchId, uid, pseudo, points, rank, opponentUid, opponentPseudo, opponentPoints, opponentRank);
                     }
                 }
             }
@@ -117,7 +125,7 @@ public class MatchmakingHelper {
         }
     }
 
-    private void createMatchWithId(String matchId, String p1Uid, String p1Pseudo, String p2Uid, String p2Pseudo) {
+    private void createMatchWithId(String matchId, String p1Uid, String p1Pseudo, long points, long rank, String p2Uid, String p2Pseudo, long opponentPoints, long opponentRank) {
         if (matchId == null) {
             if (listener != null) listener.onError("Impossible to create match");
             return;
@@ -126,8 +134,12 @@ public class MatchmakingHelper {
         HashMap<String, Object> matchData = new HashMap<>();
         matchData.put("p1_uid", p1Uid);
         matchData.put("p1_pseudo", p1Pseudo);
+        matchData.put("p1_points", points);
+        matchData.put("p1_ranking", rank);
         matchData.put("p2_uid", p2Uid);
         matchData.put("p2_pseudo", p2Pseudo);
+        matchData.put("p2_points", opponentPoints);
+        matchData.put("p2_ranking", opponentRank);
         matchData.put("state", "playing");
         matchData.put("p1_score", 0);
         matchData.put("p2_score", 0);

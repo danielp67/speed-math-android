@@ -24,7 +24,15 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"/>
-
+        <TextView
+            android:id="@+id/textCombo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:textColor="@color/gold_accent"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold"
+            android:gravity="center"/>
     <!-- GRID 2x2 -->
     <GridLayout
         android:id="@+id/gridAnswers"
@@ -96,54 +104,6 @@
 
 </FrameLayout>
 
-    <!-- Top bar: Timer / Result / Combo / Score -->
-    <LinearLayout
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp_16"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/textTimer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="start|center_vertical"
-            android:text="@string/timer"
-            android:textSize="@dimen/sp_16"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textResult"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/result"
-            android:textSize="@dimen/sp_20"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textCombo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0"
-            android:textColor="@color/gold_accent"
-            android:textSize="@dimen/sp_16"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textScoreRight"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end|center_vertical"
-            android:text="@string/score"
-            android:textSize="@dimen/sp_16"
-            android:textStyle="bold" />
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/opponentBar"
@@ -155,52 +115,113 @@
         android:background="@drawable/background_opponent_bar"
         android:padding="12dp"
         android:elevation="4dp">
-
-        <ImageView
-            android:id="@+id/imgOpponentAvatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_opponent_avatar"
-            android:layout_marginEnd="8dp"/>
-
-        <TextView
-            android:id="@+id/textOpponentName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/opponent"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:gravity="start|center_vertical"/>
-
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:background="@drawable/background_score_badge"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:orientation="vertical"
+            android:padding="12dp">
 
-            <TextView
-                android:id="@+id/textOpponentScore"
-                android:layout_width="wrap_content"
+            <!-- ===== LIGNE SCORE ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/score"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/gold_accent"
-                android:gravity="center"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/star_solid_full"
-                app:tint="@color/gold_accent"
-                android:layout_marginStart="8dp"/>
+                <ImageView
+                    android:id="@+id/imgMyAvatar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_avatar"
+                    android:layout_marginEnd="8dp"/>
+                <TextView
+                    android:id="@+id/textMyPseudo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="P1"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="start" />
+
+                <!-- Score -->
+                <TextView
+                    android:id="@+id/textMyScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="12dp" />
+                <TextView
+                    android:id="@+id/textScoreCenter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⭐"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="0dp" />
+                <TextView
+                    android:id="@+id/textOpponentScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="12dp" />
+                <!-- Opponent -->
+                <TextView
+                    android:id="@+id/textOpponentName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="P2"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="end" />
+                <ImageView
+                    android:id="@+id/imgOpponentAvatar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_avatar"
+                    android:layout_marginEnd="8dp"/>
+            </LinearLayout>
+
+            <!-- ===== LIGNE POINTS / RANK ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="4dp">
+
+                <!-- Moi -->
+                <TextView
+                    android:id="@+id/textMyStats"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0 pts  (#999)"
+                    android:textSize="13sp"
+                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/textTimer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/timer"
+                    android:textSize="@dimen/sp_16"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+                <!-- Opponent -->
+                <TextView
+                    android:id="@+id/textOpponentStats"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0 pts  (#999)"
+                    android:textSize="13sp"
+                    android:gravity="center" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

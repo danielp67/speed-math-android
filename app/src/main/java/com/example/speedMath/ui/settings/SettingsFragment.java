@@ -348,6 +348,9 @@ public class SettingsFragment extends Fragment {
                         data.put("matches_won", 0);
                         data.put("matches_drawn", 0);
                         data.put("matches_lost", 0);
+                        data.put("daily_matches_played",0);
+                        data.put("last_connection", "");
+                        data.put("rank", "");
                     }
 
                     playersRef.child(currentUid).updateChildren(data);
