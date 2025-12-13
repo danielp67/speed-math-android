@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.FeedbackManager;
 import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
@@ -42,6 +43,7 @@ public class QCMFragment extends BaseGameFragment {
     private Button btnReplay;
     private LinearLayout overlay;
     private TextView textWinner;
+    private FeedbackManager feedbackManager;
 
 
     public QCMFragment() {
@@ -112,6 +114,9 @@ public class QCMFragment extends BaseGameFragment {
             navController.navigate(R.id.navigation_home);
         });
 
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
+
         // Timer
         gameTimer = new GameTimer();
         gameTimer.setListener((elapsed, formatted) -> {
@@ -178,12 +183,14 @@ public class QCMFragment extends BaseGameFragment {
                 textCombo.setText("🔥 x" + combo + " !");
                 AnimUtils.comboPop(textCombo);
             }
+            feedbackManager.playCorrectSound();
         } else {
             combo = 0;
             textCombo.setAlpha(0);
             textResult.setText("❌");
             highlightWrong(selected);
             highlightCorrectAnswer();
+            feedbackManager.playWrongSound();
         }
 
         if (score >= nbQuestions) {
@@ -202,6 +209,7 @@ public class QCMFragment extends BaseGameFragment {
     private void levelCompleted() {
         setCardsClickable(false);
         showEndGame();
+        feedbackManager.playLevelUpSound();
         if (gameTimer != null) gameTimer.stop();
     }
     // UI helpers

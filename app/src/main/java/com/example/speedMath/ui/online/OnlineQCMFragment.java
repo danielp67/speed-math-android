@@ -26,6 +26,7 @@ import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.FeedbackManager;
 import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
@@ -68,6 +69,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
     private long rank;
     private long opponentPoints;
     private long opponentRank;
+    private FeedbackManager feedbackManager;
 
 
     public OnlineQCMFragment() {
@@ -155,6 +157,9 @@ public class OnlineQCMFragment extends BaseGameFragment {
         card2.setOnClickListener(v -> checkAnswer(t2));
         card3.setOnClickListener(v -> checkAnswer(t3));
         card4.setOnClickListener(v -> checkAnswer(t4));
+
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
         // Callback pour le bouton back
         backPressedCallback = new OnBackPressedCallback(true) {
@@ -251,6 +256,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
             result = R.string.draw_message;
         }
 
+        feedbackManager.playLevelUpSound();
         overlay.setAlpha(0f);
         overlay.setVisibility(View.VISIBLE);
         overlay.animate().alpha(1f).setDuration(500).start();
@@ -302,11 +308,14 @@ public class OnlineQCMFragment extends BaseGameFragment {
                 textCombo.setText("🔥 x" + combo + " !");
                 AnimUtils.comboPop(textCombo);
             }
+            feedbackManager.playCorrectSound();
+
         } else {
             combo = 0;
             textCombo.setAlpha(0);
             highlightWrong(selected);
             highlightCorrectAnswer();
+            feedbackManager.playWrongSound();
         }
 
         if (score >= nbQuestions) {
@@ -322,6 +331,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
         String winnerField = player.equals("P1") ? "p1" : "p2";
         matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
+        feedbackManager.playLevelUpSound();
     }
 
     private void updateScore() {

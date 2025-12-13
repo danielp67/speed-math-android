@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 import com.example.speedMath.MainActivity;
 import com.example.speedMath.R;
 import com.example.speedMath.core.BaseGameFragment;
+import com.example.speedMath.core.FeedbackManager;
 import com.example.speedMath.core.GameTimer;
 import com.example.speedMath.core.PlayerManager;
 import com.example.speedMath.core.QuestionGenerator;
@@ -62,6 +63,8 @@ public class DualFragment extends BaseGameFragment {
     private TextView p1TextWinner, p2TextWinner;
     private Button p1BtnReplay, p2BtnReplay;
     private int p1Combo = 0, p2Combo = 0;
+    private FeedbackManager feedbackManager;
+
     public DualFragment() {}
 
     @Override
@@ -171,6 +174,9 @@ public class DualFragment extends BaseGameFragment {
 
         p1TextScoreRight.setText(getString(R.string.score_format, p1Score, nbQuestions));
         p2TextScoreRight.setText(getString(R.string.score_format, p2Score, nbQuestions));
+
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
         // Timer
         gameTimer = new GameTimer();
@@ -373,6 +379,7 @@ public class DualFragment extends BaseGameFragment {
 
     private void showEndGame(int scorePlayer1, int scorePlayer2) {
         boolean isP1Winner = scorePlayer1 > scorePlayer2;
+        feedbackManager.playLevelUpSound();
 
         p1TextWinner.setText(isP1Winner ? R.string.win_message : R.string.lose_message);
         p2TextWinner.setText(isP1Winner ? R.string.lose_message : R.string.win_message);
