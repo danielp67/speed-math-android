@@ -71,8 +71,8 @@ public class ScoreManager {
             timeBonus = getBasePoints();
         }
 
-        //score += timeBonus + accuracyBonus;
-        score = 100 * level + timeBonus + accuracyBonus;
+        score += timeBonus + accuracyBonus;
+        //score = 100 * level + timeBonus + accuracyBonus;
 
         return score;
     }
