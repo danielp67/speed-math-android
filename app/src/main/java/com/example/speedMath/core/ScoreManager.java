@@ -67,6 +67,11 @@ public class ScoreManager {
             accuracyBonus = getBasePoints();
         }
 
+        if(totalQuestions < 100 * level / (20 + (level * 5)) )
+        {
+            accuracyBonus = getBasePoints() * (100 * level / (20 + (level * 5)) - totalQuestions);
+        }
+
         if (totalTimeMs <= 10000 + (2000L * level)) {
             timeBonus = getBasePoints();
         }
