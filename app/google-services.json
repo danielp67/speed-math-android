@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:122502656004:android:d14749450449202f890551",
         "android_client_info": {
-          "package_name": "com.example.speedMath"
+          "package_name": "fr.accentweb.speedMath"
         }
       },
       "oauth_client": [],

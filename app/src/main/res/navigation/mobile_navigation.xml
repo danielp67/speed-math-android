@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.speedMath.ui.arcade.ArcadeFragment"
+        android:name="fr.accentweb.speedMath.ui.arcade.ArcadeFragment"
         android:label="@string/title_mode"
         tools:layout="@layout/fragment_arcade">
 
@@ -33,24 +33,24 @@
 
     <fragment
         android:id="@+id/gameFragment"
-        android:name="com.example.speedMath.ui.game.GameFragment"
+        android:name="fr.accentweb.speedMath.ui.game.GameFragment"
         android:label="@string/action_game"
         tools:layout="@layout/fragment_game"/>
 
     <fragment
         android:id="@+id/qcmFragment"
-        android:name="com.example.speedMath.ui.dual.QCMFragment"
+        android:name="fr.accentweb.speedMath.ui.dual.QCMFragment"
         android:label="@string/action_qcm"
         tools:layout="@layout/fragment_qcm"/>
 
     <fragment
         android:id="@+id/dualFragment"
-        android:name="com.example.speedMath.ui.dual.DualFragment"
+        android:name="fr.accentweb.speedMath.ui.dual.DualFragment"
         android:label="@string/action_dual"
         tools:layout="@layout/fragment_dual"/>
     <fragment
         android:id="@+id/waitingRoomFragment"
-        android:name="com.example.speedMath.ui.online.WaitingRoomFragment"
+        android:name="fr.accentweb.speedMath.ui.online.WaitingRoomFragment"
         android:label="@string/action_qcm_online"
         tools:layout="@layout/fragment_waiting_room">
         <action
@@ -60,24 +60,24 @@
 
     <fragment
         android:id="@+id/memoryFragment"
-        android:name="com.example.speedMath.ui.memory.MemoryFragment"
+        android:name="fr.accentweb.speedMath.ui.memory.MemoryFragment"
         android:label="@string/action_memory"
         tools:layout="@layout/fragment_memory"/>
     <fragment
         android:id="@+id/memoryDualFragment"
-        android:name="com.example.speedMath.ui.memory.MemoryDualFragment"
+        android:name="fr.accentweb.speedMath.ui.memory.MemoryDualFragment"
         android:label="@string/action_memory_dual"
         tools:layout="@layout/fragment_memory_dual"/>
 
     <fragment
         android:id="@+id/onlineQCMFragment"
-        android:name="com.example.speedMath.ui.online.OnlineQCMFragment"
+        android:name="fr.accentweb.speedMath.ui.online.OnlineQCMFragment"
         android:label="@string/action_qcm_online"
         tools:layout="@layout/fragment_online_qcm"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.speedMath.ui.league.LeagueFragment"
+        android:name="fr.accentweb.speedMath.ui.league.LeagueFragment"
         android:label="@string/title_level"
         tools:layout="@layout/fragment_league">
     <action
@@ -87,12 +87,12 @@
 
     <fragment
         android:id="@+id/levelFragment"
-        android:name="com.example.speedMath.ui.level.LevelFragment"
+        android:name="fr.accentweb.speedMath.ui.level.LevelFragment"
         android:label="@string/action_game"
         tools:layout="@layout/fragment_level"/>
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.speedMath.ui.settings.SettingsFragment"
+        android:name="fr.accentweb.speedMath.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>
