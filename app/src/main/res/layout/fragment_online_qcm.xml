@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="@dimen/dp_16"
     android:paddingBottom="128dp"
     android:gravity="center_horizontal">
 <FrameLayout
@@ -94,7 +94,7 @@
             android:id="@+id/btnReplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/dp_16"
             android:text="@string/play_again"
             android:textColor="@color/gold_accent"
             android:backgroundTint="@color/blue_primary"
@@ -108,17 +108,17 @@
         android:id="@+id/opponentBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/dp_16"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@drawable/background_opponent_bar"
-        android:padding="12dp"
-        android:elevation="4dp">
+        android:padding="@dimen/dp_12"
+        android:elevation="@dimen/dp_4">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="@dimen/dp_12">
 
             <!-- ===== LIGNE SCORE ===== -->
             <LinearLayout
@@ -129,12 +129,12 @@
 
                 <ImageView
                     android:id="@+id/imgMyAvatar"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
                     android:contentDescription="@string/player_avatar"
                     android:importantForAccessibility="no"
                     android:src="@drawable/ic_avatar"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="@dimen/dp_8"/>
                 <TextView
                     android:id="@+id/textMyPseudo"
                     android:layout_width="0dp"
@@ -153,7 +153,7 @@
                     android:text="@string/dummy_text"
                     android:textStyle="bold"
                     android:textSize="@dimen/sp_20"
-                    android:paddingHorizontal="12dp" />
+                    android:paddingHorizontal="@dimen/dp_12" />
                 <TextView
                     android:id="@+id/textScoreCenter"
                     android:layout_width="wrap_content"
@@ -169,7 +169,7 @@
                     android:text="@string/dummy_text"
                     android:textStyle="bold"
                     android:textSize="@dimen/sp_20"
-                    android:paddingHorizontal="12dp" />
+                    android:paddingHorizontal="@dimen/dp_12" />
                 <!-- Opponent -->
                 <TextView
                     android:id="@+id/textOpponentName"
@@ -182,10 +182,12 @@
                     android:gravity="end" />
                 <ImageView
                     android:id="@+id/imgOpponentAvatar"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:contentDescription="@string/player_avatar"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/ic_avatar"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="@dimen/dp_8"/>
             </LinearLayout>
 
             <!-- ===== LIGNE POINTS / RANK ===== -->

@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -93,10 +92,8 @@ public class WaitingRoomFragment extends Fragment {
                     ? snapshot.child("rank").getValue(Long.class)
                     : 999999;
 
-            // ✅ CRÉATION
             matchmakingHelper = new MatchmakingHelper(uid, pseudo, points, rank);
 
-            // ✅ LISTENER
             matchmakingHelper.setMatchListener(new MatchmakingHelper.MatchListener() {
                 @Override
                 public void onMatchFound(String matchId, String uid, String pseudo, long points, long rank, String opponentUid, String opponentPseudo, long opponentPoints, long opponentRank) {
@@ -134,40 +131,35 @@ public class WaitingRoomFragment extends Fragment {
 
                 @Override
                 public void onError(String message) {
-                    textStatus.setText("Error : " + message);
+                    textStatus.setText(String.format("%s%s", getString(R.string.error_message), message));
                     progressBar.setVisibility(View.GONE);
                 }
             });
 
-            // ✅ ICI ET SEULEMENT ICI
             matchmakingHelper.findMatch();
 
         }).addOnFailureListener(e -> {
 
-            // fallback sécurité
             matchmakingHelper = new MatchmakingHelper(uid, pseudo, 0, 999999);
             matchmakingHelper.findMatch();
         });
 
 
 
-        textStatus.setText("Searching for a match…");
+        textStatus.setText(R.string.searching_for_a_match);
         progressBar.setVisibility(View.VISIBLE);
 
        // matchmakingHelper.findMatch();
 
-        // bouton annuler
         btnCancel.setOnClickListener(v -> {
-            textStatus.setText("Match cancelled");
+            textStatus.setText(R.string.match_cancelled);
             progressBar.setVisibility(View.GONE);
-            // supprime entry waiting
             if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
-            // revient en arrière
             NavController nav = Navigation.findNavController(requireView());
             nav.navigate(R.id.navigation_home);
         });
 
-        // backpress : on annule proprement
+        // backpress
         requireActivity().getOnBackPressedDispatcher().addCallback(
                 getViewLifecycleOwner(),
                 new OnBackPressedCallback(true) {
@@ -195,7 +187,7 @@ public class WaitingRoomFragment extends Fragment {
 
             public void onFinish() {
                 overlayContainer.setVisibility(View.GONE);
-                // navigation vers le fragment online (QCM)
+                // navigate to fragment online (QCM)
                 if (getView() != null) {
                     Navigation.findNavController(requireView())
                             .navigate(R.id.action_waitingRoomFragment_to_onlineQCMFragment, bundle);

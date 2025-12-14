@@ -66,6 +66,9 @@
     <string name="player_avatar">player avatar</string>
     <string name="star">⭐</string>
     <string name="dummy_text">Text</string>
+    <string name="error_message">"Error : "</string>
+    <string name="searching_for_a_match">Searching for a match…</string>
+    <string name="match_cancelled">Match cancelled</string>
 
 
 </resources>
