@@ -43,8 +43,6 @@ public class WaitingRoomFragment extends Fragment {
     private PlayerManager playerManager;
     private FrameLayout overlayContainer;
     private OnBackPressedCallback backPressedCallback;
-    private long points;
-    private long rank;
 
     @Nullable
     @Override
@@ -246,10 +244,4 @@ public class WaitingRoomFragment extends Fragment {
         }, 500);
     }
 
-    private void showDailyLimitReachedToast() {
-        NavController nav = Navigation.findNavController(requireView());
-        nav.navigate(R.id.navigation_home);
-
-        Toast.makeText(requireContext(), "Daily Limit Reached : " + playerManager.getDailyMatchLimit() + " matches played.", Toast.LENGTH_SHORT).show();
-    }
 }

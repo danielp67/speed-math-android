@@ -63,6 +63,9 @@
     <string name="draw_message">Draw !</string>
     <string name="play_again">Play again ?</string>
     <string name="opponent">Opponent</string>
+    <string name="player_avatar">player avatar</string>
+    <string name="star">⭐</string>
+    <string name="dummy_text">Text</string>
 
 
 </resources>

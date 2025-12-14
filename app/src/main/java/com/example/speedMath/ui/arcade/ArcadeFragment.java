@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,7 +48,7 @@ public class ArcadeFragment extends Fragment {
         items.add(new ArcadeItem("×", 16,"Multiplication Suite", "a × b", "MUL"));
         items.add(new ArcadeItem("÷", 16,"Division Suite", "a ÷ b", "DIV"));
 
-        ArcadeAdapter adapter = new ArcadeAdapter(items, v -> openGame(v));
+        ArcadeAdapter adapter = new ArcadeAdapter(items, this::openGame);
         recycler.setAdapter(adapter);
 
         return root;

@@ -13,7 +13,7 @@ public class ScoreManager {
 
     // Valeur de base d’une question selon le niveau
     private long getBasePoints() {
-        return 20 + (level * 5);  // ex : lvl10 → 150 pts
+        return 20 + (level * 5L);  // ex : lvl10 → 150 pts
     }
 
     // Bonus temps scalable
@@ -42,7 +42,7 @@ public class ScoreManager {
 
             // Streak
             correctStreak++;
-            long streakBonus = (correctStreak - 1) * 5; // simple, modifiable
+            long streakBonus = (correctStreak - 1) * 5L; // simple, modifiable
 
             // Calcul points
             score += getBasePoints();
@@ -52,7 +52,7 @@ public class ScoreManager {
         } else {
             // Mauvaise réponse
             correctStreak = 0;
-            score -= (20 + (level * 5));      // pénalité ajustable
+            score -= (20 + (level * 5L));      // pénalité ajustable
         }
 
         return score;
@@ -69,7 +69,7 @@ public class ScoreManager {
 
         if(totalQuestions < 100 * level / (20 + (level * 5)) )
         {
-            accuracyBonus = getBasePoints() * (100 * level / (20 + (level * 5)) - totalQuestions);
+            accuracyBonus = getBasePoints() * (100L * level / (20 + (level * 5L)) - totalQuestions);
         }
 
         if (totalTimeMs <= 10000 + (2000L * level)) {
