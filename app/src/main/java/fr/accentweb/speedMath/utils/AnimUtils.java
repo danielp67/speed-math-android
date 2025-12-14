@@ -1,7 +1,5 @@
 package fr.accentweb.speedMath.utils;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.animation.Animation;
@@ -92,73 +90,6 @@ public class AnimUtils {
                 )
                 .start();
     }
-
-// ----- 3D Flip Animations -----
-
-/*    public static void flipToFront(Button btn, String frontText, Runnable onComplete) {
-        if (btn == null) {
-            if (onComplete != null) onComplete.run();
-            return;
-        }
-
-        btn.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
-        ObjectAnimator rot1 = ObjectAnimator.ofFloat(btn, "rotationY", 0f, 90f);
-        rot1.setDuration(150);
-
-        rot1.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-                btn.setText(frontText);
-
-                ObjectAnimator rot2 = ObjectAnimator.ofFloat(btn, "rotationY", -90f, 0f);
-                rot2.setDuration(150);
-
-                rot2.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        btn.setLayerType(View.LAYER_TYPE_NONE, null);
-                        if (onComplete != null) onComplete.run();
-                    }
-                });
-
-                rot2.start();
-            }
-        });
-
-        rot1.start();
-    }
-    public static void flipToBack(Button btn) {
-        if (btn == null) return;
-
-        btn.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
-        ObjectAnimator rot1 = ObjectAnimator.ofFloat(btn, "rotationY", 0f, 90f);
-        rot1.setDuration(150);
-
-        rot1.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-                btn.setText("");
-
-                ObjectAnimator rot2 = ObjectAnimator.ofFloat(btn, "rotationY", -90f, 0f);
-                rot2.setDuration(150);
-
-                rot2.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        btn.setLayerType(View.LAYER_TYPE_NONE, null);
-                    }
-                });
-
-                rot2.start();
-            }
-        });
-
-        rot1.start();
-    }*/
 
 
     // Flip vers l'avant (affiche le contenu)

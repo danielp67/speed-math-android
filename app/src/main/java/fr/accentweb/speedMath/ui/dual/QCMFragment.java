@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -32,7 +31,6 @@ public class QCMFragment extends BaseGameFragment {
     private CardView card1, card2, card3, card4;
     private TextView t1, t2, t3, t4;
     private int correctAnswer, nbQuestions, arcadeDifficulty;
-    private long elapsedMillis = 0;
     private QuestionGenerator questionGenerator;
     private GameTimer gameTimer;
     private PlayerManager playerManager;
