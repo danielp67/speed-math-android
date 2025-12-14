@@ -130,8 +130,8 @@
 
                 <ImageView
                     android:id="@+id/imgMyAvatar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:src="@drawable/ic_avatar"
                     android:layout_marginEnd="8dp"/>
                 <TextView
@@ -181,8 +181,8 @@
                     android:gravity="end" />
                 <ImageView
                     android:id="@+id/imgOpponentAvatar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:src="@drawable/ic_avatar"
                     android:layout_marginEnd="8dp"/>
             </LinearLayout>

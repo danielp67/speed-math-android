@@ -4,20 +4,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.speedMath.R;
 import com.example.speedMath.core.FeedbackManager;
+import com.example.speedMath.core.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArcadeFragment extends Fragment {
 
+    private PlayerManager playerManager;
     private FeedbackManager feedbackManager;
 
     @Override
@@ -28,6 +32,7 @@ public class ArcadeFragment extends Fragment {
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
+        playerManager = PlayerManager.getInstance(requireContext());
 
         RecyclerView recycler = root.findViewById(R.id.recyclerArcade);
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -70,8 +75,7 @@ public class ArcadeFragment extends Fragment {
                 break;
 
             case "ONLINE":
-                Navigation.findNavController(v)
-                        .navigate(R.id.action_navigation_home_to_waitingRoomFragment, args);
+                onlineMode(v, args);
                 break;
 
             case "MEMORY":
@@ -87,4 +91,19 @@ public class ArcadeFragment extends Fragment {
                         .navigate(R.id.action_navigation_home_to_gameFragment, args);
         }
     }
+
+    public void onlineMode(View v, Bundle args) {
+
+        if(
+                playerManager.getTodayDate().equals(playerManager.getLastConnection()) &&
+                playerManager.getDailyMatchPlayed()>=playerManager.getDailyMatchLimit()
+        ) {
+            Toast.makeText(requireContext(), "Daily Limit Reached : " + playerManager.getDailyMatchLimit() + " matches played.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Navigation.findNavController(v)
+                    .navigate(R.id.action_navigation_home_to_waitingRoomFragment, args);
+        }
+    }
+
 }

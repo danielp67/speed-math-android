@@ -349,8 +349,20 @@ public class SettingsFragment extends Fragment {
                         data.put("matches_drawn", 0);
                         data.put("matches_lost", 0);
                         data.put("daily_matches_played",0);
+                        data.put("daily_matches_limit",5);
                         data.put("last_connection", "");
-                        data.put("rank", "");
+                        data.put("rank", 999999);
+
+                        playerManager.setDailyMatchLimit(5);
+                        playerManager.setDailyMatchPlayed(0);
+                        playerManager.setLastConnection(playerManager.getTodayDate());
+                        playerManager.setRank(999999);
+                        playerManager.setOnlineScore(0);
+                        playerManager.setOnlinePlayedMatches(0);
+                        playerManager.setOnlineWins(0);
+                        playerManager.setOnlineLosses(0);
+                        playerManager.setOnlineDraws(0);
+
                     }
 
                     playersRef.child(currentUid).updateChildren(data);

@@ -2,16 +2,12 @@ package com.example.speedMath.ui.online;
 
 import static android.content.ContentValues.TAG;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,20 +19,17 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.speedMath.R;
-import com.example.speedMath.core.DailyMatchManager;
 import com.example.speedMath.core.MatchmakingHelper;
 import com.example.speedMath.core.PlayerManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 
 public class WaitingRoomFragment extends Fragment {
 
@@ -72,15 +65,21 @@ public class WaitingRoomFragment extends Fragment {
         overlayContainer = view.findViewById(R.id.overlayContainer);
 
         playerManager = PlayerManager.getInstance(requireContext());
-        DailyMatchManager.getInstance(requireContext()).checkDailyMatchLimit((canPlay, currentCount, limit) -> {
+
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        pseudo = playerManager.getOnlinePseudo();
+
+        if(!playerManager.getTodayDate().equals(playerManager.getLastConnection()))
+        {
+            DatabaseReference playerRef = FirebaseDatabase.getInstance().getReference("players").child(uid);
+            playerManager.syncOnlineData(playerRef);
+        }
+      /*  DailyMatchManager.getInstance(requireContext()).checkDailyMatchLimit((canPlay, currentCount, limit) -> {
             if (!canPlay) {
                 showDailyLimitReachedToast(currentCount, limit);
                 return;
             }
-        });
-
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        pseudo = playerManager.getOnlinePseudo();
+        });*/
 
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("players")
@@ -106,8 +105,7 @@ public class WaitingRoomFragment extends Fragment {
                     if (matchStarted) return;
                     matchStarted = true;
 
-                    DailyMatchManager.getInstance(requireContext())
-                            .incrementDailyMatchCount();
+                    playerManager.incrementDailyMatchPlayed();
 
                     backPressedCallback = new OnBackPressedCallback(true) {
                         @Override
@@ -248,10 +246,10 @@ public class WaitingRoomFragment extends Fragment {
         }, 500);
     }
 
-    private void showDailyLimitReachedToast(int currentCount, int limit) {
+    private void showDailyLimitReachedToast() {
         NavController nav = Navigation.findNavController(requireView());
         nav.navigate(R.id.navigation_home);
 
-        Toast.makeText(requireContext(), "Daily Limit Reached : " + limit + " matches played.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Daily Limit Reached : " + playerManager.getDailyMatchLimit() + " matches played.", Toast.LENGTH_SHORT).show();
     }
 }

@@ -2,9 +2,14 @@ package com.example.speedMath.core;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.media.MediaPlayer;
 
 import com.example.speedMath.R;
+import com.google.firebase.database.DatabaseReference;
+
+import java.util.Locale;
 
 public class PlayerManager {
 
@@ -32,6 +37,10 @@ public class PlayerManager {
     private static final String KEY_ONLINE_WINS = "online_wins";
     private static final String KEY_ONLINE_LOSSES = "online_losses";
     private static final String KEY_ONLINE_DRAWS = "online_draws";
+    private static final String KEY_LAST_CONNECTION = "last_connection";
+    private static final String KEY_DAILY_MATCH_PLAYED = "daily_match_played";
+    private static final String KEY_DAILY_MATCH_LIMIT = "daily_match_limit";
+
     private MediaPlayer backgroundMusic = null;
     private SharedPreferences prefs;
     private Context context;
@@ -250,6 +259,68 @@ public class PlayerManager {
 
     public void setOnlineDraws(int draws) {
         prefs.edit().putInt(KEY_ONLINE_DRAWS, draws).apply();
+    }
+
+    public String getTodayDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(Calendar.getInstance().getTime());
+    }
+
+    public void syncOnlineData(DatabaseReference playerRef) {
+
+        prefs.edit()
+                .putString(KEY_LAST_CONNECTION, getTodayDate())
+                .apply();
+
+        playerRef.get().addOnSuccessListener(snapshot -> {
+
+            int dailyPlayed = snapshot.child(KEY_DAILY_MATCH_PLAYED)
+                    .getValue(Integer.class) != null
+                    ? snapshot.child(KEY_DAILY_MATCH_PLAYED).getValue(Integer.class)
+                    : 0;
+
+            int dailyLimit = snapshot.child(KEY_DAILY_MATCH_LIMIT)
+                    .getValue(Integer.class) != null
+                    ? snapshot.child(KEY_DAILY_MATCH_LIMIT).getValue(Integer.class)
+                    : 0;
+
+            prefs.edit()
+                    .putInt(KEY_DAILY_MATCH_PLAYED, dailyPlayed)
+                    .putInt(KEY_DAILY_MATCH_LIMIT, dailyLimit)
+                    .apply();
+        });
+    }
+
+
+    public String getLastConnection() {
+        return prefs.getString(KEY_LAST_CONNECTION, "");
+    }
+    public void setLastConnection(String date) {
+        prefs.edit().putString(KEY_LAST_CONNECTION, date).apply();
+    }
+
+    public int getDailyMatchPlayed() {
+        return prefs.getInt(KEY_DAILY_MATCH_PLAYED, 0);
+    }
+    public void setDailyMatchPlayed(int played) {
+        prefs.edit().putInt(KEY_DAILY_MATCH_PLAYED, played).apply();
+    }
+    public void incrementDailyMatchPlayed() {
+        prefs.edit().putInt(KEY_DAILY_MATCH_PLAYED, getDailyMatchPlayed() + 1).apply();
+    }
+
+    public int getDailyMatchLimit() {
+        return prefs.getInt(KEY_DAILY_MATCH_LIMIT, 0);
+    }
+    public void setDailyMatchLimit(int limit) {
+        prefs.edit().putInt(KEY_DAILY_MATCH_LIMIT, limit).apply();
+    }
+
+    public void setRank(int rank) {
+        prefs.edit().putInt("rank", rank).apply();
+    }
+    public int getRank() {
+        return prefs.getInt("rank", 999999);
     }
 
 }
