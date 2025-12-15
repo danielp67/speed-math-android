@@ -116,7 +116,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
 
         playerManager = PlayerManager.getInstance(requireContext());
         arcadeDifficulty = playerManager.getArcadeDifficulty();
-        nbQuestions = 5; // Default number of questions for an online match
+        nbQuestions = 7; // Default number of questions for an online match
 
         // UI references
         textQuestion = view.findViewById(R.id.textQuestion);
@@ -180,7 +180,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
         gameTimer.start();
 
         questionGenerator = new QuestionGenerator(
-                arcadeDifficulty * 50,      // difficulty par défaut
+                Math.toIntExact(points)/2,      // difficulty par défaut
                 2,      // nombre d'opérandes
                 true,  //  QCM
                 true,
@@ -273,11 +273,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
         resetCardColors();
         setCardsClickable(true);
 
-        if (arcadeDifficulty == 0) {
-            questionGenerator.setLevel(score);
-        } else {
-            questionGenerator.setLevel(arcadeDifficulty * 50);
-        }
+        questionGenerator.setLevel(Math.toIntExact(points)/2);
 
         // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
