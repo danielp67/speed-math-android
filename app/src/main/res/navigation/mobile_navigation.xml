@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_navigation_home_to_memoryDualFragment"
             app:destination="@id/memoryDualFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
 
     <fragment
@@ -74,6 +77,12 @@
         android:name="fr.accentweb.speedMath.ui.online.OnlineQCMFragment"
         android:label="@string/action_qcm_online"
         tools:layout="@layout/fragment_online_qcm"/>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="fr.accentweb.speedMath.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"

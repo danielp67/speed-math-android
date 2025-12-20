@@ -58,7 +58,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (playerManager.isMusicEnabled()) {
-            playerManager.setMusicEnabled(false);
+            playerManager.stopMusic();
+        }
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(playerManager.isMusicEnabled()) {
+            playerManager.startMusic();
+        }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        if(playerManager.isMusicEnabled()) {
+            playerManager.stopMusic();
         }
     }
 

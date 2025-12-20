@@ -99,6 +99,11 @@ public class ArcadeFragment extends Fragment {
         ) {
             Toast.makeText(requireContext(), "Daily Limit Reached : " + playerManager.getDailyMatchLimit() + " matches played.", Toast.LENGTH_SHORT).show();
         }
+        else if(playerManager.getOnlinePseudo().isEmpty()) {
+            Toast.makeText(requireContext(), "Please set a pseudo before playing online.", Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(v)
+                    .navigate(R.id.action_navigation_home_to_settingsFragment);
+        }
         else {
             Navigation.findNavController(v)
                     .navigate(R.id.action_navigation_home_to_waitingRoomFragment, args);
