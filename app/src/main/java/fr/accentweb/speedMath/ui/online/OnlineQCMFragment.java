@@ -28,6 +28,7 @@ import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameTimer;
+import fr.accentweb.speedMath.core.LocalBotManager;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.core.QuestionGenerator;
 import fr.accentweb.speedMath.utils.AnimUtils;
@@ -38,6 +39,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Collections;
+import java.util.Random;
 
 public class OnlineQCMFragment extends BaseGameFragment {
 
@@ -71,6 +73,9 @@ public class OnlineQCMFragment extends BaseGameFragment {
     private long opponentRank;
     private FeedbackManager feedbackManager;
 
+    private LocalBotManager botManager;
+    private boolean isBotMatch = false;
+    private Random random = new Random();
 
     public OnlineQCMFragment() {
         // Required empty constructor
@@ -111,6 +116,10 @@ public class OnlineQCMFragment extends BaseGameFragment {
             opponentPoints = getArguments().getLong("opponentPoints");
             opponentRank = getArguments().getLong("opponentRank");
             player = getArguments().getString("player");
+            isBotMatch = getArguments().getBoolean("is_bot_match", false);
+        }
+        if (isBotMatch) {
+            initBotManager();
         }
         matchRef = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
 
@@ -201,6 +210,9 @@ public class OnlineQCMFragment extends BaseGameFragment {
         }
         if (gameTimer != null) {
             gameTimer.stop();
+        }
+        if (botManager != null) {  // Nettoyage du bot
+            botManager.stop();
         }
     }
 
@@ -328,6 +340,9 @@ public class OnlineQCMFragment extends BaseGameFragment {
         matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
         feedbackManager.playLevelUpSound();
+        if (isBotMatch) {
+            botManager.stop();
+        }
     }
 
     private void updateScore() {
@@ -401,6 +416,36 @@ public class OnlineQCMFragment extends BaseGameFragment {
                 requireActivity().finish();
             }
         }, 500);
+    }
+
+    private void initBotManager() {
+        botManager = new LocalBotManager(matchId, player);
+        botManager.start(new LocalBotManager.BotListener() {
+            @Override
+            public void onBotScoreUpdated(int score) {
+                // Met à jour l'UI et Firebase
+                textOpponentScore.setText(String.valueOf(score));
+                String opponentScoreField = player.equals("P1") ? "p2_score" : "p1_score";
+                matchRef.child(opponentScoreField).setValue(score);
+            }
+
+            @Override
+            public void onBotWin() {
+                // Gère la défaite contre le bot
+                gameTimer.stop();
+                setCardsClickable(false);
+                String winnerField = player.equals("P1") ? "p1" : "p2";
+                String opponentScoreField = winnerField.equals("p1") ?  "p2" : "p1";
+                matchRef.child("winner").setValue(opponentScoreField);
+                matchRef.child("state").setValue("finished");
+                textWinner.setText(R.string.lose_message);
+                overlay.setVisibility(View.VISIBLE);
+                btnReplay.setOnClickListener(v -> {
+                    NavController nav = Navigation.findNavController(v);
+                    nav.navigate(R.id.navigation_home);
+                });
+            }
+        });
     }
 
 }
