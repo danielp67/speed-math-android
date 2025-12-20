@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.PlayerManager;
+import fr.accentweb.speedMath.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,12 @@ public class ArcadeFragment extends Fragment {
 
     public void onlineMode(View v, Bundle args) {
 
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            Toast.makeText(requireContext(),
+                    "No internet connection. Online mode unavailable.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         if(
                 playerManager.getTodayDate().equals(playerManager.getLastConnection()) &&
                 playerManager.getDailyMatchPlayed()>=playerManager.getDailyMatchLimit()
