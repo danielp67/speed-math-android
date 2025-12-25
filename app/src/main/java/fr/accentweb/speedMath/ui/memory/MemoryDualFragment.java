@@ -194,7 +194,7 @@ public class MemoryDualFragment extends BaseGameFragment {
             for (Button button : buttons) {
                 button.setClickable(false);
             }
-            handler.postDelayed(this::checkMatch, 400);
+            handler.postDelayed(this::checkMatch, difficulty.previewMs);
         }
     }
 
