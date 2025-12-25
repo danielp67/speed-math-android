@@ -1,17 +1,21 @@
 package fr.accentweb.speedMath;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-
-import fr.accentweb.speedMath.core.PlayerManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
+import android.view.Window;
+import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import fr.accentweb.speedMath.core.PlayerManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,8 +23,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Appliquer le thème avant setContentView
+        playerManager = PlayerManager.getInstance(this);
+        boolean isDark = playerManager.isDarkModeEnabled();
+        applyTheme(isDark);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Configuration de la barre de statut pour les versions récentes
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.blue_primary));
+        }
 
         BottomNavigationView navView = findViewById(R.id.bottomNav);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -31,20 +48,27 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_notifications
         ).build();
 
-        playerManager = PlayerManager.getInstance(this);
-
-        if(playerManager.isMusicEnabled())
-        {
+        if(playerManager.isMusicEnabled()) {
             playerManager.setMusicEnabled(true);
         }
 
-        // Charger l'état actuel
-        boolean isDark = playerManager.isDarkModeEnabled();
-
-        applyTheme(isDark);
         // Lien toolbar avec NavController pour gérer flèche Up
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        // Gestion des insets pour le fragment host
+        View navHostFragment = findViewById(R.id.nav_host_fragment);
+        ViewCompat.setOnApplyWindowInsetsListener(navHostFragment, (v, insets) -> {
+            // On ajuste uniquement le padding inférieur pour la barre de navigation
+            int navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+            v.setPadding(
+                    v.getPaddingLeft(),
+                    v.getPaddingTop(),
+                    v.getPaddingRight(),
+                    navigationBarHeight
+            );
+            return insets;
+        });
     }
 
     // Cette méthode permet à la flèche Up de fonctionner
@@ -63,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         if(playerManager.isMusicEnabled()) {
             playerManager.startMusic();
@@ -71,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         if(playerManager.isMusicEnabled()) {
             playerManager.stopMusic();
@@ -83,11 +107,12 @@ public class MainActivity extends AppCompatActivity {
         nav.setEnabled(enabled);
         nav.setClickable(enabled);
 
-        // Optionnel : désactiver l’animation visuelle
+        // Optionnel : désactiver l'animation visuelle
         for (int i = 0; i < nav.getMenu().size(); i++) {
             nav.getMenu().getItem(i).setEnabled(enabled);
         }
     }
+
     private void applyTheme(boolean isDark) {
         AppCompatDelegate.setDefaultNightMode(
                 isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
@@ -106,11 +131,10 @@ public class MainActivity extends AppCompatActivity {
                     .start();
         } else {
             nav.animate()
-                    .translationY(nav.getHeight() )
+                    .translationY(nav.getHeight())
                     .alpha(0.2f)
                     .setDuration(200)
                     .start();
         }
     }
-
 }
