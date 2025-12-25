@@ -30,7 +30,8 @@ public class PlayerManager {
     private static final String KEY_HAPTIC = "haptic";
     private static final String KEY_ARCADE_DIFFICULTY = "arcade_difficulty";
     private static final String KEY_NB_QUESTIONS = "nb_questions";
-
+    private static final String KEY_MEMORY_DIFFICULTY = "memory_difficulty";
+    private static final String KEY_MEMORY_DUO_DIFFICULTY = "memory_duo_difficulty";
     private static final String KEY_ONLINE_UID = "online_uid";
     private static final String KEY_ONLINE_PSEUDO = "online_pseudo";
     private static final String KEY_ONLINE_SCORE = "online_score";
@@ -202,6 +203,22 @@ public class PlayerManager {
     }
     public int getNbQuestions() {
         return prefs.getInt(KEY_NB_QUESTIONS, 0);
+    }
+
+    public void setMemoryDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_MEMORY_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getMemoryDifficulty() {
+        return prefs.getInt(KEY_MEMORY_DIFFICULTY, 1); // 1 = MEDIUM par défaut
+    }
+
+    public void setMemoryDuoDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_MEMORY_DUO_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getMemoryDuoDifficulty() {
+        return prefs.getInt(KEY_MEMORY_DUO_DIFFICULTY, 1); // 1 = MEDIUM par défaut
     }
 
 

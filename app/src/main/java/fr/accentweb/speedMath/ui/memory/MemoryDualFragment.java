@@ -2,6 +2,9 @@ package fr.accentweb.speedMath.ui.memory;
 
 import static androidx.core.content.ContextCompat.getColor;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameTimer;
 import fr.accentweb.speedMath.core.QuestionGenerator;
+import fr.accentweb.speedMath.ui.arcade.MemoryDifficulty;
 import fr.accentweb.speedMath.utils.AnimUtils;
 
 import java.util.ArrayList;
@@ -47,12 +51,20 @@ public class MemoryDualFragment extends BaseGameFragment {
 
     private GameTimer gameTimer;
     private FeedbackManager feedbackManager;
+    private MemoryDifficulty difficulty;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_memory_dual, container, false);
+
+        // Récupérer la difficulté depuis les arguments
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("DIFFICULTY")) {
+            difficulty = (MemoryDifficulty) args.getSerializable("DIFFICULTY");
+        } else {
+            // Difficulté par défaut si non fournie
+            difficulty = MemoryDifficulty.MEDIUM;
+        }
 
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
@@ -66,19 +78,22 @@ public class MemoryDualFragment extends BaseGameFragment {
         textWinner = root.findViewById(R.id.textWinner);
         btnReplay = root.findViewById(R.id.btnReplay);
 
-        btnReplay.setOnClickListener(v ->
-        {
+        btnReplay.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.navigation_home);
         });
 
-        feedbackManager = new FeedbackManager(requireContext());
-        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
-
         buttons = new ArrayList<>();
         cards = generateCards();
 
+        // Configurer la grille selon la difficulté
+        grid.setColumnCount(difficulty.cols);
+        grid.setRowCount(difficulty.rows);
+
         setupGrid();
+
+        // Phase de prévisualisation
+        previewCards();
 
         // Timer
         gameTimer = new GameTimer();
@@ -87,31 +102,46 @@ public class MemoryDualFragment extends BaseGameFragment {
         });
         gameTimer.start();
 
-        // init UI values
+        // Initialiser l'UI
         updateUI();
         textCombo.setAlpha(0f);
 
         return root;
     }
 
+    private void previewCards() {
+        // Montrer toutes les cartes
+        for (int i = 0; i < cards.size(); i++) {
+            Button btn = buttons.get(i);
+            btn.setText(cards.get(i).getContent());
+            btn.setClickable(false);
+        }
+
+        // Cacher les cartes avec animation après le temps de prévisualisation
+        handler.postDelayed(() -> {
+            for (Button btn : buttons) {
+                AnimUtils.flipToBack(btn);
+                btn.setClickable(true);
+            }
+        }, difficulty.previewMs);
+    }
     private void setupGrid() {
         grid.removeAllViews();
         buttons.clear();
 
-        // GridLayout params reuse
         int n = cards.size();
         for (int i = 0; i < n; i++) {
             final int idx = i;
             Button btn = new Button(requireContext());
-            btn.setText(""); // face cachée
+            btn.setText("");
             btn.setTag(i);
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
             params.height = GridLayout.LayoutParams.WRAP_CONTENT;
-            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-            params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-            params.setMargins(8,8,8,8);
+            params.columnSpec = GridLayout.spec(i % difficulty.cols, 1f);
+            params.rowSpec = GridLayout.spec(i / difficulty.cols, 1f);
+            params.setMargins(8, 8, 8, 8);
             btn.setLayoutParams(params);
 
             btn.setOnClickListener(v -> {
@@ -123,13 +153,15 @@ public class MemoryDualFragment extends BaseGameFragment {
             buttons.add(btn);
         }
     }
+
     private List<Card> generateCards() {
         List<Card> list = new ArrayList<>();
         QuestionGenerator generator = new QuestionGenerator(50, 2, false, true, true, true, true, true);
         List<Integer> usedResults = new ArrayList<>();
 
+        int pairCount = (difficulty.cols * difficulty.rows) / 2;
         int index = 0;
-        while (list.size() < 24) {
+        while (list.size() < pairCount * 2) {
             QuestionGenerator.MathQuestion q = generator.generateQuestion();
             int answer = q.answer;
 
@@ -146,14 +178,11 @@ public class MemoryDualFragment extends BaseGameFragment {
     }
 
     private void onCardClicked(int index, Button btn) {
-        // sécurité
         if (index < 0 || index >= cards.size()) return;
         Card card = cards.get(index);
         if (card.isFaceUp() || card.isMatched()) return;
 
-
         AnimUtils.flipToFront(btn, card.getContent());
-
         card.setFaceUp(true);
 
         if (firstCard == null) {
@@ -202,11 +231,7 @@ public class MemoryDualFragment extends BaseGameFragment {
                 AnimUtils.comboPop(textCombo);
             }
 
-            // feedback
-            feedbackManager.playCorrectSound();
-
         } else {
-            // Wrong match → flip back
             firstCard.setFaceUp(false);
             secondCard.setFaceUp(false);
 
@@ -215,10 +240,8 @@ public class MemoryDualFragment extends BaseGameFragment {
             feedbackManager.playWrongSound();
             combo = 0;
             textCombo.setAlpha(0f);
-            // Switch turn
             playerTurn = (playerTurn == 1 ? 2 : 1);
         }
-
 
         if (isGameFinished()) {
             showEndScreen();
@@ -237,7 +260,6 @@ public class MemoryDualFragment extends BaseGameFragment {
         busy = false;
     }
 
-
     private void updateUI() {
         textTurn.setText("Player " + playerTurn);
         textTurn.setBackgroundColor(getColor(requireContext(), playerTurn == 1 ? R.color.correct : R.color.wrong));
@@ -255,7 +277,6 @@ public class MemoryDualFragment extends BaseGameFragment {
     }
 
     private void showEndScreen() {
-        // Stop timer
         gameTimer.stop();
         feedbackManager.playLevelUpSound();
 
@@ -265,10 +286,8 @@ public class MemoryDualFragment extends BaseGameFragment {
         else winner = "🤝 Draw !";
 
         textWinner.setText(winner);
-
         endOverlay.setVisibility(View.VISIBLE);
         endOverlay.setAlpha(0f);
         endOverlay.animate().alpha(1f).setDuration(400).start();
     }
-
 }
