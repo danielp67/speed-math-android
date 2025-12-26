@@ -52,6 +52,25 @@ public class GameFragment extends BaseGameFragment {
         playerManager = PlayerManager.getInstance(requireContext());
         arcadeDifficulty = playerManager.getArcadeDifficulty();
 
+        switch (gameMode) {
+            case "ADD":
+                arcadeDifficulty = playerManager.getAddSuiteDifficulty();
+                break;
+            case "SUB":
+                arcadeDifficulty = playerManager.getSubSuiteDifficulty();
+                break;
+            case "MUL":
+                arcadeDifficulty = playerManager.getMulSuiteDifficulty();
+                break;
+            case "DIV":
+                arcadeDifficulty = playerManager.getDivSuiteDifficulty();
+                break;
+            case "ALL":
+                arcadeDifficulty = playerManager.getAllSuiteDifficulty();
+                break;
+            default:
+                arcadeDifficulty = playerManager.getAllSuiteDifficulty();
+        }
         correctAnswersStreak = playerManager.getCorrectAnswersStreak(gameMode);
         lastPlayedLevel = playerManager.getLastPlayedLevel();
 

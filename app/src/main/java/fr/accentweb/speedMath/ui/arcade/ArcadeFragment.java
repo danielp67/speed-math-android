@@ -40,7 +40,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Online Mode", "ONLINE"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
-        items.add(new ArcadeItem("+ - × ÷", 10, "All Suite", "Mixed operations", "ALL"));
+        items.add(new ArcadeItem("+ - × ÷", 10, "All Suite", "Mixed", "ALL"));
         items.add(new ArcadeItem("+", 16, "Addition Suite", "a + b", "ADD"));
         items.add(new ArcadeItem("-", 16, "Subtraction Suite", "a - b", "SUB"));
         items.add(new ArcadeItem("×", 16, "Multiplication Suite", "a × b", "MUL"));
@@ -86,17 +86,19 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
 
     @Override
     public void onSettingsClick(View v, String mode) {
+
+        // 🔒 sécurité absolue
+        if ("ONLINE".equals(mode)) return;
+
         Object currentDifficulty;
 
-        if (mode.equals("MEMORY")) {
-            int savedDifficulty = playerManager.getMemoryDifficulty();
-            currentDifficulty = MemoryDifficulty.values()[savedDifficulty];
-        }
-        else if (mode.equals("MEMORY_DUO")) {
-            int savedDifficulty = playerManager.getMemoryDuoDifficulty();
-            currentDifficulty = MemoryDifficulty.values()[savedDifficulty];
-        }
-        else {
+        if ("MEMORY".equals(mode) || "MEMORY_DUO".equals(mode)) {
+            int saved = mode.equals("MEMORY")
+                    ? playerManager.getMemoryDifficulty()
+                    : playerManager.getMemoryDuoDifficulty();
+
+            currentDifficulty = MemoryDifficulty.values()[saved];
+        } else {
             currentDifficulty = getCurrentGameDifficulty(mode);
         }
 
@@ -106,8 +108,10 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
                 mode,
                 () -> adapter.notifyDataSetChanged()
         );
+
         dialog.show(getParentFragmentManager(), "difficulty_dialog");
     }
+
 
     private GameDifficulty getCurrentGameDifficulty(String mode) {
         int difficultyValue = 3; // PROGRESSIVE par défaut

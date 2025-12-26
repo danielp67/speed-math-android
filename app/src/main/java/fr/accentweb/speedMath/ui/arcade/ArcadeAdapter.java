@@ -62,19 +62,23 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         h.iconCard.setTextSize(item.iconSize);
         h.titleCard.setText(item.title);
 
-        // Mettre à jour le texte de difficulté
+        if ("ONLINE".equals(item.mode)) {
+            h.btnSettings.setVisibility(View.GONE);
+            h.btnSettings.setClickable(false);
+        } else {
+            h.btnSettings.setVisibility(View.VISIBLE);
+        }
         if (item.mode.equals("MEMORY")) {
             int savedDifficulty = playerManager.getMemoryDifficulty();
             MemoryDifficulty difficulty = MemoryDifficulty.values()[savedDifficulty];
-            h.descriptionCard.setText("Difficulty: " + difficulty.label);
+            h.descriptionCard.setText(item.description + " - " + difficulty.label);
         }
         else if (item.mode.equals("MEMORY_DUO")) {
             int savedDifficulty = playerManager.getMemoryDuoDifficulty();
             MemoryDifficulty difficulty = MemoryDifficulty.values()[savedDifficulty];
-            h.descriptionCard.setText("Difficulty: " + difficulty.label);
+            h.descriptionCard.setText(item.description + " - " + difficulty.label);
         }
         else {
-            // Pour les autres modes, afficher la difficulté actuelle
             GameDifficulty difficulty = getCurrentGameDifficulty(item.mode);
             h.descriptionCard.setText(item.description + " - " + difficulty.getDisplayName());
         }
