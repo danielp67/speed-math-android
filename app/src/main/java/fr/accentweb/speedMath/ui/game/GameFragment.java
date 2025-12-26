@@ -64,7 +64,7 @@ public class GameFragment extends BaseGameFragment {
         textScoreRight = root.findViewById(R.id.textScoreRight);
         textQuestion = root.findViewById(R.id.textQuestion);
         textLevelNumber = root.findViewById(R.id.textLevelNumber);
-        textLevelNumber.setText("☆☆☆☆☆");
+        textLevelNumber.setText("☆☆☆");
         textResult = root.findViewById(R.id.textResult);
         textResult.setText("");
 
@@ -196,7 +196,7 @@ public class GameFragment extends BaseGameFragment {
 
     private void updateStars() {
         int filledStars = score;
-        int maxStars = 5;
+        int maxStars = 3;
 
         StringBuilder stars = new StringBuilder();
         for (int i = 0; i < maxStars; i++) {
