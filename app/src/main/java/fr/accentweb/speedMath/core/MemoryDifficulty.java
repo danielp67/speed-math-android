@@ -1,4 +1,4 @@
-package fr.accentweb.speedMath.ui.arcade;
+package fr.accentweb.speedMath.core;
 
 public enum MemoryDifficulty {
     EASY("Easy", 4, 3, 2000),

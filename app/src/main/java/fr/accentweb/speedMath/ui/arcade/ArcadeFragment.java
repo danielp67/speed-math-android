@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.FeedbackManager;
+import fr.accentweb.speedMath.core.GameDifficulty;
+import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.utils.NetworkUtils;
 import java.util.ArrayList;
@@ -21,7 +23,6 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
     private PlayerManager playerManager;
     private FeedbackManager feedbackManager;
     private ArcadeAdapter adapter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,9 +35,9 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         List<ArcadeItem> items = new ArrayList<>();
-        items.add(new ArcadeItem("👤", 16, "Solo", "Difficulty: Medium", "QCM"));
-        items.add(new ArcadeItem("👥", 16, "Battle", "Difficulty: Hard", "DUAL"));
-        items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Difficulty: Expert", "ONLINE"));
+        items.add(new ArcadeItem("👤", 16, "Solo", "QCM Mode", "QCM"));
+        items.add(new ArcadeItem("👥", 16, "Battle", "Dual Mode", "DUAL"));
+        items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Online Mode", "ONLINE"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
         items.add(new ArcadeItem("+ - × ÷", 10, "All Suite", "Mixed operations", "ALL"));
@@ -59,60 +60,83 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
 
         switch (mode) {
             case "QCM":
+                args.putInt("DIFFICULTY", playerManager.getSoloDifficulty());
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_qcmFragment, args);
                 break;
             case "DUAL":
+                args.putInt("DIFFICULTY", playerManager.getBattleDifficulty());
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dualFragment, args);
                 break;
             case "ONLINE":
                 onlineMode(v, args);
                 break;
             case "MEMORY":
-                int savedMemoryDifficulty = playerManager.getMemoryDifficulty();
-                MemoryDifficulty memoryDifficulty = MemoryDifficulty.values()[savedMemoryDifficulty];
-                args.putSerializable("DIFFICULTY", memoryDifficulty);
+                args.putInt("DIFFICULTY", playerManager.getMemoryDifficulty());
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_memoryFragment, args);
                 break;
             case "MEMORY_DUO":
-                int savedMemoryDuoDifficulty = playerManager.getMemoryDuoDifficulty();
-                MemoryDifficulty memoryDuoDifficulty = MemoryDifficulty.values()[savedMemoryDuoDifficulty];
-                args.putSerializable("DIFFICULTY", memoryDuoDifficulty);
+                args.putInt("DIFFICULTY", playerManager.getMemoryDuoDifficulty());
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_memoryDualFragment, args);
                 break;
             default:
+                args.putInt("DIFFICULTY", getCurrentGameDifficultyValue(mode));
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_gameFragment, args);
         }
     }
 
     @Override
     public void onSettingsClick(View v, String mode) {
+        Object currentDifficulty;
+
         if (mode.equals("MEMORY")) {
             int savedDifficulty = playerManager.getMemoryDifficulty();
-            MemoryDifficulty currentDifficulty = MemoryDifficulty.values()[savedDifficulty];
-
-            MemoryDifficultyDialog dialog = new MemoryDifficultyDialog(
-                    playerManager,
-                    currentDifficulty,
-                    "MEMORY",
-                    () -> adapter.notifyDataSetChanged()
-            );
-            dialog.show(getParentFragmentManager(), "difficulty_dialog");
-
-        } else if (mode.equals("MEMORY_DUO")) {
-            int savedDifficulty = playerManager.getMemoryDuoDifficulty();
-            MemoryDifficulty currentDifficulty = MemoryDifficulty.values()[savedDifficulty];
-
-            MemoryDifficultyDialog dialog = new MemoryDifficultyDialog(
-                    playerManager,
-                    currentDifficulty,
-                    "MEMORY_DUO",
-                    () -> adapter.notifyDataSetChanged()
-            );
-            dialog.show(getParentFragmentManager(), "difficulty_dialog");
+            currentDifficulty = MemoryDifficulty.values()[savedDifficulty];
         }
+        else if (mode.equals("MEMORY_DUO")) {
+            int savedDifficulty = playerManager.getMemoryDuoDifficulty();
+            currentDifficulty = MemoryDifficulty.values()[savedDifficulty];
+        }
+        else {
+            currentDifficulty = getCurrentGameDifficulty(mode);
+        }
+
+        DifficultyDialog dialog = new DifficultyDialog(
+                playerManager,
+                currentDifficulty,
+                mode,
+                () -> adapter.notifyDataSetChanged()
+        );
+        dialog.show(getParentFragmentManager(), "difficulty_dialog");
     }
 
+    private GameDifficulty getCurrentGameDifficulty(String mode) {
+        int difficultyValue = 3; // PROGRESSIVE par défaut
 
+        switch (mode) {
+            case "QCM": difficultyValue = playerManager.getSoloDifficulty(); break;
+            case "DUAL": difficultyValue = playerManager.getBattleDifficulty(); break;
+            case "ALL": difficultyValue = playerManager.getAllSuiteDifficulty(); break;
+            case "ADD": difficultyValue = playerManager.getAddSuiteDifficulty(); break;
+            case "SUB": difficultyValue = playerManager.getSubSuiteDifficulty(); break;
+            case "MUL": difficultyValue = playerManager.getMulSuiteDifficulty(); break;
+            case "DIV": difficultyValue = playerManager.getDivSuiteDifficulty(); break;
+        }
+
+        return GameDifficulty.fromValue(difficultyValue);
+    }
+
+    private int getCurrentGameDifficultyValue(String mode) {
+        switch (mode) {
+            case "QCM": return playerManager.getSoloDifficulty();
+            case "DUAL": return playerManager.getBattleDifficulty();
+            case "ALL": return playerManager.getAllSuiteDifficulty();
+            case "ADD": return playerManager.getAddSuiteDifficulty();
+            case "SUB": return playerManager.getSubSuiteDifficulty();
+            case "MUL": return playerManager.getMulSuiteDifficulty();
+            case "DIV": return playerManager.getDivSuiteDifficulty();
+            default: return 3; // PROGRESSIVE par défaut
+        }
+    }
 
     private void onlineMode(View v, Bundle args) {
         if (!NetworkUtils.isInternetAvailable(requireContext())) {

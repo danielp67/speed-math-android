@@ -7,8 +7,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import fr.accentweb.speedMath.R;
+import fr.accentweb.speedMath.core.GameDifficulty;
+import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
-
 import java.util.List;
 
 public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder> {
@@ -61,17 +62,21 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         h.iconCard.setTextSize(item.iconSize);
         h.titleCard.setText(item.title);
 
-        // Mettre à jour le texte de difficulté pour "Memory" et "Memory Duo"
+        // Mettre à jour le texte de difficulté
         if (item.mode.equals("MEMORY")) {
             int savedDifficulty = playerManager.getMemoryDifficulty();
             MemoryDifficulty difficulty = MemoryDifficulty.values()[savedDifficulty];
             h.descriptionCard.setText("Difficulty: " + difficulty.label);
-        } else if (item.mode.equals("MEMORY_DUO")) {
+        }
+        else if (item.mode.equals("MEMORY_DUO")) {
             int savedDifficulty = playerManager.getMemoryDuoDifficulty();
             MemoryDifficulty difficulty = MemoryDifficulty.values()[savedDifficulty];
             h.descriptionCard.setText("Difficulty: " + difficulty.label);
-        } else {
-            h.descriptionCard.setText(item.description);
+        }
+        else {
+            // Pour les autres modes, afficher la difficulté actuelle
+            GameDifficulty difficulty = getCurrentGameDifficulty(item.mode);
+            h.descriptionCard.setText(item.description + " - " + difficulty.getDisplayName());
         }
 
         h.btnPlay.setTag(item.mode);
@@ -80,6 +85,21 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         h.btnSettings.setOnClickListener(v -> listener.onSettingsClick(v, item.mode));
     }
 
+    private GameDifficulty getCurrentGameDifficulty(String mode) {
+        int difficultyValue = 3; // PROGRESSIVE par défaut
+
+        switch (mode) {
+            case "QCM": difficultyValue = playerManager.getSoloDifficulty(); break;
+            case "DUAL": difficultyValue = playerManager.getBattleDifficulty(); break;
+            case "ALL": difficultyValue = playerManager.getAllSuiteDifficulty(); break;
+            case "ADD": difficultyValue = playerManager.getAddSuiteDifficulty(); break;
+            case "SUB": difficultyValue = playerManager.getSubSuiteDifficulty(); break;
+            case "MUL": difficultyValue = playerManager.getMulSuiteDifficulty(); break;
+            case "DIV": difficultyValue = playerManager.getDivSuiteDifficulty(); break;
+        }
+
+        return GameDifficulty.fromValue(difficultyValue);
+    }
 
     @Override
     public int getItemCount() {

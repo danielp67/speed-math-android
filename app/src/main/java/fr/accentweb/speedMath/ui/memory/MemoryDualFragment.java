@@ -2,9 +2,6 @@ package fr.accentweb.speedMath.ui.memory;
 
 import static androidx.core.content.ContextCompat.getColor;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -23,7 +20,7 @@ import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameTimer;
 import fr.accentweb.speedMath.core.QuestionGenerator;
-import fr.accentweb.speedMath.ui.arcade.MemoryDifficulty;
+import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.utils.AnimUtils;
 
 import java.util.ArrayList;

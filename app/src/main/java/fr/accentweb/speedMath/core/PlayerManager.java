@@ -30,6 +30,14 @@ public class PlayerManager {
     private static final String KEY_HAPTIC = "haptic";
     private static final String KEY_ARCADE_DIFFICULTY = "arcade_difficulty";
     private static final String KEY_NB_QUESTIONS = "nb_questions";
+    // Ajout des nouvelles clés pour les difficultés
+    private static final String KEY_SOLO_DIFFICULTY = "solo_difficulty";
+    private static final String KEY_BATTLE_DIFFICULTY = "battle_difficulty";
+    private static final String KEY_ALL_SUITE_DIFFICULTY = "all_suite_difficulty";
+    private static final String KEY_ADD_SUITE_DIFFICULTY = "add_suite_difficulty";
+    private static final String KEY_SUB_SUITE_DIFFICULTY = "sub_suite_difficulty";
+    private static final String KEY_MUL_SUITE_DIFFICULTY = "mul_suite_difficulty";
+    private static final String KEY_DIV_SUITE_DIFFICULTY = "div_suite_difficulty";
     private static final String KEY_MEMORY_DIFFICULTY = "memory_difficulty";
     private static final String KEY_MEMORY_DUO_DIFFICULTY = "memory_duo_difficulty";
     private static final String KEY_ONLINE_UID = "online_uid";
@@ -204,6 +212,72 @@ public class PlayerManager {
     public int getNbQuestions() {
         return prefs.getInt(KEY_NB_QUESTIONS, 0);
     }
+
+    // ---- DIFFICULTY ----
+
+    // Solo (QCM)
+    public void setSoloDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_SOLO_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getSoloDifficulty() {
+        return prefs.getInt(KEY_SOLO_DIFFICULTY, 3); // PROGRESSIVE par défaut
+    }
+
+    // Battle (DUAL)
+    public void setBattleDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_BATTLE_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getBattleDifficulty() {
+        return prefs.getInt(KEY_BATTLE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+    }
+
+    // All Suite
+    public void setAllSuiteDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_ALL_SUITE_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getAllSuiteDifficulty() {
+        return prefs.getInt(KEY_ALL_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+    }
+
+    // Addition Suite
+    public void setAddSuiteDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_ADD_SUITE_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getAddSuiteDifficulty() {
+        return prefs.getInt(KEY_ADD_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+    }
+
+    // Subtraction Suite
+    public void setSubSuiteDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_SUB_SUITE_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getSubSuiteDifficulty() {
+        return prefs.getInt(KEY_SUB_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+    }
+
+    // Multiplication Suite
+    public void setMulSuiteDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_MUL_SUITE_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getMulSuiteDifficulty() {
+        return prefs.getInt(KEY_MUL_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+    }
+
+    // Division Suite
+    public void setDivSuiteDifficulty(int difficulty) {
+        prefs.edit().putInt(KEY_DIV_SUITE_DIFFICULTY, difficulty).apply();
+    }
+
+    public int getDivSuiteDifficulty() {
+        return prefs.getInt(KEY_DIV_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+    }
+
 
     public void setMemoryDifficulty(int difficulty) {
         prefs.edit().putInt(KEY_MEMORY_DIFFICULTY, difficulty).apply();

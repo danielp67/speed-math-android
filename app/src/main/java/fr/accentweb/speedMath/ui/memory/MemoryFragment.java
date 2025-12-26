@@ -22,7 +22,7 @@ import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameTimer;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.core.QuestionGenerator;
-import fr.accentweb.speedMath.ui.arcade.MemoryDifficulty;
+import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.utils.AnimUtils;
 
 import java.util.ArrayList;
