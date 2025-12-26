@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -52,6 +53,9 @@ public class LevelFragment extends BaseGameFragment {
     private GameTimer gameTimer;
 
     private FeedbackManager feedbackManager;
+    private View localOverlay;
+    private Button btnReplay;
+    private TextView textWinner;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -110,6 +114,10 @@ public class LevelFragment extends BaseGameFragment {
         textCancel.setText("X");
         textClear.setText("C");
         textValidate.setText("OK");
+
+        localOverlay = root.findViewById(R.id.localOverlay);
+        btnReplay = root.findViewById(R.id.btnReplay);
+        textWinner = root.findViewById(R.id.textWinner);
 
         cardClear.setOnClickListener(v -> textResult.setText(""));
         cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
@@ -195,10 +203,6 @@ public class LevelFragment extends BaseGameFragment {
     private void levelCompleted() {
         feedbackManager.playLevelUpSound();
         feedbackManager.correctFeedback(textValidate);
-        textValidate.setText("🎉 Level completed !");
-        textValidate.setTextColor(ContextCompat.getColor(requireContext(), R.color.gold_accent));
-        textValidate.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.blue_primary));
-
         if (gameTimer != null) gameTimer.stop();
         score = (int) scoreManager.setFinalBonus(questionNbr, correctAnswerNbr, gameTimer.getElapsedMillis());
         updateScore();
@@ -206,10 +210,15 @@ public class LevelFragment extends BaseGameFragment {
         playerManager.setCurrentLevel(gameLevel);
         playerManager.setLevelHighScore(gameLevel, score);
 
-        textValidate.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_dashboard);
-        });
+        for (int i = 0; i <= 9; i++) {
+            cards[i].setClickable(false);
+        }
+        cardClear.setClickable(false);
+        cardCancel.setClickable(false);
+        cardValidateCard.setClickable(false);
+
+        // Afficher l'overlay existant
+        showEndGame();
     }
 
     private void updateScore() {
@@ -232,6 +241,25 @@ public class LevelFragment extends BaseGameFragment {
             view.setBackground(originalBackground);
             view.setText("");
         }, 500);
+    }
+
+    private void showEndGame() {
+        textWinner.setText("🎉 Level " + gameLevel + " Completed!");
+        localOverlay.setAlpha(0f);
+        localOverlay.setVisibility(View.VISIBLE);
+        localOverlay.animate().alpha(1f).setDuration(500).start();
+
+        btnReplay.setText("Next Level →");
+        btnReplay.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putInt("LEVEL", gameLevel + 1);
+            args.putString("MODE", gameMode);
+            args.putLong("TARGET_SCORE", targetScore);
+            args.putInt("DIFFICULTY", gameDifficulty);
+            args.putInt("STATUS", 0);
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.levelFragment, args);
+        });
     }
 
 }

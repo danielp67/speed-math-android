@@ -69,6 +69,7 @@
     <string name="error_message">"Error : "</string>
     <string name="searching_for_a_match">Searching for a match…</string>
     <string name="match_cancelled">Match cancelled</string>
+    <string name="next_level">Next level →</string>
 
 
 </resources>
