@@ -2,10 +2,10 @@ package fr.accentweb.speedMath.core;
 
 public enum GameDifficulty {
 
-    PROGRESSIVE("Progressive", 3),
-    EASY("Easy", 0),
-    MEDIUM("Medium", 1),
-    HARD("Hard", 2),
+    PROGRESSIVE("Progressive", 0),
+    EASY("Easy", 1),
+    MEDIUM("Medium", 2),
+    HARD("Hard", 3),
     EXTREME("Extreme", 4);
 
     private final String displayName;

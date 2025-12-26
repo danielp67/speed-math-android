@@ -50,7 +50,6 @@ public class GameFragment extends BaseGameFragment {
 
         gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
         playerManager = PlayerManager.getInstance(requireContext());
-        arcadeDifficulty = playerManager.getArcadeDifficulty();
 
         switch (gameMode) {
             case "ADD":

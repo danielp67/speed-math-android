@@ -62,12 +62,6 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         h.iconCard.setTextSize(item.iconSize);
         h.titleCard.setText(item.title);
 
-        if ("ONLINE".equals(item.mode)) {
-            h.btnSettings.setVisibility(View.GONE);
-            h.btnSettings.setClickable(false);
-        } else {
-            h.btnSettings.setVisibility(View.VISIBLE);
-        }
         if (item.mode.equals("MEMORY")) {
             int savedDifficulty = playerManager.getMemoryDifficulty();
             MemoryDifficulty difficulty = MemoryDifficulty.values()[savedDifficulty];
@@ -83,6 +77,13 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
             h.descriptionCard.setText(item.description + " - " + difficulty.getDisplayName());
         }
 
+        if ("ONLINE".equals(item.mode)) {
+            h.btnSettings.setVisibility(View.GONE);
+            h.btnSettings.setClickable(false);
+            h.descriptionCard.setText(item.description);
+        } else {
+            h.btnSettings.setVisibility(View.VISIBLE);
+        }
         h.btnPlay.setTag(item.mode);
         h.btnPlay.setOnClickListener(v -> listener.onPlayClick(v, item.mode));
         h.btnSettings.setTag(item.mode);

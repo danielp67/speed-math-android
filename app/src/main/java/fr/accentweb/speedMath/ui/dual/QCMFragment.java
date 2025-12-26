@@ -62,24 +62,10 @@ public class QCMFragment extends BaseGameFragment {
             @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
-
-        gameMode = getArguments() != null ? getArguments().getString("MODE") : "ALL";
         playerManager = PlayerManager.getInstance(requireContext());
-        arcadeDifficulty = playerManager.getArcadeDifficulty();
-        nbQuestions = playerManager.getNbQuestions();
-        switch (nbQuestions) {
-            case 1:
-                nbQuestions = 10;
-                break;
-            case 2:
-                nbQuestions = 20;
-                break;
-            case 3:
-                nbQuestions = 25;
-                break;
-            default:
-                nbQuestions = 5;
-        }
+        arcadeDifficulty = playerManager.getSoloDifficulty();
+        nbQuestions = 10;
+
         // UI references
         textQuestion = view.findViewById(R.id.textQuestion);
         textResult = view.findViewById(R.id.textResult);
@@ -108,8 +94,7 @@ public class QCMFragment extends BaseGameFragment {
         card4.setOnClickListener(v -> checkAnswer(t4));
 
         btnReplay.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_home);
+            restartGame();
         });
 
         feedbackManager = new FeedbackManager(requireContext());
@@ -249,5 +234,22 @@ public class QCMFragment extends BaseGameFragment {
         overlay.setAlpha(0f);
         overlay.setVisibility(View.VISIBLE);
         overlay.animate().alpha(1f).setDuration(500).start();
+    }
+
+    private void restartGame() {
+        score = 0;
+        combo = 0;
+        textCombo.setAlpha(0f);
+
+        updateScore();
+        textResult.setText("");
+        resetCardColors();
+
+        overlay.setVisibility(View.GONE);
+
+        gameTimer.reset();
+        gameTimer.start();
+
+        generateQuestion();
     }
 }

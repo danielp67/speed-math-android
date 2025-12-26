@@ -199,19 +199,6 @@ public class PlayerManager {
         return prefs.getBoolean(KEY_HAPTIC, true);
     }
 
-    public void setArcadeDifficulty(int difficulty) {
-        prefs.edit().putInt(KEY_ARCADE_DIFFICULTY, difficulty).apply();
-    }
-    public int getArcadeDifficulty() {
-        return prefs.getInt(KEY_ARCADE_DIFFICULTY, 0);
-    }
-
-    public void setNbQuestions(int nbQuestions) {
-        prefs.edit().putInt(KEY_NB_QUESTIONS, nbQuestions).apply();
-    }
-    public int getNbQuestions() {
-        return prefs.getInt(KEY_NB_QUESTIONS, 0);
-    }
 
     // ---- DIFFICULTY ----
 

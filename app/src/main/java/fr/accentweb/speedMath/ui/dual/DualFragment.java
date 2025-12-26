@@ -73,21 +73,8 @@ public class DualFragment extends BaseGameFragment {
         super.onViewCreated(v, savedInstanceState);
 
         playerManager = PlayerManager.getInstance(requireContext());
-        arcadeDifficulty = playerManager.getArcadeDifficulty();
-        nbQuestions = playerManager.getNbQuestions();
-        switch (nbQuestions) {
-            case 1:
-                nbQuestions = 10;
-                break;
-            case 2:
-                nbQuestions = 20;
-                break;
-            case 3:
-                nbQuestions = 25;
-                break;
-            default:
-                nbQuestions = 5;
-        }
+        arcadeDifficulty = playerManager.getBattleDifficulty();
+        nbQuestions = 10;
         // ====================== INIT PLAYER 1 ======================
         View p1 = v.findViewById(R.id.viewPlayer1);
         p1TextQuestion = p1.findViewById(R.id.textQuestion);
@@ -123,8 +110,7 @@ public class DualFragment extends BaseGameFragment {
 
         p1BtnReplay.setOnClickListener(view ->
         {
-            NavController navController = Navigation.findNavController(view);
-            navController.navigate(R.id.navigation_home);
+            restartGame();
         });
 
 
@@ -163,8 +149,7 @@ public class DualFragment extends BaseGameFragment {
 
         p2BtnReplay.setOnClickListener(view ->
                 {
-                    NavController navController = Navigation.findNavController(view);
-                    navController.navigate(R.id.navigation_home);
+                    restartGame();
                 });
 
         p1TextScoreRight.setText(getString(R.string.score_format, p1Score, nbQuestions));
@@ -388,6 +373,35 @@ public class DualFragment extends BaseGameFragment {
         p2Overlay.setAlpha(0f);
         p2Overlay.setVisibility(View.VISIBLE);
         p2Overlay.animate().alpha(1f).setDuration(500).start();
+    }
+
+    private void restartGame() {
+        p1Score = 0;
+        p2Score = 0;
+        p1Combo = 0;
+        p2Combo = 0;
+
+        p1TextResult.setText("");
+        p2TextResult.setText("");
+        p1TextScoreRight.setText(getString(R.string.score_format, p1Score, nbQuestions));
+        p2TextScoreRight.setText(getString(R.string.score_format, p2Score, nbQuestions));
+        p1TextCombo.setAlpha(0f);
+        p2TextCombo.setAlpha(0f);
+
+        p1Overlay.setVisibility(View.GONE);
+        p2Overlay.setVisibility(View.GONE);
+
+        resetCardColors(p1Cards);
+        resetCardColors(p2Cards);
+
+        gameTimer.reset();
+        gameTimer.start();
+
+        generateQuestionPlayer1();
+        generateQuestionPlayer2();
+
+        setP1CardsClickable(true);
+        setP2CardsClickable(true);
     }
 
 }

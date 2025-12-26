@@ -124,8 +124,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
         matchRef = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
 
         playerManager = PlayerManager.getInstance(requireContext());
-        arcadeDifficulty = playerManager.getArcadeDifficulty();
-        nbQuestions = 7; // Default number of questions for an online match
+        nbQuestions = 10;
 
         // UI references
         textQuestion = view.findViewById(R.id.textQuestion);

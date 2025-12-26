@@ -20,6 +20,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
 import fr.accentweb.speedMath.R;
+import fr.accentweb.speedMath.core.GameDifficulty;
+import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.databinding.FragmentSettingsBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,10 +64,6 @@ public class SettingsFragment extends Fragment {
         SwitchCompat switchAnimation = root.findViewById(R.id.switchAnimations);
         SwitchCompat switchHaptic = root.findViewById(R.id.switchHaptic);
 
-        // Spinners
-        Spinner spinnerDifficulty = root.findViewById(R.id.spinnerDifficulty);
-        Spinner spinnerNbQuestions = root.findViewById(R.id.spinnerNbQuestions);
-
         // Bouton reset score
         Button btnResetScore = root.findViewById(R.id.btnResetScore);
 
@@ -78,25 +76,6 @@ public class SettingsFragment extends Fragment {
         switchHaptic.setChecked(playerManager.isHapticEnabled());
 
         applyTheme(playerManager.isDarkModeEnabled());
-
-        // --- Initialiser Spinners ---
-        ArrayAdapter<String> adapterDifficulty = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                new String[]{"Adaptive", "Easy", "Medium", "Hard", "Extreme"}
-        );
-        adapterDifficulty.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDifficulty.setAdapter(adapterDifficulty);
-        spinnerDifficulty.setSelection(playerManager.getArcadeDifficulty());
-
-        ArrayAdapter<Integer> adapterNbQuestions = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                new Integer[]{5, 10, 20, 25}
-        );
-        adapterNbQuestions.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerNbQuestions.setAdapter(adapterNbQuestions);
-        spinnerNbQuestions.setSelection(playerManager.getNbQuestions());
 
         // --- Listeners Switch ---
         switchDark.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -140,27 +119,6 @@ public class SettingsFragment extends Fragment {
                 switchHaptic.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             }
             playerManager.setHapticEnabled(on);
-        });
-
-        // --- Listeners Spinners ---
-        spinnerDifficulty.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                playerManager.setArcadeDifficulty(position);
-            }
-
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
-
-        spinnerNbQuestions.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                playerManager.setNbQuestions(position);
-            }
-
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
 
         // --- Reset score ---
@@ -219,8 +177,15 @@ public class SettingsFragment extends Fragment {
         playerManager.setVibrationEnabled(true);
         playerManager.setAnimationEnabled(true);
         playerManager.setHapticEnabled(true);
-        playerManager.setArcadeDifficulty(0);
-        playerManager.setNbQuestions(0);
+        playerManager.setSoloDifficulty(GameDifficulty.PROGRESSIVE.ordinal());
+        playerManager.setBattleDifficulty(GameDifficulty.PROGRESSIVE.ordinal());
+        playerManager.setAllSuiteDifficulty(GameDifficulty.PROGRESSIVE.ordinal());
+        playerManager.setAddSuiteDifficulty(GameDifficulty.PROGRESSIVE.ordinal());
+        playerManager.setSubSuiteDifficulty(GameDifficulty.PROGRESSIVE.ordinal());
+        playerManager.setMulSuiteDifficulty(GameDifficulty.PROGRESSIVE.ordinal());
+        playerManager.setDivSuiteDifficulty(GameDifficulty.PROGRESSIVE.ordinal());
+        playerManager.setMemoryDifficulty(MemoryDifficulty.EASY.ordinal());
+        playerManager.setMemoryDuoDifficulty(MemoryDifficulty.EASY.ordinal());
         playerManager.setOnlinePseudo("");
         playerManager.setOnlineUid("");
         playerManager.setOnlineScore(0);
@@ -241,9 +206,6 @@ public class SettingsFragment extends Fragment {
         SwitchCompat switchAnimation = requireView().findViewById(R.id.switchAnimations);
         SwitchCompat switchHaptic = requireView().findViewById(R.id.switchHaptic);
 
-        Spinner spinnerDifficulty = requireView().findViewById(R.id.spinnerDifficulty);
-        Spinner spinnerNbQuestions = requireView().findViewById(R.id.spinnerNbQuestions);
-
         // Switch
         switchDark.setChecked(playerManager.isDarkModeEnabled());
         switchSound.setChecked(playerManager.isSoundEnabled());
@@ -251,10 +213,6 @@ public class SettingsFragment extends Fragment {
         switchVibration.setChecked(playerManager.isVibrationEnabled());
         switchAnimation.setChecked(playerManager.isAnimationEnabled());
         switchHaptic.setChecked(playerManager.isHapticEnabled());
-
-        // Spinners
-        spinnerDifficulty.setSelection(playerManager.getArcadeDifficulty(), false);
-        spinnerNbQuestions.setSelection(playerManager.getNbQuestions(), false);
 
         // Appliquer thème
         applyTheme(playerManager.isDarkModeEnabled());
