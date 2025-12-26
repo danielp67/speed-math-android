@@ -57,9 +57,6 @@ public class MemoryFragment extends BaseGameFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_memory, container, false);
-
-        // Récupérer la difficulté depuis les arguments (si fournie)
-        Bundle args = getArguments();
         int savedDifficulty = PlayerManager.getInstance(requireContext()).getMemoryDifficulty();
         difficulty = MemoryDifficulty.values()[savedDifficulty];
 
@@ -74,8 +71,7 @@ public class MemoryFragment extends BaseGameFragment {
         btnReplay = root.findViewById(R.id.btnReplay);
 
         btnReplay.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_home);
+            restartGame();
         });
 
         feedbackManager = new FeedbackManager(requireContext());
@@ -292,4 +288,30 @@ public class MemoryFragment extends BaseGameFragment {
         endOverlay.setAlpha(0f);
         endOverlay.animate().alpha(1f).setDuration(400).start();
     }
+
+    private void restartGame() {
+        moves = 0;
+        score = 0;
+        combo = 0;
+        firstCard = null;
+        secondCard = null;
+        firstIndex = -1;
+        secondIndex = -1;
+
+        updateMoves();
+        updateScore();
+        textCombo.setAlpha(0f);
+
+        endOverlay.setVisibility(View.GONE);
+
+        cards = generateCards();
+
+        setupGrid();
+
+        gameTimer.reset();
+        gameTimer.start();
+
+        previewCards();
+    }
+
 }

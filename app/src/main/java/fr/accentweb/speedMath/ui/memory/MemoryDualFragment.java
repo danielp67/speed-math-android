@@ -19,6 +19,7 @@ import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameTimer;
+import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.core.QuestionGenerator;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.utils.AnimUtils;
@@ -53,15 +54,8 @@ public class MemoryDualFragment extends BaseGameFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_memory_dual, container, false);
-
-        // Récupérer la difficulté depuis les arguments
-        Bundle args = getArguments();
-        if (args != null && args.containsKey("DIFFICULTY")) {
-            difficulty = (MemoryDifficulty) args.getSerializable("DIFFICULTY");
-        } else {
-            // Difficulté par défaut si non fournie
-            difficulty = MemoryDifficulty.MEDIUM;
-        }
+        int savedDifficulty = PlayerManager.getInstance(requireContext()).getMemoryDuoDifficulty();
+        difficulty = MemoryDifficulty.values()[savedDifficulty];
 
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
@@ -76,8 +70,7 @@ public class MemoryDualFragment extends BaseGameFragment {
         btnReplay = root.findViewById(R.id.btnReplay);
 
         btnReplay.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_home);
+            restartGame();
         });
 
         buttons = new ArrayList<>();
@@ -286,5 +279,30 @@ public class MemoryDualFragment extends BaseGameFragment {
         endOverlay.setVisibility(View.VISIBLE);
         endOverlay.setAlpha(0f);
         endOverlay.animate().alpha(1f).setDuration(400).start();
+    }
+
+    private void restartGame() {
+        playerTurn = scoreP1 > scoreP2 ? 1 : 2;
+        scoreP1 = 0;
+        scoreP2 = 0;
+        combo = 0;
+        firstCard = null;
+        secondCard = null;
+        firstIndex = -1;
+        secondIndex = -1;
+
+        updateUI();
+        textCombo.setAlpha(0f);
+
+        endOverlay.setVisibility(View.GONE);
+
+        cards = generateCards();
+
+        setupGrid();
+
+        gameTimer.reset();
+        gameTimer.start();
+
+        previewCards();
     }
 }
