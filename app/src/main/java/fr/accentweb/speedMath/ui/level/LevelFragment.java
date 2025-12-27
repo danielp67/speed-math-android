@@ -111,7 +111,7 @@ public class LevelFragment extends BaseGameFragment {
         textClear = cardClear.findViewById(R.id.textButton);
         textValidate = cardValidateCard.findViewById(R.id.textButton);
 
-        textCancel.setText("X");
+        textCancel.setText("AC");
         textClear.setText("C");
         textValidate.setText("OK");
 
@@ -119,8 +119,13 @@ public class LevelFragment extends BaseGameFragment {
         btnReplay = root.findViewById(R.id.btnReplay);
         textWinner = root.findViewById(R.id.textWinner);
 
-        cardClear.setOnClickListener(v -> textResult.setText(""));
-        cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        cardCancel.setOnClickListener(v -> textResult.setText(""));
+        cardClear.setOnClickListener(v -> {
+            String current = textResult.getText().toString();
+            if (!current.isEmpty()) {
+                textResult.setText(current.substring(0, current.length() - 1));
+            }
+        });
         cardValidateCard.setOnClickListener(v -> checkAnswer());
 
         // Timer

@@ -1,122 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/numPad"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:columnCount="3"
-    android:rowCount="5">
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
-    <androidx.cardview.widget.CardView
+    <!-- Result -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardResult"
         android:layout_width="296dp"
         android:layout_height="64dp"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_columnSpan="3"
+        android:layout_marginHorizontal="@dimen/dp_2"
+        android:layout_marginBottom="@dimen/dp_8"
         app:cardElevation="8dp"
-        app:layout_constraintTop_toBottomOf="@id/textQuestion">
+        app:cardCornerRadius="@dimen/dp_12">
 
         <TextView
             android:id="@+id/textResult"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:padding="@dimen/dp_16"
             android:textSize="@dimen/sp_24" />
+    </com.google.android.material.card.MaterialCardView>>
 
-    </androidx.cardview.widget.CardView>
+    <!-- Ligne 1 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <include
-        android:id="@+id/card1"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card1"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
 
-    <include
-        android:id="@+id/card2"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card2"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
 
-    <include
-        android:id="@+id/card3"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card3"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
+    </LinearLayout>
 
-    <include
-        android:id="@+id/card4"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+    <!-- Ligne 2 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <include
-        android:id="@+id/card5"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card4"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
 
-    <include
-        android:id="@+id/card6"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card5"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
 
-    <include
-        android:id="@+id/card7"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card6"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
+    </LinearLayout>
 
-    <include
-        android:id="@+id/card8"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+    <!-- Ligne 3 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <include
-        android:id="@+id/card9"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card7"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
 
-    <include
-        android:id="@+id/cardX"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card8"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
 
-    <include
-        android:id="@+id/card0"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+        <include
+            android:id="@+id/card9"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
+    </LinearLayout>
 
-    <include
-        android:id="@+id/cardC"
-        layout="@layout/card_pad"
-        android:layout_margin="@dimen/dp_2"
-        android:layout_width="@dimen/dp_96"
-        android:layout_height="@dimen/dp_48" />
+    <!-- Ligne 4 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <include
+            android:id="@+id/cardX"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
+
+        <include
+            android:id="@+id/card0"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
+
+        <include
+            android:id="@+id/cardC"
+            layout="@layout/card_pad"
+            android:layout_width="@dimen/dp_96"
+            android:layout_height="@dimen/dp_48"
+            android:layout_margin="@dimen/dp_2" />
+    </LinearLayout>
+
+    <!-- Ligne OK -->
     <include
         android:id="@+id/cardOK"
         layout="@layout/card_pad"
-        android:layout_columnSpan="3"
-        android:layout_margin="@dimen/dp_2"
-
         android:layout_width="296dp"
-        android:layout_height="@dimen/dp_48" />
+        android:layout_height="@dimen/dp_48"
+        android:layout_margin="@dimen/dp_2" />
 
-</GridLayout>
+</LinearLayout>

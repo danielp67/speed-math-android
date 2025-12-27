@@ -1,13 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/dp_96"
     android:layout_height="@dimen/dp_48"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="@drawable/num_pad_button_ripple"
-    app:cardElevation="8dp">
+    app:rippleColor="@color/blue_primary_light"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/accent_violet"
+    app:strokeWidth="1dp"
+    app:cardCornerRadius="12dp">
 
     <TextView
         android:id="@+id/textButton"
@@ -18,5 +20,5 @@
         android:textSize="@dimen/sp_24"
         android:textStyle="bold"
         android:fontFamily="@font/inter_regular"
-        android:textColor="?attr/colorOnBackground"/>
-</androidx.cardview.widget.CardView>
+        android:textColor="?attr/textPrimary"/>
+</com.google.android.material.card.MaterialCardView>
