@@ -155,7 +155,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
             Toast.makeText(requireContext(), "Please set a pseudo before playing online.", Toast.LENGTH_SHORT).show();
             NavController navController = Navigation.findNavController(v);
             NavOptions navOptions = new NavOptions.Builder()
-                    .setPopUpTo(R.id.navigation_home, false) // ou true si tu veux supprimer le menu aussi
+                    .setPopUpTo(R.id.navigation_home, true) // ou true si tu veux supprimer le menu aussi
                     .build();
 
             navController.navigate(R.id.navigation_notifications, args, navOptions);
