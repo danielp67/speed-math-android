@@ -137,8 +137,6 @@ android:orientation="vertical">
     android:textSize="@dimen/sp_24"
     android:textStyle="bold"
     android:textColor="@color/blue_primary"
-    android:backgroundTint="@color/gold_accent"
-    app:strokeColor="@color/accent_violet"
-    app:strokeWidth="1dp" />
+    android:backgroundTint="@color/gold_accent" />
 </LinearLayout>
     </FrameLayout>
