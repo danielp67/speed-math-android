@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import fr.accentweb.speedMath.R;
@@ -263,7 +264,11 @@ public class LevelFragment extends BaseGameFragment {
             args.putInt("DIFFICULTY", gameDifficulty);
             args.putInt("STATUS", 0);
             NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.levelFragment, args);
+            NavOptions navOptions = new NavOptions.Builder()
+                    .setPopUpTo(R.id.navigation_dashboard, false) // ou true si tu veux supprimer le menu aussi
+                    .build();
+
+            navController.navigate(R.id.levelFragment, args, navOptions);
         });
     }
 

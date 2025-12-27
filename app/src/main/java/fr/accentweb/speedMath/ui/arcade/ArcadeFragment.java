@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -151,7 +153,12 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
             Toast.makeText(requireContext(), "Daily Limit Reached: " + playerManager.getDailyMatchLimit() + " matches played.", Toast.LENGTH_SHORT).show();
         } else if (playerManager.getOnlinePseudo().isEmpty()) {
             Toast.makeText(requireContext(), "Please set a pseudo before playing online.", Toast.LENGTH_SHORT).show();
-            Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_settingsFragment);
+            NavController navController = Navigation.findNavController(v);
+            NavOptions navOptions = new NavOptions.Builder()
+                    .setPopUpTo(R.id.navigation_home, false) // ou true si tu veux supprimer le menu aussi
+                    .build();
+
+            navController.navigate(R.id.navigation_notifications, args, navOptions);
         } else {
             Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_waitingRoomFragment, args);
         }
