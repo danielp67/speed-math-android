@@ -1,48 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
 
-        <!-- GREYS -->
-        <color name="grey_dark_1">#0A0A0A</color>
-        <color name="grey_dark_2">#1A1A1A</color>
-        <color name="grey_dark_3">#2C2C2C</color>
-        <color name="grey_light">#F1F1F1</color>
+    <!-- =====================================================
+     CORE
+    ====================================================== -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
 
-        <!-- ACCENTS -->
-        <color name="blue_primary_light">#4A7AC7</color>
-        <color name="blue_primary">#2A5FA9</color>
-        <color name="blue_primary_dark">#2A5FA9</color>
+    <!-- =====================================================
+     BACKGROUNDS
+    ====================================================== -->
+    <color name="background_dark">#0E1220</color>        <!-- écran principal -->
+    <color name="background_dark_soft">#151A2E</color>   <!-- cards -->
+    <color name="background_dark_lighter">#1E2440</color>
 
-        <!-- PREMIUM -->
-        <color name="gold_accent">#FFD700</color>
+    <color name="background_light">#F6F7FB</color>       <!-- light mode -->
+    <color name="background_light_soft">#FFFFFF</color>
 
-        <!-- TRANSPARENTS -->
-        <color name="transparent">#00FFFFFF</color>
-        <!-- Backgrounds -->
-        <color name="background_dark">#121212</color>
-        <color name="background_light">#FFFFFF</color>
+    <!-- =====================================================
+     GREYS / NEUTRALS
+    ====================================================== -->
+    <color name="grey_light">#E6E8F0</color>
+    <color name="grey_medium">#A6ACC9</color>
+    <color name="grey_dark">#2A2F4A</color>
+    <color name="grey_disabled">#6E7399</color>
+    <color name="divider">#2A3170</color>
 
-        <!-- Card colors -->
-        <color name="card_completed">#FFD700</color> <!-- gold for completed -->
-        <color name="card_pending">#B0B0B0</color> <!-- grey for pending -->
+    <!-- =====================================================
+     PRIMARY – SpeedMath Blue
+    ====================================================== -->
+    <color name="blue_primary">#4A7AC7</color>
+    <color name="blue_primary_light">#6FA3FF</color>
+    <color name="blue_primary_dark">#355AA6</color>
+    <color name="grey_dark_1">#A6ACC9</color> <!-- déjà grey_medium -->
+    <color name="grey_dark_2">#6E7399</color> <!-- déjà text_disabled ou text_secondary_light -->
+    <color name="grey_dark_3">#2A2F4A</color> <!-- grey_dark existant -->
 
-        <!-- Text colors -->
-        <color name="text_primary">#FFFFFF</color>
-        <color name="text_secondary">#B0B0B0</color>
-        <color name="text_star">#FFD700</color> <!-- star color -->
+    <!-- =====================================================
+     ACCENTS – Energy / Gradient
+    ====================================================== -->
+    <color name="accent_violet">#8B7CFF</color>
+    <color name="accent_pink">#C77DFF</color>
 
-        <!-- Buttons -->
-        <color name="button_bg">#1E88E5</color>
-        <color name="button_text">#FFFFFF</color>
+    <!-- =====================================================
+     GOLD / PREMIUM / SCORE
+    ====================================================== -->
+    <color name="gold_accent">#FFD86A</color>
 
-        <!-- Check colors -->
-        <color name="correct">#A5D6A7</color>
-        <color name="wrong">#FFCDD2</color>
-    </resources>
+    <!-- =====================================================
+     TEXT COLORS
+    ====================================================== -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B6BCE2</color>
+    <color name="text_disabled">#6E7399</color>
 
+    <color name="text_primary_light">#2A2F4A</color>
+    <color name="text_secondary_light">#6E7399</color>
+
+    <!-- =====================================================
+     CARDS
+    ====================================================== -->
+    <color name="card_bg">#151A2E</color>
+    <color name="card_bg_light">#FFFFFF</color>
+    <color name="card_border">#2A3170</color>
+    <color name="card_bg_dark">#28282D</color>
+
+    <!-- =====================================================
+     BUTTONS
+    ====================================================== -->
+    <color name="button_primary">#4A7AC7</color>
+    <color name="button_primary_pressed">#355AA6</color>
+    <color name="button_primary_text">#FFFFFF</color>
+
+    <color name="button_secondary">#1E2440</color>
+    <color name="button_secondary_text">#FFFFFF</color>
+
+    <!-- =====================================================
+     FEEDBACK / GAME
+    ====================================================== -->
+    <color name="correct">#9ED9A0</color>
+    <color name="wrong">#F29A9A</color>
+    <color name="warning">#FFD86A</color>
+
+    <!-- =====================================================
+     STARS / SCORE
+    ====================================================== -->
+    <color name="text_star">#FFD86A</color>
+
+    <!-- =====================================================
+     MATERIAL ALIASES (IMPORTANT)
+    ====================================================== -->
+    <color name="colorSurface">@color/card_bg</color>
+    <color name="colorSurfaceLight">@color/card_bg_light</color>
+
+    <color name="colorOnBackground">@color/text_primary</color>
+    <color name="colorOnSurface">@color/text_primary</color>
+
+    <color name="colorOnBackgroundLight">@color/text_primary_light</color>
+    <color name="colorOnSurfaceLight">@color/text_primary_light</color>
+
+    <!-- Ripple -->
+    <color name="ripple_color">#33FFFFFF</color>
+    <color name="ripple_color_dark">#33FFFFFF</color>
+
+</resources>

@@ -5,4 +5,5 @@
     <attr name="cardBackground" format="color"/>
     <attr name="tabIconTint" format="color"/>
     <attr name="itemTextAppearanceActive" format="reference"/>
+    <attr name="playButtonColor" format="color"/>
 </resources>

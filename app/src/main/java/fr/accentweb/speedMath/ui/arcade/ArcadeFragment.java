@@ -87,7 +87,6 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
     @Override
     public void onSettingsClick(View v, String mode) {
 
-        // 🔒 sécurité absolue
         if ("ONLINE".equals(mode)) return;
 
         Object currentDifficulty;

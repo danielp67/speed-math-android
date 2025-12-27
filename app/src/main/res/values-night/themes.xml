@@ -16,8 +16,9 @@
             <item name="android:colorPrimary">@color/grey_dark_1</item>
             <item name="colorOnPrimary">@color/white</item>
             <item name="colorPrimaryDark">@color/blue_primary_dark</item>
+            <item name="playButtonColor">@color/blue_primary_dark</item>
             <item name="colorAccent">@color/gold_accent</item>
-            <item name="itemTextAppearanceActive">@color/blue_primary_light</item>
+            <item name="itemTextAppearanceActive">@color/accent_violet</item>
 
             <!-- NAV + STATUS BAR -->
             <item name="android:navigationBarColor">@color/black</item>
@@ -28,11 +29,11 @@
         </style>
 
         <style name="Theme.ActionBar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-            <item name="android:textColorPrimary">@color/blue_primary_light</item>
+            <item name="android:textColorPrimary">@color/accent_violet</item>
             <item name="titleTextStyle">@style/ActionBar.TitleText</item>
         </style>
 
         <style name="ActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-            <item name="android:textColor">@color/blue_primary_light</item>
+            <item name="android:textColor">@color/accent_violet</item>
         </style>
 </resources>

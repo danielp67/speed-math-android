@@ -16,6 +16,7 @@
         <item name="android:colorPrimary">@color/white</item>
         <item name="colorOnPrimary">@color/grey_dark_1</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
+        <item name="playButtonColor">@color/blue_primary</item>
         <item name="colorAccent">@color/gold_accent</item>
         <item name="itemTextAppearanceActive">@color/gold_accent</item>
 

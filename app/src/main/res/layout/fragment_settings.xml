@@ -15,12 +15,14 @@
         android:paddingBottom="@dimen/dp_64">
 
         <!-- ===== CARD PSEUDO ===== -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="18dp"
+            app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardCornerRadius="12dp">
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/accent_violet">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -72,14 +74,16 @@
                     android:textAllCaps="false"
                     android:layout_marginTop="12dp"/>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
         <!-- ===== CARD DISPLAY ===== -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="18dp"
+            app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardCornerRadius="12dp">
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/accent_violet">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -104,15 +108,17 @@
                     android:textSize="16sp"/>
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- ===== CARD EFFECTS ===== -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="18dp"
+            app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardCornerRadius="12dp">
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/accent_violet">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -173,14 +179,16 @@
                     android:layout_marginTop="10dp"/>
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- ===== CARD DANGER ZONE ===== -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardCornerRadius="12dp">
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/accent_violet">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -208,7 +216,7 @@
                     android:textColor="@android:color/white"
                     android:textStyle="bold" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 

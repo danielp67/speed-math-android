@@ -9,6 +9,9 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.GameDifficulty;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
@@ -85,7 +88,7 @@ public class DifficultyDialog extends DialogFragment {
             });
         }
 
-        return new AlertDialog.Builder(requireContext())
+        return new AlertDialog.Builder(requireContext(), R.style.SpeedMath_Dialog)
                 .setView(view)
                 .setTitle(getDialogTitle())
                 .setPositiveButton("OK", (dialog, which) -> {
