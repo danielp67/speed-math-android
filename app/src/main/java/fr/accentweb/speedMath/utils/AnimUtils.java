@@ -7,6 +7,11 @@ import android.view.animation.AnimationUtils;
 import android.content.Context;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.android.material.card.MaterialCardView;
+
+import fr.accentweb.speedMath.R;
 
 public class AnimUtils {
 
@@ -131,6 +136,49 @@ public class AnimUtils {
                 })
                 .start();
     }
+
+    // Flip vers l'avant (affiche le contenu)
+    public static void flipToFront(final MaterialCardView cardView, final String frontText) {
+        if (cardView == null) return;
+
+        TextView text = cardView.findViewById(R.id.textCard);
+        if (text == null) return;
+
+        cardView.animate()
+                .scaleX(0f)
+                .setDuration(120)
+                .withEndAction(() -> {
+                    text.setText(frontText);
+                    cardView.setScaleX(0f);
+                    cardView.animate()
+                            .scaleX(1f)
+                            .setDuration(120)
+                            .start();
+                })
+                .start();
+    }
+
+    // Flip vers l'arrière (cache le contenu)
+    public static void flipToBack(final MaterialCardView cardView) {
+        if (cardView == null) return;
+
+        TextView text = cardView.findViewById(R.id.textCard);
+        if (text == null) return;
+
+        cardView.animate()
+                .scaleX(0f)
+                .setDuration(120)
+                .withEndAction(() -> {
+                    text.setText("");
+                    cardView.setScaleX(0f);
+                    cardView.animate()
+                            .scaleX(1f)
+                            .setDuration(120)
+                            .start();
+                })
+                .start();
+    }
+
     public static void slideTextTurn(View view, boolean isPlayer1) {
         float distance = 200f; // pixels de déplacement (tu peux adapter)
 

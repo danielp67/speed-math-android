@@ -123,14 +123,18 @@
                 android:textStyle="bold"
                 android:paddingBottom="20dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReplay"
+                style="@style/SpeedMath.Button.Selectable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gold_accent"
-                android:backgroundTint="@color/blue_primary"
+                android:layout_marginTop="16dp"
+                android:padding="@dimen/dp_16"
+                android:text="@string/play_again"
+                android:textSize="@dimen/sp_24"
                 android:textStyle="bold"
-                android:text="Play Again"/>
+                android:textColor="@color/blue_primary"
+                android:backgroundTint="@color/gold_accent" />
 
         </LinearLayout>
     </RelativeLayout>

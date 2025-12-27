@@ -7,14 +7,20 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.material.card.MaterialCardView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.BaseGameFragment;
@@ -25,18 +31,12 @@ import fr.accentweb.speedMath.core.QuestionGenerator;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.utils.AnimUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class MemoryFragment extends BaseGameFragment {
 
     private GridLayout grid;
     private TextView textMoves, textTimer, textScore, textCombo;
     private List<Card> cards;
-    private List<Button> buttons;
+    private List<MaterialCardView> cardViews;
 
     private Card firstCard = null, secondCard = null;
     private int firstIndex = -1, secondIndex = -1;
@@ -49,7 +49,7 @@ public class MemoryFragment extends BaseGameFragment {
     private final Handler handler = new Handler();
     private View endOverlay;
     private TextView textWinner;
-    private Button btnReplay;
+    private View btnReplay;
     private GameTimer gameTimer;
     private FeedbackManager feedbackManager;
     private MemoryDifficulty difficulty = MemoryDifficulty.MEDIUM;
@@ -60,7 +60,6 @@ public class MemoryFragment extends BaseGameFragment {
         int savedDifficulty = PlayerManager.getInstance(requireContext()).getMemoryDifficulty();
         difficulty = MemoryDifficulty.values()[savedDifficulty];
 
-
         textMoves = root.findViewById(R.id.textMoves);
         textTimer = root.findViewById(R.id.textTimer);
         textScore = root.findViewById(R.id.textScore);
@@ -70,33 +69,26 @@ public class MemoryFragment extends BaseGameFragment {
         textWinner = root.findViewById(R.id.textWinner);
         btnReplay = root.findViewById(R.id.btnReplay);
 
-        btnReplay.setOnClickListener(v -> {
-            restartGame();
-        });
+        btnReplay.setOnClickListener(v -> restartGame());
 
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
-        buttons = new ArrayList<>();
+        cardViews = new ArrayList<>();
         cards = generateCards();
 
-        // Configurer la grille selon la difficulté
         grid.setColumnCount(difficulty.cols);
         grid.setRowCount(difficulty.rows);
 
         setupGrid();
-
-        // Phase de prévisualisation
         previewCards();
 
-        // Timer
         gameTimer = new GameTimer();
         gameTimer.setListener((elapsed, formatted) -> {
             if (textTimer != null) textTimer.setText(formatted);
         });
         gameTimer.start();
 
-        // Initialiser les valeurs de l'UI
         updateMoves();
         updateScore();
         textCombo.setAlpha(0f);
@@ -105,32 +97,33 @@ public class MemoryFragment extends BaseGameFragment {
     }
 
     private void previewCards() {
-        // Montrer toutes les cartes
         for (int i = 0; i < cards.size(); i++) {
-            Button btn = buttons.get(i);
-            btn.setText(cards.get(i).getContent());
-            btn.setClickable(false);
+            MaterialCardView cardView = cardViews.get(i);
+            TextView text = cardView.findViewById(R.id.textCard);
+            text.setText(cards.get(i).getContent());
+            cardView.setClickable(false);
         }
 
-        // Cacher les cartes avec animation après le temps de prévisualisation
         handler.postDelayed(() -> {
-            for (Button btn : buttons) {
-                AnimUtils.flipToBack(btn);
-                btn.setClickable(true);
+            for (MaterialCardView cardView : cardViews) {
+                AnimUtils.flipToBack(cardView);
+                cardView.setClickable(true);
             }
         }, difficulty.previewMs);
     }
 
     private void setupGrid() {
         grid.removeAllViews();
-        buttons.clear();
+        cardViews.clear();
 
         int n = cards.size();
         for (int i = 0; i < n; i++) {
             final int idx = i;
-            Button btn = new Button(requireContext());
-            btn.setText("");
-            btn.setTag(i);
+
+            MaterialCardView cardView = (MaterialCardView) LayoutInflater.from(requireContext())
+                    .inflate(R.layout.memory_card, grid, false);
+
+            cardView.setTag(i);
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
@@ -138,15 +131,15 @@ public class MemoryFragment extends BaseGameFragment {
             params.columnSpec = GridLayout.spec(i % difficulty.cols, 1f);
             params.rowSpec = GridLayout.spec(i / difficulty.cols, 1f);
             params.setMargins(8, 8, 8, 8);
-            btn.setLayoutParams(params);
+            cardView.setLayoutParams(params);
 
-            btn.setOnClickListener(v -> {
+            cardView.setOnClickListener(v -> {
                 if (busy) return;
-                onCardClicked(idx, btn);
+                onCardClicked(idx, cardView);
             });
 
-            grid.addView(btn);
-            buttons.add(btn);
+            grid.addView(cardView);
+            cardViews.add(cardView);
         }
     }
 
@@ -158,7 +151,6 @@ public class MemoryFragment extends BaseGameFragment {
         int pairCount = (difficulty.cols * difficulty.rows) / 2;
         int pairIndex = 0;
 
-        // Générer des paires selon la difficulté
         while (list.size() < pairCount * 2) {
             QuestionGenerator.MathQuestion q = generator.generateQuestion();
             int answer = q.answer;
@@ -175,12 +167,12 @@ public class MemoryFragment extends BaseGameFragment {
         return list;
     }
 
-    private void onCardClicked(int index, Button btn) {
+    private void onCardClicked(int index, MaterialCardView cardView) {
         if (index < 0 || index >= cards.size()) return;
         Card card = cards.get(index);
         if (card.isFaceUp() || card.isMatched()) return;
 
-        AnimUtils.flipToFront(btn, card.getContent());
+        AnimUtils.flipToFront(cardView, card.getContent());
         card.setFaceUp(true);
         moves++;
         updateMoves();
@@ -191,9 +183,7 @@ public class MemoryFragment extends BaseGameFragment {
         } else if (secondCard == null && index != firstIndex) {
             secondCard = card;
             secondIndex = index;
-            for (Button button : buttons) {
-                button.setClickable(false);
-            }
+            for (MaterialCardView cv : cardViews) cv.setClickable(false);
             handler.postDelayed(this::checkMatch, difficulty.previewMs);
         }
     }
@@ -203,19 +193,18 @@ public class MemoryFragment extends BaseGameFragment {
 
         boolean match = firstCard.getIndex() == secondCard.getIndex();
 
+        MaterialCardView c1 = safeGetCard(firstIndex);
+        MaterialCardView c2 = safeGetCard(secondIndex);
+
         if (match) {
             firstCard.setMatched(true);
             secondCard.setMatched(true);
 
-            Button b1 = safeGetButton(firstIndex);
-            Button b2 = safeGetButton(secondIndex);
-            if (b1 != null) b1.setBackgroundColor(getColor(requireContext(), R.color.correct));
-            if (b2 != null) b2.setBackgroundColor(getColor(requireContext(), R.color.correct));
+            if (c1 != null) c1.setCardBackgroundColor(getColor(requireContext(), R.color.correct));
+            if (c2 != null) c2.setCardBackgroundColor(getColor(requireContext(), R.color.correct));
 
             combo++;
-            int basePoints = 10;
-            int bonus = (combo - 1) * 5;
-            int earned = basePoints + Math.max(0, bonus);
+            int earned = 10 + Math.max(0, (combo - 1) * 5);
             score += earned;
             updateScore();
 
@@ -227,15 +216,12 @@ public class MemoryFragment extends BaseGameFragment {
 
             feedbackManager.playCorrectSound();
         } else {
-            Button b1 = safeGetButton(firstIndex);
-            Button b2 = safeGetButton(secondIndex);
-
             feedbackManager.playWrongSound();
             combo = 0;
             textCombo.setAlpha(0f);
 
-            if (b1 != null) AnimUtils.flipToBack(b1);
-            if (b2 != null) AnimUtils.flipToBack(b2);
+            if (c1 != null) AnimUtils.flipToBack(c1);
+            if (c2 != null) AnimUtils.flipToBack(c2);
 
             firstCard.setFaceUp(false);
             secondCard.setFaceUp(false);
@@ -251,16 +237,14 @@ public class MemoryFragment extends BaseGameFragment {
         firstIndex = -1;
         secondIndex = -1;
 
-        for (Button button : buttons) {
-            button.setClickable(true);
-        }
+        for (MaterialCardView cv : cardViews) cv.setClickable(true);
         handler.postDelayed(() -> busy = false, 350);
     }
 
     @Nullable
-    private Button safeGetButton(int idx) {
-        if (idx < 0 || idx >= buttons.size()) return null;
-        return buttons.get(idx);
+    private MaterialCardView safeGetCard(int idx) {
+        if (idx < 0 || idx >= cardViews.size()) return null;
+        return cardViews.get(idx);
     }
 
     private void updateMoves() {
@@ -313,5 +297,4 @@ public class MemoryFragment extends BaseGameFragment {
 
         previewCards();
     }
-
 }
