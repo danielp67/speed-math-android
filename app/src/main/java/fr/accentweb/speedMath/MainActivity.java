@@ -1,5 +1,6 @@
 package fr.accentweb.speedMath;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,6 +26,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.lang.reflect.Method;
 
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.ui.arcade.ArcadeFragment;
@@ -45,12 +50,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Configuration de la barre de statut pour les versions récentes
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(this, R.color.blue_primary));
-        }
+        configureSystemBars(isDark);
+
 
         BottomNavigationView navView = findViewById(R.id.bottomNav);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -245,6 +246,28 @@ public class MainActivity extends AppCompatActivity {
     public void updateOnlineStats(OnlineStats stats) {
         this.onlineStats = stats;
         updateOnlineStatsInFragments();
+    }
+
+    private void configureSystemBars(boolean isDark) {
+        Window window = getWindow();
+
+        window.setStatusBarColor(
+                ContextCompat.getColor(this,
+                        isDark ? R.color.black : R.color.blue_primary)
+        );
+
+        window.setNavigationBarColor(
+                ContextCompat.getColor(this,
+                        isDark ? R.color.black : R.color.blue_primary)
+        );
+
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(window, window.getDecorView());
+
+        if (controller != null) {
+            controller.setAppearanceLightStatusBars(!isDark);
+            controller.setAppearanceLightNavigationBars(false);
+        }
     }
 
 }
