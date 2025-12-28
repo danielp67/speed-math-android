@@ -242,6 +242,8 @@ public class WaitingRoomFragment extends Fragment {
     private void startBotMatch() {
         if (!fragmentActive) return;
         matchStarted = true;
+        playerManager.incrementDailyMatchPlayed();
+
         if (matchmakingHelper != null) {
             matchmakingHelper.cancelMatchmaking();
         }
