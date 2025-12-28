@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                // Initialisation si nécessaire
                 if (onlineStats == null) {
                     onlineStats = new OnlineStats(0, 0, 10);
                 }
@@ -191,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 onlineStats.playersOnline = onlineCount;
 
                 // Mise à jour de l'UI
-                updateOnlineStatsInFragments();
+                updateOnlineStats(onlineStats);
 
                 Log.d("OnlineStats", "Joueurs en ligne: " + onlineCount);
             }
@@ -241,6 +240,11 @@ public class MainActivity extends AppCompatActivity {
 
     public OnlineStats getOnlineStats() {
         return onlineStats;
+    }
+
+    public void updateOnlineStats(OnlineStats stats) {
+        this.onlineStats = stats;
+        updateOnlineStatsInFragments();
     }
 
 }

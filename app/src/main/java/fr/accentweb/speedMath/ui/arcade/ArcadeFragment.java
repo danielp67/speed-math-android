@@ -51,11 +51,10 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("×", 16, "Multiplication Suite", "a × b", "MUL"));
         items.add(new ArcadeItem("÷", 16, "Division Suite", "a ÷ b", "DIV"));
 
-        OnlineStats onlineStats = null;
         if (getActivity() instanceof MainActivity) {
-            onlineStats = ((MainActivity) getActivity()).getOnlineStats();
+            this.onlineStats = ((MainActivity) getActivity()).getOnlineStats();
         }
-        adapter = new ArcadeAdapter(items, this, playerManager, onlineStats);
+        adapter = new ArcadeAdapter(items, this, playerManager, this.onlineStats);
         recycler.setAdapter(adapter);
 
         return root;
@@ -172,9 +171,10 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
     }
 
     public void refreshOnlineStats(OnlineStats stats) {
-        this.onlineStats = stats; // met à jour les stats
+        if (stats == null) return;
+        this.onlineStats = stats;
         if (adapter != null) {
-            adapter.notifyDataSetChanged(); // force le rebind
+            adapter.setOnlineStats(stats);
         }
     }
 }

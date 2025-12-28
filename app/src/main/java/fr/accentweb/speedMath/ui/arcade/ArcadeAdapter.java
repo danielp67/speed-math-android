@@ -36,8 +36,9 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
 
     public void setOnlineStats(OnlineStats stats) {
         this.onlineStats = stats;
-        notifyDataSetChanged(); // Met à jour toutes les cartes
+        notifyDataSetChanged();
     }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView iconCard, titleCard, descriptionCard;
@@ -106,7 +107,7 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
 
             if (onlineStats != null) {
                 h.txtPlayersOnline.setText("\uD83D\uDFE2 " + onlineStats.playersOnline);
-                h.txtGamesLeft.setText(onlineStats.gamesPlayedToday + " / " + onlineStats.dailyLimit);
+                h.txtGamesLeft.setText(playerManager.getDailyMatchPlayed() + " / " + playerManager.getDailyMatchLimit());
             } else {
                 h.txtPlayersOnline.setText("\uD83D\uDFE2 0");
                 h.txtGamesLeft.setText("0 / 0");
