@@ -4,20 +4,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.GameDifficulty;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
-import java.util.List;
 
 public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder> {
 
     private final List<ArcadeItem> items;
     private final OnItemClickListener listener;
     private final PlayerManager playerManager;
-    private final OnlineStats onlineStats;
+    private OnlineStats onlineStats; // <-- rendre modifiable
 
     public interface OnItemClickListener {
         void onPlayClick(View v, String mode);
@@ -28,19 +31,19 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         this.items = items;
         this.listener = listener;
         this.playerManager = playerManager;
-        this.onlineStats = onlineStats;
+        this.onlineStats = onlineStats; // peut être null initialement
+    }
+
+    public void setOnlineStats(OnlineStats stats) {
+        this.onlineStats = stats;
+        notifyDataSetChanged(); // Met à jour toutes les cartes
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView iconCard;
-        TextView titleCard;
-        TextView descriptionCard;
-        View btnPlay;
-        View btnSettings;
-
+        TextView iconCard, titleCard, descriptionCard;
+        View btnPlay, btnSettings;
         View layoutOnlineInfo;
         TextView txtPlayersOnline, txtGamesLeft;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -52,7 +55,6 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
             layoutOnlineInfo = itemView.findViewById(R.id.layoutOnlineInfo);
             txtPlayersOnline = itemView.findViewById(R.id.txtPlayersOnline);
             txtGamesLeft = itemView.findViewById(R.id.txtGamesLeft);
-
         }
     }
 
@@ -68,12 +70,12 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         ArcadeItem item = items.get(pos);
 
-        // ===== ICON & TITLE =====
+        // ICON & TITLE
         h.iconCard.setText(item.icon);
         h.iconCard.setTextSize(item.iconSize);
         h.titleCard.setText(item.title);
 
-        // ===== DESCRIPTION =====
+        // DESCRIPTION
         switch (item.mode) {
             case "MEMORY":
                 int memDiff = playerManager.getMemoryDifficulty();
@@ -92,29 +94,34 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
                 h.descriptionCard.setText(item.description + " - " + gameDiff.getDisplayName());
         }
 
-        // ===== ONLINE vs DEFAULT =====
         boolean isOnline = "ONLINE".equals(item.mode);
 
+        // SETTINGS / ONLINE INFO
         h.btnSettings.setVisibility(isOnline ? View.GONE : View.VISIBLE);
         h.btnSettings.setClickable(!isOnline);
 
         if (isOnline) {
             h.layoutOnlineInfo.setVisibility(View.VISIBLE);
             h.descriptionCard.setText(item.description);
-            h.txtPlayersOnline.setText("\uD83D\uDFE2 " + onlineStats.playersOnline);
-            h.txtGamesLeft.setText(onlineStats.gamesPlayedToday + " / " + onlineStats.dailyLimit);
+
+            if (onlineStats != null) {
+                h.txtPlayersOnline.setText("\uD83D\uDFE2 " + onlineStats.playersOnline);
+                h.txtGamesLeft.setText(onlineStats.gamesPlayedToday + " / " + onlineStats.dailyLimit);
+            } else {
+                h.txtPlayersOnline.setText("\uD83D\uDFE2 0");
+                h.txtGamesLeft.setText("0 / 0");
+            }
         } else {
             h.layoutOnlineInfo.setVisibility(View.GONE);
         }
 
-        // ===== CLICK LISTENERS =====
+        // CLICK LISTENERS
         h.btnPlay.setTag(item.mode);
         h.btnPlay.setOnClickListener(v -> listener.onPlayClick(v, item.mode));
 
         h.btnSettings.setTag(item.mode);
         h.btnSettings.setOnClickListener(v -> listener.onSettingsClick(v, item.mode));
     }
-
 
     private GameDifficulty getCurrentGameDifficulty(String mode) {
         int difficultyValue = 3; // PROGRESSIVE par défaut

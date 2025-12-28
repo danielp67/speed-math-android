@@ -11,6 +11,8 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import fr.accentweb.speedMath.MainActivity;
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameDifficulty;
@@ -49,8 +51,10 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("×", 16, "Multiplication Suite", "a × b", "MUL"));
         items.add(new ArcadeItem("÷", 16, "Division Suite", "a ÷ b", "DIV"));
 
-        onlineStats = OnlineStats.getDefault();
-
+        OnlineStats onlineStats = null;
+        if (getActivity() instanceof MainActivity) {
+            onlineStats = ((MainActivity) getActivity()).getOnlineStats();
+        }
         adapter = new ArcadeAdapter(items, this, playerManager, onlineStats);
         recycler.setAdapter(adapter);
 
@@ -164,6 +168,13 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
             navController.navigate(R.id.navigation_notifications, args, navOptions);
         } else {
             Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_waitingRoomFragment, args);
+        }
+    }
+
+    public void refreshOnlineStats(OnlineStats stats) {
+        this.onlineStats = stats; // met à jour les stats
+        if (adapter != null) {
+            adapter.notifyDataSetChanged(); // force le rebind
         }
     }
 }
