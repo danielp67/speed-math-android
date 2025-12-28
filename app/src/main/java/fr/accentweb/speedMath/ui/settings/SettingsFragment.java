@@ -274,63 +274,67 @@ public class SettingsFragment extends Fragment {
             return;
         }
 
-        // A user is new if they don't have a locally saved pseudo.
-        final boolean isNewPlayer = playerManager.getOnlineUid().isEmpty();
-        // Vérification finale
-        playersRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                boolean exists = false;
-                for (DataSnapshot snap : task.getResult().getChildren()) {
-                    String existingPseudo = snap.child("pseudo").getValue(String.class);
-                    if (pseudo.equalsIgnoreCase(existingPseudo) && !snap.getKey().equals(currentUid)) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (exists) {
-                    Toast.makeText(getContext(), "Account already exists", Toast.LENGTH_SHORT).show();
-                    pseudoStatus.setImageResource(R.drawable.circle_xmark_full);
-                } else {
-                    // Sauvegarde Firebase
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("pseudo", pseudo);
-                    data.put("uid", currentUid);
+        playersRef.child(currentUid).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) return;
 
-                    if (isNewPlayer) {
-                        data.put("points", 0);
-                        data.put("matches_played", 0);
-                        data.put("matches_won", 0);
-                        data.put("matches_drawn", 0);
-                        data.put("matches_lost", 0);
-                        data.put("daily_match_played",0);
-                        data.put("daily_match_limit",5);
-                        data.put("last_connection", "");
-                        data.put("rank", 999999);
+            boolean isNewPlayer = !task.getResult().exists();
 
-                        playerManager.setDailyMatchLimit(5);
-                        playerManager.setDailyMatchPlayed(0);
-                        playerManager.setLastConnection(playerManager.getTodayDate());
-                        playerManager.setRank(999999);
-                        playerManager.setOnlineScore(0);
-                        playerManager.setOnlinePlayedMatches(0);
-                        playerManager.setOnlineWins(0);
-                        playerManager.setOnlineLosses(0);
-                        playerManager.setOnlineDraws(0);
-
+            playersRef.get().addOnCompleteListener(task2 -> {
+                if (task2.isSuccessful() && task2.getResult() != null) {
+                    boolean exists = false;
+                    for (DataSnapshot snap : task2.getResult().getChildren()) {
+                        String existingPseudo = snap.child("pseudo").getValue(String.class);
+                        if (pseudo.equalsIgnoreCase(existingPseudo) && !snap.getKey().equals(currentUid)) {
+                            exists = true;
+                            break;
+                        }
                     }
 
-                    playersRef.child(currentUid).updateChildren(data);
+                    if (exists) {
+                        Toast.makeText(getContext(), "Account already exists", Toast.LENGTH_SHORT).show();
+                        pseudoStatus.setImageResource(R.drawable.circle_xmark_full);
+                    } else {
 
-                    // Sauvegarde SharedPreferences
-                    playerManager.setOnlinePseudo(pseudo);
-                    playerManager.setOnlineUid(currentUid);
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("pseudo", pseudo);
+                        data.put("uid", currentUid);
 
-                    Toast.makeText(getContext(), "Account saved ✅", Toast.LENGTH_SHORT).show();
-                    pseudoStatus.setImageResource(R.drawable.circle_check_full);
+                        if (isNewPlayer) {
+                            data.put("points", 0);
+                            data.put("matches_played", 0);
+                            data.put("matches_won", 0);
+                            data.put("matches_drawn", 0);
+                            data.put("matches_lost", 0);
+                            data.put("daily_match_played", 0);
+                            data.put("daily_match_limit", 5);
+                            data.put("last_connection", playerManager.getTodayDate());
+                            data.put("rank", 999999);
+
+                            playerManager.setDailyMatchLimit(5);
+                            playerManager.setDailyMatchPlayed(0);
+                            playerManager.setLastConnection(playerManager.getTodayDate());
+                            playerManager.setRank(999999);
+                            playerManager.setOnlineScore(0);
+                            playerManager.setOnlinePlayedMatches(0);
+                            playerManager.setOnlineWins(0);
+                            playerManager.setOnlineLosses(0);
+                            playerManager.setOnlineDraws(0);
+                        }
+
+                        playersRef.child(currentUid).updateChildren(data);
+
+                        // Local
+                        playerManager.setOnlinePseudo(pseudo);
+                        playerManager.setOnlineUid(currentUid);
+
+                        Toast.makeText(getContext(), "Account saved ✅", Toast.LENGTH_SHORT).show();
+                        pseudoStatus.setImageResource(R.drawable.circle_check_full);
+                    }
                 }
-            }
+            });
         });
     }
+
 
     @Override
     public void onDestroyView() {
