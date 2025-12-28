@@ -96,7 +96,7 @@
         android:id="@+id/endOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#4D000000"
+        android:background="#7F000000"
         android:visibility="gone"
         android:gravity="center">
 
@@ -104,7 +104,6 @@
             android:orientation="vertical"
             android:gravity="center"
             android:padding="24dp"
-            android:background="?attr/colorBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="10dp"
@@ -119,8 +118,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Player 1 Wins!"
-                android:textSize="26sp"
+                android:textSize="@dimen/sp_32"
                 android:textStyle="bold"
+                android:textColor="@color/gold_accent"
                 android:paddingBottom="20dp"/>
 
             <com.google.android.material.button.MaterialButton

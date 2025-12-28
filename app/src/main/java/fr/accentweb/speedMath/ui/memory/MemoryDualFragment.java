@@ -236,7 +236,7 @@ public class MemoryDualFragment extends BaseGameFragment {
             playerTurn = (playerTurn == 1 ? 2 : 1);
         }
 
-        if (isGameFinished()) {
+        if (isGameFinished() || true) {
             showEndScreen();
             return;
         }
