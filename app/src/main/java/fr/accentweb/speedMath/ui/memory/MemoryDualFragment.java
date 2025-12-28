@@ -12,8 +12,11 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
+import com.google.android.material.card.MaterialCardView;
 
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.BaseGameFragment;
@@ -33,7 +36,7 @@ public class MemoryDualFragment extends BaseGameFragment {
     private GridLayout grid;
     private TextView textTimer, textTurn, textScoreP1, textScoreP2, textCombo;
     private List<Card> cards;
-    private List<Button> buttons;
+    private List<MaterialCardView> cardViews;
 
     private int combo = 0;
     private Card firstCard = null, secondCard = null;
@@ -73,7 +76,7 @@ public class MemoryDualFragment extends BaseGameFragment {
             restartGame();
         });
 
-        buttons = new ArrayList<>();
+        cardViews = new ArrayList<>();
         cards = generateCards();
 
         // Configurer la grille selon la difficulté
@@ -100,31 +103,32 @@ public class MemoryDualFragment extends BaseGameFragment {
     }
 
     private void previewCards() {
-        // Montrer toutes les cartes
         for (int i = 0; i < cards.size(); i++) {
-            Button btn = buttons.get(i);
-            btn.setText(cards.get(i).getContent());
-            btn.setClickable(false);
+            MaterialCardView cardView = cardViews.get(i);
+            TextView text = cardView.findViewById(R.id.textCard);
+            text.setText(cards.get(i).getContent());
+            cardView.setClickable(false);
         }
 
-        // Cacher les cartes avec animation après le temps de prévisualisation
         handler.postDelayed(() -> {
-            for (Button btn : buttons) {
-                AnimUtils.flipToBack(btn);
-                btn.setClickable(true);
+            for (MaterialCardView cardView : cardViews) {
+                AnimUtils.flipToBack(cardView);
+                cardView.setClickable(true);
             }
         }, difficulty.previewMs);
     }
     private void setupGrid() {
         grid.removeAllViews();
-        buttons.clear();
+        cardViews.clear();
 
         int n = cards.size();
         for (int i = 0; i < n; i++) {
             final int idx = i;
-            Button btn = new Button(requireContext());
-            btn.setText("");
-            btn.setTag(i);
+
+            MaterialCardView cardView = (MaterialCardView) LayoutInflater.from(requireContext())
+                    .inflate(R.layout.memory_card, grid, false);
+
+            cardView.setTag(i);
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
@@ -132,15 +136,15 @@ public class MemoryDualFragment extends BaseGameFragment {
             params.columnSpec = GridLayout.spec(i % difficulty.cols, 1f);
             params.rowSpec = GridLayout.spec(i / difficulty.cols, 1f);
             params.setMargins(8, 8, 8, 8);
-            btn.setLayoutParams(params);
+            cardView.setLayoutParams(params);
 
-            btn.setOnClickListener(v -> {
+            cardView.setOnClickListener(v -> {
                 if (busy) return;
-                onCardClicked(idx, btn);
+                onCardClicked(idx, cardView);
             });
 
-            grid.addView(btn);
-            buttons.add(btn);
+            grid.addView(cardView);
+            cardViews.add(cardView);
         }
     }
 
@@ -167,12 +171,12 @@ public class MemoryDualFragment extends BaseGameFragment {
         return list;
     }
 
-    private void onCardClicked(int index, Button btn) {
+    private void onCardClicked(int index, MaterialCardView cardView) {
         if (index < 0 || index >= cards.size()) return;
         Card card = cards.get(index);
         if (card.isFaceUp() || card.isMatched()) return;
 
-        AnimUtils.flipToFront(btn, card.getContent());
+        AnimUtils.flipToFront(cardView, card.getContent());
         card.setFaceUp(true);
 
         if (firstCard == null) {
@@ -181,9 +185,7 @@ public class MemoryDualFragment extends BaseGameFragment {
         } else if (secondCard == null && index != firstIndex) {
             secondCard = card;
             secondIndex = index;
-            for (Button button : buttons) {
-                button.setClickable(false);
-            }
+            for (MaterialCardView cv : cardViews) cv.setClickable(false);
             handler.postDelayed(this::checkMatch, difficulty.previewMs);
         }
     }
@@ -195,21 +197,20 @@ public class MemoryDualFragment extends BaseGameFragment {
         }
 
         boolean match = firstCard.getIndex() == secondCard.getIndex();
+        MaterialCardView c1 = safeGetCard(firstIndex);
+        MaterialCardView c2 = safeGetCard(secondIndex);
 
         if (match) {
             feedbackManager.playCorrectSound();
             firstCard.setMatched(true);
             secondCard.setMatched(true);
 
-            Button b1 = buttons.get(firstIndex);
-            Button b2 = buttons.get(secondIndex);
-
             int color = (playerTurn == 1)
                     ? getColor(requireContext(), R.color.correct)
                     : getColor(requireContext(), R.color.wrong);
 
-            b1.setBackgroundColor(color);
-            b2.setBackgroundColor(color);
+            if (c1 != null) c1.setCardBackgroundColor(getColor(requireContext(), R.color.correct));
+            if (c2 != null) c2.setCardBackgroundColor(getColor(requireContext(), R.color.correct));
 
             if (playerTurn == 1) scoreP1++;
             else scoreP2++;
@@ -220,13 +221,15 @@ public class MemoryDualFragment extends BaseGameFragment {
                 textCombo.setAlpha(1f);
                 AnimUtils.comboPop(textCombo);
             }
+            feedbackManager.playCorrectSound();
 
         } else {
             firstCard.setFaceUp(false);
             secondCard.setFaceUp(false);
 
-            AnimUtils.flipToBack(buttons.get(firstIndex));
-            AnimUtils.flipToBack(buttons.get(secondIndex));
+            if (c1 != null) AnimUtils.flipToBack(c1);
+            if (c2 != null) AnimUtils.flipToBack(c2);
+
             feedbackManager.playWrongSound();
             combo = 0;
             textCombo.setAlpha(0f);
@@ -243,11 +246,16 @@ public class MemoryDualFragment extends BaseGameFragment {
         firstIndex = -1;
         secondIndex = -1;
 
-        for (Button button : buttons) {
-            button.setClickable(true);
-        }
+        for (MaterialCardView cv : cardViews) cv.setClickable(true);
+        handler.postDelayed(() -> busy = false, 350);
         updateUI();
         busy = false;
+    }
+
+    @Nullable
+    private MaterialCardView safeGetCard(int idx) {
+        if (idx < 0 || idx >= cardViews.size()) return null;
+        return cardViews.get(idx);
     }
 
     private void updateUI() {

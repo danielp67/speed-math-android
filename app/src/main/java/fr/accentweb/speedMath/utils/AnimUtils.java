@@ -1,6 +1,7 @@
 package fr.accentweb.speedMath.utils;
 
 import android.animation.ObjectAnimator;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -8,6 +9,8 @@ import android.content.Context;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.card.MaterialCardView;
 
@@ -137,44 +140,42 @@ public class AnimUtils {
                 .start();
     }
 
-    // Flip vers l'avant (affiche le contenu)
-    public static void flipToFront(final MaterialCardView cardView, final String frontText) {
-        if (cardView == null) return;
+    public static void flipToFront(MaterialCardView card, String content) {
+        TextView text = card.findViewById(R.id.textCard);
+        TypedValue typedValue = new TypedValue();
+        Context context = card.getContext();
+        context.getTheme().resolveAttribute(R.attr.textPrimary, typedValue, true);
 
-        TextView text = cardView.findViewById(R.id.textCard);
-        if (text == null) return;
-
-        cardView.animate()
+        card.animate()
                 .scaleX(0f)
                 .setDuration(120)
                 .withEndAction(() -> {
-                    text.setText(frontText);
-                    cardView.setScaleX(0f);
-                    cardView.animate()
-                            .scaleX(1f)
-                            .setDuration(120)
-                            .start();
+                    text.setText(content);
+                    text.setAlpha(1f);
+                    text.setTextSize(16);
+                    text.setTextColor(typedValue.data);
+                    card.setScaleX(0f);
+                    card.animate().scaleX(1f).setDuration(120).start();
                 })
                 .start();
     }
 
-    // Flip vers l'arrière (cache le contenu)
-    public static void flipToBack(final MaterialCardView cardView) {
-        if (cardView == null) return;
+    public static void flipToBack(MaterialCardView card) {
+        TextView text = card.findViewById(R.id.textCard);
+        TypedValue typedValue = new TypedValue();
+        Context context = card.getContext();
+        context.getTheme().resolveAttribute(R.attr.textPrimary, typedValue, true);
 
-        TextView text = cardView.findViewById(R.id.textCard);
-        if (text == null) return;
-
-        cardView.animate()
+        card.animate()
                 .scaleX(0f)
                 .setDuration(120)
                 .withEndAction(() -> {
-                    text.setText("");
-                    cardView.setScaleX(0f);
-                    cardView.animate()
-                            .scaleX(1f)
-                            .setDuration(120)
-                            .start();
+                    text.setText("?");
+                    text.setTextSize(40);
+                    text.setAlpha(0.5f);
+                    text.setTextColor(typedValue.data);
+                    card.setScaleX(0f);
+                    card.animate().scaleX(1f).setDuration(120).start();
                 })
                 .start();
     }

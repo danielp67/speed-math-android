@@ -121,9 +121,9 @@ android:orientation="vertical">
     android:id="@+id/textWinner"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="32sp"
+    android:textSize="@dimen/sp_32"
     android:textStyle="bold"
-    android:textColor="@color/blue_primary"
+    android:textColor="@color/gold_accent"
     android:text="Level Completed!"/>
 
 <com.google.android.material.button.MaterialButton

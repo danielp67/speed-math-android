@@ -266,8 +266,7 @@ public class MemoryFragment extends BaseGameFragment {
         gameTimer.stop();
         feedbackManager.playLevelUpSound();
 
-        String winner = "🎉 You win !";
-        textWinner.setText(winner);
+
         endOverlay.setVisibility(View.VISIBLE);
         endOverlay.setAlpha(0f);
         endOverlay.animate().alpha(1f).setDuration(400).start();
