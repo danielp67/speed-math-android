@@ -87,18 +87,21 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/sp_32"
             android:textStyle="bold"
-            android:textColor="@color/blue_primary"
-            android:text=""/>
+            android:textColor="@color/gold_accent"
+            android:text="Level Completed!"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnReplay"
+            style="@style/SpeedMath.Button.Selectable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_16"
+            android:layout_marginTop="16dp"
+            android:padding="@dimen/dp_16"
             android:text="@string/play_again"
-            android:textColor="@color/gold_accent"
-            android:backgroundTint="@color/blue_primary"
-            android:textStyle="bold"/>
+            android:textSize="@dimen/sp_24"
+            android:textStyle="bold"
+            android:textColor="@color/blue_primary"
+            android:backgroundTint="@color/gold_accent" />
     </LinearLayout>
 
 </FrameLayout>
@@ -143,6 +146,7 @@
                     android:text="@string/dummy_text"
                     android:textStyle="bold"
                     android:textSize="@dimen/sp_16"
+                    android:textColor="@color/white"
                     android:gravity="start" />
 
                 <!-- Score -->
@@ -153,6 +157,7 @@
                     android:text="@string/dummy_text"
                     android:textStyle="bold"
                     android:textSize="@dimen/sp_20"
+                    android:textColor="@color/white"
                     android:paddingHorizontal="@dimen/dp_12" />
                 <TextView
                     android:id="@+id/textScoreCenter"
@@ -169,6 +174,7 @@
                     android:text="@string/dummy_text"
                     android:textStyle="bold"
                     android:textSize="@dimen/sp_20"
+                    android:textColor="@color/white"
                     android:paddingHorizontal="@dimen/dp_12" />
                 <!-- Opponent -->
                 <TextView
@@ -179,6 +185,7 @@
                     android:text="@string/dummy_text"
                     android:textStyle="bold"
                     android:textSize="@dimen/sp_16"
+                    android:textColor="@color/white"
                     android:gravity="end" />
                 <ImageView
                     android:id="@+id/imgOpponentAvatar"
@@ -205,6 +212,7 @@
                     android:layout_weight="1"
                     android:text="@string/dummy_text"
                     android:textSize="@dimen/sp_14"
+                    android:textColor="@color/white"
                     android:gravity="center" />
                 <TextView
                     android:id="@+id/textTimer"
@@ -214,6 +222,7 @@
                     android:text="@string/timer"
                     android:textSize="@dimen/sp_16"
                     android:textStyle="bold"
+                    android:textColor="@color/white"
                     android:gravity="center" />
                 <!-- Opponent -->
                 <TextView
@@ -223,6 +232,7 @@
                     android:layout_weight="1"
                     android:text="@string/dummy_text"
                     android:textSize="@dimen/sp_14"
+                    android:textColor="@color/white"
                     android:gravity="center" />
             </LinearLayout>
         </LinearLayout>

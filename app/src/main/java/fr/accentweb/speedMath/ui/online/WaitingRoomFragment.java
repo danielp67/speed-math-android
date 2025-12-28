@@ -32,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Random;
 
-
 public class WaitingRoomFragment extends Fragment {
 
     private String uid;
@@ -50,6 +49,8 @@ public class WaitingRoomFragment extends Fragment {
     private long rank = 999999;
     private CountDownTimer matchmakingTimer;
     private Random random = new Random();
+
+    private boolean fragmentActive = true; // <-- flag fragment actif
 
     @Nullable
     @Override
@@ -86,11 +87,11 @@ public class WaitingRoomFragment extends Fragment {
 
         ref.get().addOnSuccessListener(snapshot -> {
 
-             points = snapshot.child("points").getValue(Long.class) != null
+            points = snapshot.child("points").getValue(Long.class) != null
                     ? snapshot.child("points").getValue(Long.class)
                     : 0;
 
-             rank = snapshot.child("rank").getValue(Long.class) != null
+            rank = snapshot.child("rank").getValue(Long.class) != null
                     ? snapshot.child("rank").getValue(Long.class)
                     : 999999;
 
@@ -99,7 +100,7 @@ public class WaitingRoomFragment extends Fragment {
             matchmakingHelper.setMatchListener(new MatchmakingHelper.MatchListener() {
                 @Override
                 public void onMatchFound(String matchId, String uid, String pseudo, long points, long rank, String opponentUid, String opponentPseudo, long opponentPoints, long opponentRank) {
-                    if (matchStarted) return;
+                    if (!fragmentActive || matchStarted) return; // <-- check fragment actif
                     matchStarted = true;
 
                     playerManager.incrementDailyMatchPlayed();
@@ -133,6 +134,7 @@ public class WaitingRoomFragment extends Fragment {
 
                 @Override
                 public void onError(String message) {
+                    if (!fragmentActive) return;
                     textStatus.setText(String.format("%s%s", getString(R.string.error_message), message));
                     progressBar.setVisibility(View.GONE);
                 }
@@ -141,23 +143,22 @@ public class WaitingRoomFragment extends Fragment {
             matchmakingHelper.findMatch();
 
         }).addOnFailureListener(e -> {
-
             matchmakingHelper = new MatchmakingHelper(uid, pseudo, 0, 999999);
             matchmakingHelper.findMatch();
         });
 
-
-
         textStatus.setText(R.string.searching_for_a_match);
         progressBar.setVisibility(View.VISIBLE);
 
-        int randomDelay = 20000 + random.nextInt(11000); // 20-30 secondes
+        int randomDelay = 1000 + random.nextInt(11000); // 1-12s
         startMatchmakingTimer(randomDelay);
 
         btnCancel.setOnClickListener(v -> {
+            fragmentActive = false;
             textStatus.setText(R.string.match_cancelled);
             progressBar.setVisibility(View.GONE);
             if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
+            if (matchmakingTimer != null) matchmakingTimer.cancel();
             NavController nav = Navigation.findNavController(requireView());
             nav.navigate(R.id.navigation_home);
         });
@@ -168,7 +169,9 @@ public class WaitingRoomFragment extends Fragment {
                 new OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
+                        fragmentActive = false;
                         if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
+                        if (matchmakingTimer != null) matchmakingTimer.cancel();
                         setEnabled(false);
                         requireActivity().getOnBackPressedDispatcher().onBackPressed();
                     }
@@ -176,6 +179,7 @@ public class WaitingRoomFragment extends Fragment {
     }
 
     private void showCountdownOverlay(Bundle bundle) {
+        if (!fragmentActive) return;
         overlayContainer.setVisibility(View.VISIBLE);
         View overlayView = getLayoutInflater().inflate(R.layout.countdown_overlay, overlayContainer, true);
         TextView textCountdown = overlayView.findViewById(R.id.textCountdown);
@@ -189,8 +193,8 @@ public class WaitingRoomFragment extends Fragment {
             }
 
             public void onFinish() {
+                if (!fragmentActive) return;
                 overlayContainer.setVisibility(View.GONE);
-                // navigate to fragment online (QCM)
                 if (getView() != null) {
                     Navigation.findNavController(requireView())
                             .navigate(R.id.action_waitingRoomFragment_to_onlineQCMFragment, bundle);
@@ -202,14 +206,13 @@ public class WaitingRoomFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // assure cleanup si le fragment est détruit
-        if (matchmakingHelper != null) {
-            matchmakingHelper.cancelMatchmaking();
-        }
+        fragmentActive = false;
+        if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
+        if (matchmakingTimer != null) matchmakingTimer.cancel();
     }
 
     private void declareForfeitLoss(String matchId, String uid, String opponentUid) {
-        if (!matchStarted) return;
+        if (!matchStarted || !fragmentActive) return;
         int nbQuestions = 5;
         String player = uid.compareTo(opponentUid) < 0 ? "P1" : "P2";
         Log.w(TAG, "Player quit the match → declaring forfeit loss.");
@@ -218,12 +221,9 @@ public class WaitingRoomFragment extends Fragment {
         String opponentScoreField = player.equals("P1") ? "p2_score" : "p1_score";
         DatabaseReference matchRef = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
 
-        // give the opponent a point
         matchRef.child(opponentScoreField).setValue(nbQuestions);
-
         matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
-
     }
 
     private void handleBackOrUpNavigation(String matchId, String uid, String opponentUid) {
@@ -240,6 +240,7 @@ public class WaitingRoomFragment extends Fragment {
     }
 
     private void startBotMatch() {
+        if (!fragmentActive) return;
         matchStarted = true;
         if (matchmakingHelper != null) {
             matchmakingHelper.cancelMatchmaking();
@@ -252,18 +253,16 @@ public class WaitingRoomFragment extends Fragment {
                 "Sam_0x", "Izzy_24", "Rex_91", "Nova_17", "Kira_08", "Finn_300"
         };
         String botPseudo = botNames[random.nextInt(botNames.length)];
-
         String botUid = "bot_" + System.currentTimeMillis();
         long botPoints = 0;
         long botRank = 999999;
         String matchId = "bot_" + System.currentTimeMillis();
 
-        // Crée le match dans Firebase
         HashMap<String, Object> matchData = new HashMap<>();
         matchData.put("p1_uid", uid);
         matchData.put("p1_pseudo", pseudo);
-        matchData.put("p1_points", points);  // Utilise les variables de classe
-        matchData.put("p1_ranking", rank);  // Utilise les variables de classe
+        matchData.put("p1_points", points);
+        matchData.put("p1_ranking", rank);
         matchData.put("p2_uid", botUid);
         matchData.put("p2_pseudo", botPseudo);
         matchData.put("p2_points", botPoints);
@@ -274,17 +273,18 @@ public class WaitingRoomFragment extends Fragment {
         matchData.put("timestamp", System.currentTimeMillis());
         matchData.put("is_bot_match", true);
 
-        // Simule un délai réseau réaliste
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (!fragmentActive) return;
             FirebaseDatabase.getInstance().getReference("matches").child(matchId)
                     .setValue(matchData)
                     .addOnSuccessListener(aVoid -> {
+                        if (!fragmentActive) return;
                         Bundle bundle = new Bundle();
                         bundle.putString("matchId", matchId);
                         bundle.putString("myUid", uid);
                         bundle.putString("myPseudo", pseudo);
-                        bundle.putLong("myPoints", points);  // Utilise les variables de classe
-                        bundle.putLong("myRank", rank);      // Utilise les variables de classe
+                        bundle.putLong("myPoints", points);
+                        bundle.putLong("myRank", rank);
                         bundle.putString("opponentUid", botUid);
                         bundle.putString("opponentPseudo", botPseudo);
                         bundle.putLong("opponentPoints", botPoints);
@@ -294,31 +294,27 @@ public class WaitingRoomFragment extends Fragment {
 
                         progressBar.setVisibility(View.GONE);
 
-                        // Navigue vers le jeu après un court délai
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             showCountdownOverlay(bundle);
                         }, 1500);
                     });
-        }, 500 + random.nextInt(1000)); // 0.5-1.5s de "chargement"
+        }, 500 + random.nextInt(1000));
     }
 
     private void startMatchmakingTimer(int delayMs) {
-        // Annule le timer précédent s'il existe
         if (matchmakingTimer != null) {
             matchmakingTimer.cancel();
         }
 
         matchmakingTimer = new CountDownTimer(delayMs, 1000) {
             @Override
-            public void onTick(long millisUntilFinished) {
-                int secondsLeft = (int) (millisUntilFinished / 1000);
-            }
+            public void onTick(long millisUntilFinished) { }
 
             @Override
             public void onFinish() {
-                if (!matchStarted) {
+                if (!matchStarted && fragmentActive) {
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (!matchStarted) {
+                        if (!matchStarted && fragmentActive) {
                             startBotMatch();
                         }
                     }, 1000 + random.nextInt(2000));
