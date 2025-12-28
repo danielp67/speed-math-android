@@ -25,6 +25,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
     private PlayerManager playerManager;
     private FeedbackManager feedbackManager;
     private ArcadeAdapter adapter;
+    private OnlineStats onlineStats;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,7 +49,9 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("×", 16, "Multiplication Suite", "a × b", "MUL"));
         items.add(new ArcadeItem("÷", 16, "Division Suite", "a ÷ b", "DIV"));
 
-        adapter = new ArcadeAdapter(items, this, playerManager);
+        onlineStats = OnlineStats.getDefault();
+
+        adapter = new ArcadeAdapter(items, this, playerManager, onlineStats);
         recycler.setAdapter(adapter);
 
         return root;

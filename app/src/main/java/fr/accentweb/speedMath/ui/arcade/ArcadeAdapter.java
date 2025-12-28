@@ -17,16 +17,18 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
     private final List<ArcadeItem> items;
     private final OnItemClickListener listener;
     private final PlayerManager playerManager;
+    private final OnlineStats onlineStats;
 
     public interface OnItemClickListener {
         void onPlayClick(View v, String mode);
         void onSettingsClick(View v, String mode);
     }
 
-    public ArcadeAdapter(List<ArcadeItem> items, OnItemClickListener listener, PlayerManager playerManager) {
+    public ArcadeAdapter(List<ArcadeItem> items, OnItemClickListener listener, PlayerManager playerManager, OnlineStats onlineStats) {
         this.items = items;
         this.listener = listener;
         this.playerManager = playerManager;
+        this.onlineStats = onlineStats;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -36,6 +38,10 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         View btnPlay;
         View btnSettings;
 
+        View layoutOnlineInfo;
+        TextView txtPlayersOnline, txtGamesLeft;
+
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             iconCard = itemView.findViewById(R.id.iconCard);
@@ -43,6 +49,10 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
             descriptionCard = itemView.findViewById(R.id.descriptionCard);
             btnPlay = itemView.findViewById(R.id.btnPlay);
             btnSettings = itemView.findViewById(R.id.btnSettings);
+            layoutOnlineInfo = itemView.findViewById(R.id.layoutOnlineInfo);
+            txtPlayersOnline = itemView.findViewById(R.id.txtPlayersOnline);
+            txtGamesLeft = itemView.findViewById(R.id.txtGamesLeft);
+
         }
     }
 
@@ -58,37 +68,53 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         ArcadeItem item = items.get(pos);
 
+        // ===== ICON & TITLE =====
         h.iconCard.setText(item.icon);
         h.iconCard.setTextSize(item.iconSize);
         h.titleCard.setText(item.title);
 
-        if (item.mode.equals("MEMORY")) {
-            int savedDifficulty = playerManager.getMemoryDifficulty();
-            MemoryDifficulty difficulty = MemoryDifficulty.values()[savedDifficulty];
-            h.descriptionCard.setText(item.description + " - " + difficulty.label);
-        }
-        else if (item.mode.equals("MEMORY_DUO")) {
-            int savedDifficulty = playerManager.getMemoryDuoDifficulty();
-            MemoryDifficulty difficulty = MemoryDifficulty.values()[savedDifficulty];
-            h.descriptionCard.setText(item.description + " - " + difficulty.label);
-        }
-        else {
-            GameDifficulty difficulty = getCurrentGameDifficulty(item.mode);
-            h.descriptionCard.setText(item.description + " - " + difficulty.getDisplayName());
+        // ===== DESCRIPTION =====
+        switch (item.mode) {
+            case "MEMORY":
+                int memDiff = playerManager.getMemoryDifficulty();
+                MemoryDifficulty memDifficulty = MemoryDifficulty.values()[memDiff];
+                h.descriptionCard.setText(item.description + " - " + memDifficulty.label);
+                break;
+
+            case "MEMORY_DUO":
+                int memDuoDiff = playerManager.getMemoryDuoDifficulty();
+                MemoryDifficulty memDuoDifficulty = MemoryDifficulty.values()[memDuoDiff];
+                h.descriptionCard.setText(item.description + " - " + memDuoDifficulty.label);
+                break;
+
+            default:
+                GameDifficulty gameDiff = getCurrentGameDifficulty(item.mode);
+                h.descriptionCard.setText(item.description + " - " + gameDiff.getDisplayName());
         }
 
-        if ("ONLINE".equals(item.mode)) {
-            h.btnSettings.setVisibility(View.GONE);
-            h.btnSettings.setClickable(false);
+        // ===== ONLINE vs DEFAULT =====
+        boolean isOnline = "ONLINE".equals(item.mode);
+
+        h.btnSettings.setVisibility(isOnline ? View.GONE : View.VISIBLE);
+        h.btnSettings.setClickable(!isOnline);
+
+        if (isOnline) {
+            h.layoutOnlineInfo.setVisibility(View.VISIBLE);
             h.descriptionCard.setText(item.description);
+            h.txtPlayersOnline.setText("\uD83D\uDFE2 " + onlineStats.playersOnline);
+            h.txtGamesLeft.setText(onlineStats.gamesPlayedToday + " / " + onlineStats.dailyLimit);
         } else {
-            h.btnSettings.setVisibility(View.VISIBLE);
+            h.layoutOnlineInfo.setVisibility(View.GONE);
         }
+
+        // ===== CLICK LISTENERS =====
         h.btnPlay.setTag(item.mode);
         h.btnPlay.setOnClickListener(v -> listener.onPlayClick(v, item.mode));
+
         h.btnSettings.setTag(item.mode);
         h.btnSettings.setOnClickListener(v -> listener.onSettingsClick(v, item.mode));
     }
+
 
     private GameDifficulty getCurrentGameDifficulty(String mode) {
         int difficultyValue = 3; // PROGRESSIVE par défaut

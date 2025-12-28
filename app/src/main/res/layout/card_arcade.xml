@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:layout_marginVertical="8dp"
-    android:layout_marginBottom="8dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
     app:strokeWidth="1dp"
@@ -62,7 +61,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- ===== SETTINGS ===== -->
+        <!-- ===== SETTINGS (DEFAULT) ===== -->
         <ImageButton
             android:id="@+id/btnSettings"
             android:layout_width="64dp"
@@ -74,7 +73,36 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             app:tint="@color/grey_light"/>
 
-        <!-- ===== PLAY (DOMINANT) ===== -->
+        <!-- ===== ONLINE INFO (ONLINE ONLY) ===== -->
+        <LinearLayout
+            android:id="@+id/layoutOnlineInfo"
+            android:layout_width="88dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtPlayersOnline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🟢 128"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="?attr/textPrimary"/>
+
+            <TextView
+                android:id="@+id/txtGamesLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 / 10"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="?attr/textPrimary"/>
+        </LinearLayout>
+
+        <!-- ===== PLAY ===== -->
         <ImageView
             android:id="@+id/btnPlay"
             android:layout_width="72dp"
