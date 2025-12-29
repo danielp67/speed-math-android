@@ -190,11 +190,12 @@ public class MainActivity extends AppCompatActivity {
                 // Mise à jour du nombre de joueurs
                 onlineStats.playersOnline = onlineCount;
 
-                // Mise à jour de l'UI
-                updateOnlineStats(onlineStats);
+                // Mettre à jour le fragment
+                updateOnlineStatsInFragments();  // <-- ajoute ça
 
                 Log.d("OnlineStats", "Joueurs en ligne: " + onlineCount);
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

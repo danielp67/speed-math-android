@@ -150,7 +150,7 @@ public class WaitingRoomFragment extends Fragment {
         textStatus.setText(R.string.searching_for_a_match);
         progressBar.setVisibility(View.VISIBLE);
 
-        int randomDelay = 1000 + random.nextInt(11000); // 1-12s
+        int randomDelay = 8000 + random.nextInt(4000); // 1-12s
         startMatchmakingTimer(randomDelay);
 
         btnCancel.setOnClickListener(v -> {

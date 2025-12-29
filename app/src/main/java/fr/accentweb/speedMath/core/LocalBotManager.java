@@ -17,7 +17,7 @@ public class LocalBotManager {
     private final String botScoreField;
     private final Random random = new Random();
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private int nbQuestions = 7;
+    private int nbQuestions = 10;
 
     public interface BotListener {
         void onBotScoreUpdated(int score);
