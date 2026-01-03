@@ -80,20 +80,30 @@ public class FriendFragment extends Fragment {
             @Nullable Bundle savedInstanceState
     ) {
 
-        // ----- Arguments -----
         if (getArguments() == null) {
             Navigation.findNavController(view).navigateUp();
             return;
         }
+        Bundle args = getArguments();
+        roomId = args.getString("roomId");
+        player = args.getString("player");
+        myPseudo = args.getString("myPseudo");
+        opponentPseudo = args.getString("opponentPseudo");
 
-        roomId = getArguments().getString("roomId");
-        player = getArguments().getString("player");
-        myPseudo = getArguments().getString("myPseudo");
-        opponentPseudo = getArguments().getString("opponentPseudo");
+        if (roomId == null || player == null || myPseudo == null || opponentPseudo == null) {
+            Navigation.findNavController(view).navigateUp();
+            return;
+        }
 
-        roomRef = FirebaseDatabase.getInstance()
-                .getReference("friends_rooms")
-                .child(roomId);
+        try {
+            roomRef = FirebaseDatabase.getInstance()
+                    .getReference("friends_rooms")
+                    .child(roomId);
+        } catch (Exception e) {
+            Log.e(TAG, "Error during initialization", e);
+            Navigation.findNavController(view).navigateUp();
+            return;
+        }
 
         playerManager = PlayerManager.getInstance(requireContext());
 

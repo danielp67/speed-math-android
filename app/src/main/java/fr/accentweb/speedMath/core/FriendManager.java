@@ -1,5 +1,7 @@
 package fr.accentweb.speedMath.core;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,25 +45,25 @@ public class FriendManager {
     public void joinRoom(String roomCode, String uid, String pseudo, RoomCallback callback) {
         roomsRef.child(roomCode).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
-                callback.onError("Erreur de connexion");
+                callback.onError("Connection error");
                 return;
             }
 
             DataSnapshot snapshot = task.getResult();
             if (!snapshot.exists()) {
-                callback.onError("Room introuvable");
+                callback.onError("Room not found");
                 return;
             }
 
             String status = snapshot.child("status").getValue(String.class);
             if (!"waiting".equals(status)) {
-                callback.onError("Room déjà pleine");
+                callback.onError("Room already completed");
                 return;
             }
 
             String hostUid = snapshot.child("host_uid").getValue(String.class);
             if (uid.equals(hostUid)) {
-                callback.onError("Vous ne pouvez pas rejoindre votre propre room");
+                callback.onError("You cannot join your own room");
                 return;
             }
 
@@ -72,7 +74,7 @@ public class FriendManager {
 
             roomsRef.child(roomCode).updateChildren(updates)
                     .addOnSuccessListener(aVoid -> callback.onSuccess())
-                    .addOnFailureListener(e -> callback.onError("Erreur lors de la connexion"));
+                    .addOnFailureListener(e -> callback.onError("Error during connexion"));
         });
     }
 
@@ -81,7 +83,7 @@ public class FriendManager {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-                    listener.onError("Room supprimée");
+                    listener.onError("Room deleted");
                     return;
                 }
 

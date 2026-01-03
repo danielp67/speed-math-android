@@ -55,7 +55,7 @@ public class JoinFriendFragment extends Fragment {
                 btnJoin.setEnabled(false);
                 btnJoin.setText("Connexion...");
 
-                friendManager.joinRoom(code, playerManager.getOnlineUid(),
+                friendManager.joinRoom(code, playerManager.getOnlineUid(), playerManager.getOnlinePseudo(),
                         new FriendManager.RoomCallback() {
                             @Override
                             public void onSuccess() {

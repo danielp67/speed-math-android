@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,8 +21,8 @@ public class WaitingFriendFragment extends Fragment {
 
     private FriendManager friendManager;
     private PlayerManager playerManager;
-
     private String roomCode;
+    private FriendManager.RoomListener roomListener;
 
     @Nullable
     @Override
@@ -44,26 +45,48 @@ public class WaitingFriendFragment extends Fragment {
         TextView txtStatus = view.findViewById(R.id.txtStatus);
         Button btnCancel = view.findViewById(R.id.btnCancel);
 
-        // Création de la room
-        roomCode = friendManager.createRoom(playerManager.getOnlineUid(), playerManager.getOnlinePseudo());
-        txtRoomCode.setText(roomCode);
-        txtStatus.setText("Waiting for your friend…");
-
-        // Écoute de la room
-        friendManager.listenRoom(roomCode, status -> {
-            if ("ready".equals(status)) {
-                txtStatus.setText("Friend joined!");
-
-                Bundle args = new Bundle();
-                args.putString("ROOM_CODE", roomCode);
-
-                Navigation.findNavController(requireView())
-                        .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
-            }
-        });
-
-        btnCancel.setOnClickListener(v ->
-                Navigation.findNavController(v).popBackStack()
+        roomCode = friendManager.createRoom(
+                playerManager.getOnlineUid(),
+                playerManager.getOnlinePseudo()
         );
+        txtRoomCode.setText(roomCode);
+        txtStatus.setText("Waiting for your friend...");
+
+        roomListener = new FriendManager.RoomListener() {
+            @Override
+            public void onStatusChanged(String status) {
+                if ("ready".equals(status)) {
+                    txtStatus.setText("Ami connecté !");
+
+                    Bundle args = new Bundle();
+                    args.putString("ROOM_CODE", roomCode);
+                    args.putString("player", "P1");
+
+                    Navigation.findNavController(requireView())
+                            .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(requireView()).popBackStack();
+            }
+        };
+
+        friendManager.listenRoom(roomCode, roomListener);
+
+        btnCancel.setOnClickListener(v -> {
+            friendManager.cleanupRoom(roomCode);
+            Navigation.findNavController(v).popBackStack();
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (roomListener != null) {
+            friendManager.listenRoom(roomCode, null);
+        }
     }
 }
