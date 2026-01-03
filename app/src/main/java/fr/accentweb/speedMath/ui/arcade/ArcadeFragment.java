@@ -18,6 +18,7 @@ import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameDifficulty;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
+import fr.accentweb.speedMath.ui.friend.PlayWithFriendDialogFragment;
 import fr.accentweb.speedMath.utils.NetworkUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("👤", 16, "Solo", "QCM Mode", "QCM"));
         items.add(new ArcadeItem("👥", 16, "Battle", "Dual Mode", "DUAL"));
         items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Online Mode", "ONLINE"));
+        items.add(new ArcadeItem("🤝", 16, "Play with a Friend", "Invite or join a friend", "FRIEND"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
         items.add(new ArcadeItem("+ - × ÷", 10, "All Suite", "Mixed", "ALL"));
@@ -77,6 +79,10 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
                 break;
             case "ONLINE":
                 onlineMode(v, args);
+                break;
+            case "FRIEND":
+                new PlayWithFriendDialogFragment()
+                        .show(getParentFragmentManager(), "play_with_friend");
                 break;
             case "MEMORY":
                 args.putInt("DIFFICULTY", playerManager.getMemoryDifficulty());
