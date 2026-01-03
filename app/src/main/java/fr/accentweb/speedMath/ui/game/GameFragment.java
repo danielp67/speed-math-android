@@ -70,7 +70,7 @@ public class GameFragment extends BaseGameFragment {
             default:
                 arcadeDifficulty = playerManager.getAllSuiteDifficulty();
         }
-        correctAnswersStreak = playerManager.getCorrectAnswersStreak(gameMode);
+        correctAnswersStreak = playerManager.getCorrectAnswersStreak(gameMode, arcadeDifficulty);
         lastPlayedLevel = playerManager.getLastPlayedLevel();
 
         // Feedback manager
@@ -190,8 +190,8 @@ public class GameFragment extends BaseGameFragment {
 
     private void updateScore() {
         if (textScoreRight != null) {
-            playerManager.setCorrectAnswersStreak(gameMode, score);
-            textScoreRight.setText("Best : " + playerManager.getCorrectAnswersStreak(gameMode));
+            playerManager.setCorrectAnswersStreak(gameMode, arcadeDifficulty, score);
+            textScoreRight.setText("Best : " + playerManager.getCorrectAnswersStreak(gameMode, arcadeDifficulty));
             updateStars(); // Met à jour les étoiles
         }
     }

@@ -57,6 +57,7 @@
     <string name="option_1">Option 1</string>
     <string name="score_format">Score: %1$d/%2$d</string>
     <string name="action_qcm_online">Online</string>
+    <string name="action_qcm_friend">Friends</string>
 
     <string name="win_message">🎉 You win !</string>
     <string name="lose_message">You loose !</string>

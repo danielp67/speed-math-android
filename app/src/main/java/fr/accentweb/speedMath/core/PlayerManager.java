@@ -101,15 +101,15 @@ public class PlayerManager {
         return prefs.getInt(KEY_CURRENT_LEVEL, 0);
     }
 
-    public void setCorrectAnswersStreak(String mode, int streak) {
-        if(streak > getCorrectAnswersStreak(mode))
+    public void setCorrectAnswersStreak(String mode, int arcadeDifficulty, int streak) {
+        if(streak > getCorrectAnswersStreak(mode, arcadeDifficulty))
         {
-            prefs.edit().putInt(KEY_ANSWERS_STREAK_PREFIX + mode, streak).apply();
+            prefs.edit().putInt(KEY_ANSWERS_STREAK_PREFIX + mode + "_" + arcadeDifficulty , streak).apply();
         }
     }
 
-    public int getCorrectAnswersStreak(String mode) {
-        return prefs.getInt(KEY_ANSWERS_STREAK_PREFIX + mode, 0);
+    public int getCorrectAnswersStreak(String mode, int arcadeDifficulty) {
+        return prefs.getInt(KEY_ANSWERS_STREAK_PREFIX + mode + "_" + arcadeDifficulty, 0);
     }
 
     public void resetUserStats() {
@@ -208,7 +208,7 @@ public class PlayerManager {
     }
 
     public int getSoloDifficulty() {
-        return prefs.getInt(KEY_SOLO_DIFFICULTY, 3); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_SOLO_DIFFICULTY, 0); // PROGRESSIVE par défaut
     }
 
     // Battle (DUAL)
@@ -217,7 +217,7 @@ public class PlayerManager {
     }
 
     public int getBattleDifficulty() {
-        return prefs.getInt(KEY_BATTLE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_BATTLE_DIFFICULTY, 0); // PROGRESSIVE par défaut
     }
 
     // All Suite
@@ -226,7 +226,7 @@ public class PlayerManager {
     }
 
     public int getAllSuiteDifficulty() {
-        return prefs.getInt(KEY_ALL_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_ALL_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
     }
 
     // Addition Suite
@@ -235,7 +235,7 @@ public class PlayerManager {
     }
 
     public int getAddSuiteDifficulty() {
-        return prefs.getInt(KEY_ADD_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_ADD_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
     }
 
     // Subtraction Suite
@@ -244,7 +244,7 @@ public class PlayerManager {
     }
 
     public int getSubSuiteDifficulty() {
-        return prefs.getInt(KEY_SUB_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_SUB_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
     }
 
     // Multiplication Suite
@@ -253,7 +253,7 @@ public class PlayerManager {
     }
 
     public int getMulSuiteDifficulty() {
-        return prefs.getInt(KEY_MUL_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_MUL_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
     }
 
     // Division Suite
@@ -262,7 +262,7 @@ public class PlayerManager {
     }
 
     public int getDivSuiteDifficulty() {
-        return prefs.getInt(KEY_DIV_SUITE_DIFFICULTY, 3); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_DIV_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
     }
 
 
@@ -271,7 +271,7 @@ public class PlayerManager {
     }
 
     public int getMemoryDifficulty() {
-        return prefs.getInt(KEY_MEMORY_DIFFICULTY, 1); // 1 = MEDIUM par défaut
+        return prefs.getInt(KEY_MEMORY_DIFFICULTY, 0); // 1 = MEDIUM par défaut
     }
 
     public void setMemoryDuoDifficulty(int difficulty) {
@@ -279,7 +279,7 @@ public class PlayerManager {
     }
 
     public int getMemoryDuoDifficulty() {
-        return prefs.getInt(KEY_MEMORY_DUO_DIFFICULTY, 1); // 1 = MEDIUM par défaut
+        return prefs.getInt(KEY_MEMORY_DUO_DIFFICULTY, 0); // 1 = MEDIUM par défaut
     }
 
 

@@ -30,7 +30,7 @@ public enum GameDifficulty {
                 return difficulty;
             }
         }
-        return MEDIUM; // Valeur par défaut
+        return PROGRESSIVE; // Valeur par défaut
     }
 
     public static GameDifficulty[] getAllDifficultiesInOrder() {
