@@ -2,6 +2,7 @@ package fr.accentweb.speedMath.ui.friend;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,15 +54,15 @@ public class JoinFriendFragment extends Fragment {
                 }
 
                 btnJoin.setEnabled(false);
-                btnJoin.setText("Connexion...");
+                btnJoin.setText("Connection...");
 
                 friendManager.joinRoom(code, playerManager.getOnlineUid(), playerManager.getOnlinePseudo(),
                         new FriendManager.RoomCallback() {
                             @Override
                             public void onSuccess() {
                                 Bundle args = new Bundle();
-                                args.putString("ROOM_CODE", code);
-
+                                args.putString("roomId", code);
+                                Log.d("friend", "start to room");
                                 Navigation.findNavController(requireView())
                                         .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
                             }

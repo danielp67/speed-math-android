@@ -15,6 +15,9 @@ import java.util.Random;
 public class FriendManager {
     private static FriendManager instance;
     private final DatabaseReference roomsRef;
+    private ValueEventListener roomListener;
+
+
 
     private FriendManager() {
         roomsRef = FirebaseDatabase.getInstance().getReference("friend_rooms");
@@ -79,7 +82,12 @@ public class FriendManager {
     }
 
     public void listenRoom(String roomCode, RoomListener listener) {
-        roomsRef.child(roomCode).addValueEventListener(new ValueEventListener() {
+        if (listener == null) {
+            roomsRef.child(roomCode).removeEventListener(roomListener);
+            return;
+        }
+
+        roomListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -88,15 +96,20 @@ public class FriendManager {
                 }
 
                 String status = snapshot.child("status").getValue(String.class);
-                listener.onStatusChanged(status);
+                if (status != null) {
+                    listener.onStatusChanged(status);
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 listener.onError(error.getMessage());
             }
-        });
+        };
+
+        roomsRef.child(roomCode).addValueEventListener(roomListener);
     }
+
 
     public void startGame(String roomCode) {
         roomsRef.child(roomCode).child("status").setValue("playing");

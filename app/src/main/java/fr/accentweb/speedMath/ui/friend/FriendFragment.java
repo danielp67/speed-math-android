@@ -79,6 +79,7 @@ public class FriendFragment extends Fragment {
             @NonNull View view,
             @Nullable Bundle savedInstanceState
     ) {
+        Log.d("friend", "start to room - fragment");
 
         if (getArguments() == null) {
             Navigation.findNavController(view).navigateUp();
@@ -90,14 +91,14 @@ public class FriendFragment extends Fragment {
         myPseudo = args.getString("myPseudo");
         opponentPseudo = args.getString("opponentPseudo");
 
-        if (roomId == null || player == null || myPseudo == null || opponentPseudo == null) {
+/*        if (roomId == null || player == null || myPseudo == null || opponentPseudo == null) {
             Navigation.findNavController(view).navigateUp();
             return;
-        }
+        }*/
 
         try {
             roomRef = FirebaseDatabase.getInstance()
-                    .getReference("friends_rooms")
+                    .getReference("friend_rooms")
                     .child(roomId);
         } catch (Exception e) {
             Log.e(TAG, "Error during initialization", e);

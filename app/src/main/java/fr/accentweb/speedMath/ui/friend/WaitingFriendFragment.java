@@ -1,6 +1,7 @@
 package fr.accentweb.speedMath.ui.friend;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,12 +57,12 @@ public class WaitingFriendFragment extends Fragment {
             @Override
             public void onStatusChanged(String status) {
                 if ("ready".equals(status)) {
-                    txtStatus.setText("Ami connecté !");
+                    txtStatus.setText("Friend connected !");
 
                     Bundle args = new Bundle();
-                    args.putString("ROOM_CODE", roomCode);
+                    args.putString("roomId", roomCode);
                     args.putString("player", "P1");
-
+                    Log.d("friend", "start to room - host");
                     Navigation.findNavController(requireView())
                             .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
                 }
