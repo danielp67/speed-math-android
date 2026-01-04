@@ -85,16 +85,19 @@ public class FriendFragment extends Fragment {
             Navigation.findNavController(view).navigateUp();
             return;
         }
-        Bundle args = getArguments();
-        roomId = args.getString("roomId");
-        player = args.getString("player");
-        myPseudo = args.getString("myPseudo");
-        opponentPseudo = args.getString("opponentPseudo");
 
-/*        if (roomId == null || player == null || myPseudo == null || opponentPseudo == null) {
+        playerManager = PlayerManager.getInstance(requireContext());
+        Bundle args = getArguments();
+        roomId = args.getString("roomId", "");  // Valeur par défaut
+        player = args.getString("player", "");  // Valeur par défaut
+        myPseudo = args.getString("myPseudo", playerManager.getOnlinePseudo());
+        opponentPseudo = args.getString("opponentPseudo", "opponent");
+
+        // Vérification complète
+        if (roomId.isEmpty()) {
             Navigation.findNavController(view).navigateUp();
             return;
-        }*/
+        }
 
         try {
             roomRef = FirebaseDatabase.getInstance()
@@ -105,7 +108,6 @@ public class FriendFragment extends Fragment {
             Navigation.findNavController(view).navigateUp();
             return;
         }
-
         playerManager = PlayerManager.getInstance(requireContext());
 
         // ----- UI -----
@@ -186,6 +188,11 @@ public class FriendFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists() || gameFinished) return;
 
+                if (player == null) {
+                    Log.e(TAG, "Player is null");
+                    return;
+                }
+
                 String opponentScoreKey = player.equals("P1") ? "p2_score" : "p1_score";
                 Long opponentScore = snapshot.child(opponentScoreKey).getValue(Long.class);
                 if (opponentScore != null) {
@@ -193,7 +200,7 @@ public class FriendFragment extends Fragment {
                 }
 
                 String state = snapshot.child("state").getValue(String.class);
-                if ("finished".equals(state)) {
+                if (state != null && "finished".equals(state)) {
                     gameFinished = true;
                     showResult(snapshot);
                 }
@@ -205,8 +212,11 @@ public class FriendFragment extends Fragment {
             }
         };
 
-        roomRef.addValueEventListener(roomListener);
+        if (roomRef != null) {
+            roomRef.addValueEventListener(roomListener);
+        }
     }
+
 
     private void generateQuestion() {
         if (playerManager.isAnimationEnabled()) {

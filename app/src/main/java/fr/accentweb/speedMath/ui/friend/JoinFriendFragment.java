@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.FriendManager;
 import fr.accentweb.speedMath.core.PlayerManager;
@@ -62,9 +64,26 @@ public class JoinFriendFragment extends Fragment {
                             public void onSuccess() {
                                 Bundle args = new Bundle();
                                 args.putString("roomId", code);
-                                Log.d("friend", "start to room");
-                                Navigation.findNavController(requireView())
-                                        .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
+                                args.putString("player", "P2");  // Le joueur qui rejoint est toujours P2
+                                args.putString("myPseudo", playerManager.getOnlinePseudo());
+
+                                // Récupérer le pseudo de l'hôte depuis Firebase
+                                FirebaseDatabase.getInstance().getReference("friend_rooms")
+                                        .child(code)
+                                        .child("host_pseudo")
+                                        .get()
+                                        .addOnSuccessListener(snapshot -> {
+                                            String hostPseudo = snapshot.getValue(String.class);
+                                            args.putString("opponentPseudo", hostPseudo != null ? hostPseudo : "opponent");
+
+                                            Navigation.findNavController(requireView())
+                                                    .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            args.putString("opponentPseudo", "opponent");
+                                            Navigation.findNavController(requireView())
+                                                    .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
+                                        });
                             }
 
                             @Override
@@ -75,6 +94,7 @@ public class JoinFriendFragment extends Fragment {
                             }
                         });
             });
+
 
             btnCancel.setOnClickListener(v ->
                     Navigation.findNavController(v).popBackStack()

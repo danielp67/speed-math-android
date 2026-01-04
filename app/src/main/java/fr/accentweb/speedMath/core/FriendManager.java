@@ -47,19 +47,14 @@ public class FriendManager {
 
     public void joinRoom(String roomCode, String uid, String pseudo, RoomCallback callback) {
         roomsRef.child(roomCode).get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                callback.onError("Connection error");
-                return;
-            }
-
-            DataSnapshot snapshot = task.getResult();
-            if (!snapshot.exists()) {
+            if (!task.isSuccessful() || !task.getResult().exists()) {
                 callback.onError("Room not found");
                 return;
             }
 
+            DataSnapshot snapshot = task.getResult();
             String status = snapshot.child("status").getValue(String.class);
-            if (!"waiting".equals(status)) {
+            if (status == null || !"waiting".equals(status)) {
                 callback.onError("Room already completed");
                 return;
             }
@@ -70,16 +65,20 @@ public class FriendManager {
                 return;
             }
 
+            // Mise à jour des données de la room
             Map<String, Object> updates = new HashMap<>();
             updates.put("guest_uid", uid);
             updates.put("guest_pseudo", pseudo);
             updates.put("status", "ready");
+            updates.put("p1_score", 0);  // Initialisation des scores
+            updates.put("p2_score", 0);
 
             roomsRef.child(roomCode).updateChildren(updates)
                     .addOnSuccessListener(aVoid -> callback.onSuccess())
                     .addOnFailureListener(e -> callback.onError("Error during connexion"));
         });
     }
+
 
     public void listenRoom(String roomCode, RoomListener listener) {
         if (listener == null) {
