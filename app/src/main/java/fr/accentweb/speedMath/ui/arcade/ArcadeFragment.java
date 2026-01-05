@@ -44,7 +44,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("👤", 16, "Solo", "QCM Mode", "QCM"));
         items.add(new ArcadeItem("👥", 16, "Battle", "Dual Mode", "DUAL"));
         items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Online Mode", "ONLINE"));
-        items.add(new ArcadeItem("🤝", 16, "Play with a Friend", "Invite or join a friend", "FRIEND"));
+      //  items.add(new ArcadeItem("🤝", 16, "Play with a Friend", "Invite or join a friend", "FRIEND"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
         items.add(new ArcadeItem("+ - × ÷", 10, "All Suite", "Mixed", "ALL"));

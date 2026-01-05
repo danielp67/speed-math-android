@@ -130,7 +130,7 @@ public class PlayerManager {
     }
 
     public boolean isDarkModeEnabled() {
-        return prefs.getBoolean(KEY_DARK_MODE, false);
+        return prefs.getBoolean(KEY_DARK_MODE, true);
     }
 
     // ---- Effect ----
