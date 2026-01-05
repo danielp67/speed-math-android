@@ -9,10 +9,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+
+import com.google.firebase.database.FirebaseDatabase;
 
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.FriendManager;
@@ -53,24 +56,59 @@ public class WaitingFriendFragment extends Fragment {
         txtRoomCode.setText(roomCode);
         txtStatus.setText("Waiting for your friend...");
 
+        requireActivity().getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        friendManager.cleanupRoom(roomCode);
+                        setEnabled(false);
+                        requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                    }
+                }
+        );
+
         roomListener = new FriendManager.RoomListener() {
             @Override
             public void onStatusChanged(String status) {
-                if ("ready".equals(status)) {
-                    txtStatus.setText("Friend connected !");
+                if (!isAdded() || getView() == null) return;
 
-                    Bundle args = new Bundle();
-                    args.putString("roomId", roomCode);
-                    args.putString("player", "P1");
-                    Log.d("friend", "start to room - host");
-                    Navigation.findNavController(requireView())
-                            .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
+                if ("ready".equals(status)) {
+                    FirebaseDatabase.getInstance().getReference("friend_rooms")
+                            .child(roomCode)
+                            .child("guest_pseudo")
+                            .get()
+                            .addOnSuccessListener(snapshot -> {
+                                if (!isAdded() || getView() == null) return;
+                                String opponentPseudo = snapshot.getValue(String.class);
+
+                                Bundle args = new Bundle();
+                                args.putString("roomId", roomCode);
+                                args.putString("player", "P1");
+                                args.putString("myPseudo", playerManager.getOnlinePseudo());
+                                args.putString("opponentPseudo", opponentPseudo != null ? opponentPseudo : "opponent");
+
+                                Navigation.findNavController(requireView())
+                                        .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
+                            })
+                            .addOnFailureListener(e -> {
+                                if (!isAdded() || getView() == null) return;
+                                Bundle args = new Bundle();
+                                args.putString("roomId", roomCode);
+                                args.putString("player", "P1");
+                                args.putString("myPseudo", playerManager.getOnlinePseudo());
+                                args.putString("opponentPseudo", "opponent");
+
+                                Navigation.findNavController(requireView())
+                                        .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
+                            });
                 }
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                if (!isAdded() || getView() == null) return;
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).popBackStack();
             }
         };

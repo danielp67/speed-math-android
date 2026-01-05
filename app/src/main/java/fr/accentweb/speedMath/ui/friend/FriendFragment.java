@@ -51,19 +51,20 @@ public class FriendFragment extends Fragment {
 
     private LinearLayout overlay;
     private TextView textWinner;
-    private Button btnExit;
+    private Button btnReplay;
 
     private int correctAnswer;
     private int score = 0;
     private int combo = 0;
-    private final int NB_QUESTIONS = 10;
+    private final int nbQuestions = 10;
 
     private QuestionGenerator questionGenerator;
     private GameTimer gameTimer;
     private PlayerManager playerManager;
     private FeedbackManager feedbackManager;
+    private OnBackPressedCallback backPressedCallback;
 
-    private boolean gameFinished = false;
+    private boolean isGameFinished = false;
 
     @Override
     public View onCreateView(
@@ -79,8 +80,6 @@ public class FriendFragment extends Fragment {
             @NonNull View view,
             @Nullable Bundle savedInstanceState
     ) {
-        Log.d("friend", "start to room - fragment");
-
         if (getArguments() == null) {
             Navigation.findNavController(view).navigateUp();
             return;
@@ -88,13 +87,12 @@ public class FriendFragment extends Fragment {
 
         playerManager = PlayerManager.getInstance(requireContext());
         Bundle args = getArguments();
-        roomId = args.getString("roomId", "");  // Valeur par défaut
-        player = args.getString("player", "");  // Valeur par défaut
+        roomId = args.getString("roomId", "");
+        player = args.getString("player", "");
         myPseudo = args.getString("myPseudo", playerManager.getOnlinePseudo());
         opponentPseudo = args.getString("opponentPseudo", "opponent");
 
-        // Vérification complète
-        if (roomId.isEmpty()) {
+        if (roomId == null || player == null || myPseudo == null || opponentPseudo == null) {
             Navigation.findNavController(view).navigateUp();
             return;
         }
@@ -124,7 +122,7 @@ public class FriendFragment extends Fragment {
 
         overlay = view.findViewById(R.id.localOverlay);
         textWinner = view.findViewById(R.id.textWinner);
-        btnExit = view.findViewById(R.id.btnReplay);
+        btnReplay = view.findViewById(R.id.btnReplay);
 
         card1 = view.findViewById(R.id.cardOption1);
         card2 = view.findViewById(R.id.cardOption2);
@@ -149,6 +147,17 @@ public class FriendFragment extends Fragment {
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
+        // Callback pour le bouton back
+        backPressedCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handleBackOrUpNavigation();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                backPressedCallback
+        );
         // ----- Timer -----
         gameTimer = new GameTimer();
         gameTimer.setListener((elapsed, formatted) -> textTimer.setText(formatted));
@@ -168,16 +177,6 @@ public class FriendFragment extends Fragment {
 
         listenRoom();
         generateQuestion();
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(
-                getViewLifecycleOwner(),
-                new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        finishAndLeave();
-                    }
-                }
-        );
     }
 
     // ---------------------------------------------------
@@ -186,7 +185,7 @@ public class FriendFragment extends Fragment {
         roomListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists() || gameFinished) return;
+                if (!snapshot.exists() || isGameFinished) return;
 
                 if (player == null) {
                     Log.e(TAG, "Player is null");
@@ -201,8 +200,8 @@ public class FriendFragment extends Fragment {
 
                 String state = snapshot.child("state").getValue(String.class);
                 if (state != null && "finished".equals(state)) {
-                    gameFinished = true;
-                    showResult(snapshot);
+                    isGameFinished = true;
+                    determineWinner(snapshot);
                 }
             }
 
@@ -218,19 +217,53 @@ public class FriendFragment extends Fragment {
     }
 
 
-    private void generateQuestion() {
-        if (playerManager.isAnimationEnabled()) {
-            AnimUtils.slideLeftRight(textQuestion);
+    private void determineWinner(DataSnapshot snapshot) {
+        gameTimer.stop();
+        setCardsClickable(false);
+
+        Long p1Score = snapshot.child("p1_score").getValue(Long.class);
+        Long p2Score = snapshot.child("p2_score").getValue(Long.class);
+
+        long myFinalScore = player.equals("P1") ? (p1Score != null ? p1Score : 0) : (p2Score != null ? p2Score : 0);
+        long opponentFinalScore = player.equals("P1") ? (p2Score != null ? p2Score : 0) : (p1Score != null ? p1Score : 0);
+
+        int result;
+        if (myFinalScore > opponentFinalScore) {
+            result = R.string.win_message;
+        } else if (myFinalScore < opponentFinalScore) {
+            result = R.string.lose_message;
+        } else {
+            result = R.string.draw_message;
         }
 
-        resetCards();
-        setClickable(true);
+        feedbackManager.playLevelUpSound();
+        overlay.setAlpha(0f);
+        overlay.setVisibility(View.VISIBLE);
+        overlay.animate().alpha(1f).setDuration(500).start();
+        textWinner.setText(result);
+        btnReplay.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.navigation_home);
+        });
+    }
 
+    private void generateQuestion() {
+        if (playerManager.isAnimationEnabled()) AnimUtils.slideLeftRight(textQuestion);
+
+        resetCardColors();
+        setCardsClickable(true);
+
+        questionGenerator.setLevel(Math.toIntExact(100)/2);
+
+        // Génération via QuestionGenerator
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
-        correctAnswer = q.answer;
-        textQuestion.setText(q.expression);
 
+        textQuestion.setText(q.expression);
+        correctAnswer = q.answer;
+
+        // Shuffle display order
         Collections.shuffle(q.answersChoice);
+
         t1.setText(String.valueOf(q.answersChoice.get(0)));
         t2.setText(String.valueOf(q.answersChoice.get(1)));
         t3.setText(String.valueOf(q.answersChoice.get(2)));
@@ -238,82 +271,116 @@ public class FriendFragment extends Fragment {
     }
 
     private void checkAnswer(TextView selected) {
-        setClickable(false);
+        setCardsClickable(false);
 
         int value = Integer.parseInt(selected.getText().toString());
+
         if (value == correctAnswer) {
+            highlightCorrect(selected);
             score++;
-            combo++;
-            feedbackManager.playCorrectSound();
-            highlight(selected, true);
             updateScore();
+            combo++;
+            if (combo >= 2 && playerManager.isAnimationEnabled()) { // combo commence à 2
+                textCombo.setText("🔥 x" + combo + " !");
+                AnimUtils.comboPop(textCombo);
+            }
+            feedbackManager.playCorrectSound();
+
         } else {
             combo = 0;
+            textCombo.setAlpha(0);
+            highlightWrong(selected);
+            highlightCorrectAnswer();
             feedbackManager.playWrongSound();
-            highlight(selected, false);
         }
 
-        if (score >= NB_QUESTIONS) {
-            finishGame();
+        if (score >= nbQuestions) {
+            playerFinished();
         } else {
-            new Handler(Looper.getMainLooper()).postDelayed(this::generateQuestion, 900);
+            new Handler(Looper.getMainLooper()).postDelayed(this::generateQuestion, 1000);
         }
+    }
+
+    private void playerFinished() {
+        gameTimer.stop();
+        setCardsClickable(false);
+        String winnerField = player.equals("P1") ? "p1" : "p2";
+        roomRef.child("winner").setValue(winnerField);
+        roomRef.child("state").setValue("finished");
+        feedbackManager.playLevelUpSound();
     }
 
     private void updateScore() {
-        textMyScore.setText(String.valueOf(score));
-        String key = player.equals("P1") ? "p1_score" : "p2_score";
-        roomRef.child(key).setValue(score);
+        if (textMyScore != null) {
+            textMyScore.setText(String.valueOf(score));
+            String playerScoreField = player.equals("P1") ? "p1_score" : "p2_score";
+            roomRef.child(playerScoreField).setValue(score);
+        }
     }
 
-    private void finishGame() {
-        roomRef.child("state").setValue("finished");
-        gameTimer.stop();
+    // UI helpers
+    private void highlightCorrect(TextView view) {
+        ((CardView) view.getParent()).setCardBackgroundColor(Color.parseColor("#A5D6A7"));
     }
 
-    private void showResult(DataSnapshot snapshot) {
-        gameTimer.stop();
-        overlay.setVisibility(View.VISIBLE);
-
-        long p1 = snapshot.child("p1_score").getValue(Long.class);
-        long p2 = snapshot.child("p2_score").getValue(Long.class);
-
-        boolean win =
-                (player.equals("P1") && p1 > p2) ||
-                        (player.equals("P2") && p2 > p1);
-
-        textWinner.setText(
-                win ? R.string.win_message :
-                        (p1 == p2 ? R.string.draw_message : R.string.lose_message)
-        );
-
-        btnExit.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.navigation_home)
-        );
+    private void highlightWrong(TextView view) {
+        ((CardView) view.getParent()).setCardBackgroundColor(Color.parseColor("#FFCDD2"));
     }
 
-    private void finishAndLeave() {
-        roomRef.child("state").setValue("finished");
-        Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
+    private void highlightCorrectAnswer() {
+        if (Integer.parseInt(t1.getText().toString()) == correctAnswer)
+            card1.setCardBackgroundColor(Color.parseColor("#A5D6A7"));
+        if (Integer.parseInt(t2.getText().toString()) == correctAnswer)
+            card2.setCardBackgroundColor(Color.parseColor("#A5D6A7"));
+        if (Integer.parseInt(t3.getText().toString()) == correctAnswer)
+            card3.setCardBackgroundColor(Color.parseColor("#A5D6A7"));
+        if (Integer.parseInt(t4.getText().toString()) == correctAnswer)
+            card4.setCardBackgroundColor(Color.parseColor("#A5D6A7"));
     }
 
-    private void resetCards() {
+    private void resetCardColors() {
         card1.setCardBackgroundColor(Color.WHITE);
         card2.setCardBackgroundColor(Color.WHITE);
         card3.setCardBackgroundColor(Color.WHITE);
         card4.setCardBackgroundColor(Color.WHITE);
     }
 
-    private void highlight(TextView view, boolean correct) {
-        ((CardView) view.getParent())
-                .setCardBackgroundColor(correct ? Color.parseColor("#A5D6A7") : Color.parseColor("#FFCDD2"));
+    public void setCardsClickable(boolean clickable) {
+        card1.setClickable(clickable);
+        card2.setClickable(clickable);
+        card3.setClickable(clickable);
+        card4.setClickable(clickable);
     }
 
-    private void setClickable(boolean enabled) {
-        card1.setClickable(enabled);
-        card2.setClickable(enabled);
-        card3.setClickable(enabled);
-        card4.setClickable(enabled);
+    private void declareForfeitLoss() {
+        if (isGameFinished) return; // if already finished, do nothing
+
+        Log.w(TAG, "Player quit the match → declaring forfeit loss.");
+
+        String winnerField = player.equals("P1") ? "p2" : "p1";
+        String opponentScoreField = player.equals("P1") ? "p2_score" : "p1_score";
+
+        // give the opponent a point
+        roomRef.child(opponentScoreField).setValue(nbQuestions);
+
+        roomRef.child("winner").setValue(winnerField);
+        roomRef.child("state").setValue("finished");
+
+        isGameFinished = true;
+    }
+
+
+    private void handleBackOrUpNavigation() {
+        declareForfeitLoss();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            try {
+                NavController nav = Navigation.findNavController(requireView());
+                nav.navigate(R.id.navigation_home);
+            } catch (Exception e) {
+                Log.e(TAG, "Error navigating", e);
+                requireActivity().finish();
+            }
+        }, 500);
     }
 
     @Override

@@ -36,69 +36,74 @@ public class JoinFriendFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_join_friend, container, false);
     }
 
-        @Override
-        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-            friendManager = FriendManager.getInstance();
-            playerManager = PlayerManager.getInstance(requireContext());
+        friendManager = FriendManager.getInstance();
+        playerManager = PlayerManager.getInstance(requireContext());
 
-            EditText inputRoomCode = view.findViewById(R.id.inputRoomCode);
-            Button btnJoin = view.findViewById(R.id.btnJoin);
-            Button btnCancel = view.findViewById(R.id.btnCancel);
+        EditText inputRoomCode = view.findViewById(R.id.inputRoomCode);
+        Button btnJoin = view.findViewById(R.id.btnJoin);
+        Button btnCancel = view.findViewById(R.id.btnCancel);
 
-            btnJoin.setOnClickListener(v -> {
-                String code = inputRoomCode.getText().toString().trim().toUpperCase();
+        btnJoin.setOnClickListener(v -> {
+            String code = inputRoomCode.getText().toString().trim().toUpperCase();
 
-                if (TextUtils.isEmpty(code)) {
-                    inputRoomCode.setError("Enter a room code");
-                    return;
-                }
+            if (TextUtils.isEmpty(code)) {
+                inputRoomCode.setError("Enter a room code");
+                return;
+            }
 
-                btnJoin.setEnabled(false);
-                btnJoin.setText("Connection...");
+            btnJoin.setEnabled(false);
+            btnJoin.setText("Connection...");
 
-                friendManager.joinRoom(code, playerManager.getOnlineUid(), playerManager.getOnlinePseudo(),
-                        new FriendManager.RoomCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Bundle args = new Bundle();
-                                args.putString("roomId", code);
-                                args.putString("player", "P2");  // Le joueur qui rejoint est toujours P2
-                                args.putString("myPseudo", playerManager.getOnlinePseudo());
+            friendManager.joinRoom(code, playerManager.getOnlineUid(), playerManager.getOnlinePseudo(),
+                    new FriendManager.RoomCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (!isAdded() || getView() == null) return;
 
-                                // Récupérer le pseudo de l'hôte depuis Firebase
-                                FirebaseDatabase.getInstance().getReference("friend_rooms")
-                                        .child(code)
-                                        .child("host_pseudo")
-                                        .get()
-                                        .addOnSuccessListener(snapshot -> {
-                                            String hostPseudo = snapshot.getValue(String.class);
-                                            args.putString("opponentPseudo", hostPseudo != null ? hostPseudo : "opponent");
+                            Bundle args = new Bundle();
+                            args.putString("roomId", code);
+                            args.putString("player", "P2");  // Le joueur qui rejoint est toujours P2
+                            args.putString("myPseudo", playerManager.getOnlinePseudo());
 
-                                            Navigation.findNavController(requireView())
-                                                    .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            args.putString("opponentPseudo", "opponent");
-                                            Navigation.findNavController(requireView())
-                                                    .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
-                                        });
-                            }
+                            // Récupérer le pseudo de l'hôte depuis Firebase
+                            FirebaseDatabase.getInstance().getReference("friend_rooms")
+                                    .child(code)
+                                    .child("host_pseudo")
+                                    .get()
+                                    .addOnSuccessListener(snapshot -> {
+                                        if (!isAdded() || getView() == null) return;
+                                        String hostPseudo = snapshot.getValue(String.class);
+                                        args.putString("opponentPseudo", hostPseudo != null ? hostPseudo : "opponent");
 
-                            @Override
-                            public void onError(String error) {
-                                btnJoin.setEnabled(true);
-                                btnJoin.setText("Join");
-                                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            });
+                                        Navigation.findNavController(requireView())
+                                                .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        if (!isAdded() || getView() == null) return;
+                                        args.putString("opponentPseudo", "opponent");
+                                        Navigation.findNavController(requireView())
+                                                .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
+                                    });
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            if (!isAdded() || getView() == null) return;
+                            btnJoin.setEnabled(true);
+                            btnJoin.setText("Join");
+                            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
 
 
-            btnCancel.setOnClickListener(v ->
-                    Navigation.findNavController(v).popBackStack()
-            );
-        }
+        btnCancel.setOnClickListener(v ->
+                Navigation.findNavController(v).popBackStack()
+        );
+    }
 
 }

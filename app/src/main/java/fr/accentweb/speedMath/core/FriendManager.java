@@ -38,7 +38,7 @@ public class FriendManager {
         room.put("host_pseudo", pseudo);
         room.put("guest_uid", null);
         room.put("guest_pseudo", null);
-        room.put("status", "waiting");
+        room.put("state", "waiting");
         room.put("timestamp", System.currentTimeMillis());
 
         roomsRef.child(roomCode).setValue(room);
@@ -53,7 +53,7 @@ public class FriendManager {
             }
 
             DataSnapshot snapshot = task.getResult();
-            String status = snapshot.child("status").getValue(String.class);
+            String status = snapshot.child("state").getValue(String.class);
             if (status == null || !"waiting".equals(status)) {
                 callback.onError("Room already completed");
                 return;
@@ -69,7 +69,7 @@ public class FriendManager {
             Map<String, Object> updates = new HashMap<>();
             updates.put("guest_uid", uid);
             updates.put("guest_pseudo", pseudo);
-            updates.put("status", "ready");
+            updates.put("state", "ready");
             updates.put("p1_score", 0);  // Initialisation des scores
             updates.put("p2_score", 0);
 
@@ -94,7 +94,7 @@ public class FriendManager {
                     return;
                 }
 
-                String status = snapshot.child("status").getValue(String.class);
+                String status = snapshot.child("state").getValue(String.class);
                 if (status != null) {
                     listener.onStatusChanged(status);
                 }
@@ -111,7 +111,7 @@ public class FriendManager {
 
 
     public void startGame(String roomCode) {
-        roomsRef.child(roomCode).child("status").setValue("playing");
+        roomsRef.child(roomCode).child("state").setValue("playing");
     }
 
     public void cleanupRoom(String roomCode) {
