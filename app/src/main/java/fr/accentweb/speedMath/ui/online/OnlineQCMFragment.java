@@ -121,7 +121,13 @@ public class OnlineQCMFragment extends BaseGameFragment {
         if (isBotMatch) {
             initBotManager();
         }
-        matchRef = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
+        try {
+            matchRef = FirebaseDatabase.getInstance().getReference("matches").child(matchId);
+        } catch (Exception e) {
+            Log.e(TAG, "Error during initialization", e);
+            Navigation.findNavController(view).navigateUp();
+            return;
+        }
 
         playerManager = PlayerManager.getInstance(requireContext());
         nbQuestions = 10;
