@@ -219,8 +219,18 @@ public class OnlineQCMFragment extends BaseGameFragment {
         if (botManager != null) {  // Nettoyage du bot
             botManager.stop();
         }
+        if (!isGameFinished) {
+            declareForfeitLoss(); // Déclare la défaite et termine le match
+        }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!isGameFinished) {
+            declareForfeitLoss(); // Déclare la défaite et termine le match
+        }
+    }
     private void setupMatchListener() {
         matchListener = new ValueEventListener() {
             @Override
@@ -406,6 +416,8 @@ public class OnlineQCMFragment extends BaseGameFragment {
         matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
 
+        Navigation.findNavController(requireView())
+                .navigate(R.id.navigation_home);
         isGameFinished = true;
     }
 

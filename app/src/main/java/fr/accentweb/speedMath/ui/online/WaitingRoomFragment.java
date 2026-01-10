@@ -44,6 +44,8 @@ public class WaitingRoomFragment extends Fragment {
     private PlayerManager playerManager;
     private FrameLayout overlayContainer;
     private OnBackPressedCallback backPressedCallback;
+    private String currentMatchId;
+    private String opponentUid;
 
     private long points = 0;
     private long rank = 999999;
@@ -99,9 +101,11 @@ public class WaitingRoomFragment extends Fragment {
 
             matchmakingHelper.setMatchListener(new MatchmakingHelper.MatchListener() {
                 @Override
-                public void onMatchFound(String matchId, String uid, String pseudo, long points, long rank, String opponentUid, String opponentPseudo, long opponentPoints, long opponentRank) {
+                public void onMatchFound(String matchId, String uid, String pseudo, long points, long rank, String _opponentUid, String opponentPseudo, long opponentPoints, long opponentRank) {
                     if (!fragmentActive || matchStarted) return; // <-- check fragment actif
                     matchStarted = true;
+                    currentMatchId = matchId;
+                    opponentUid = _opponentUid;
 
                     playerManager.incrementDailyMatchPlayed();
 
@@ -204,16 +208,20 @@ public class WaitingRoomFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        cleanupAndExitToHome();
+    }
+
+    @Override
     public void onDestroyView() {
+        cleanupAndExitToHome();
         super.onDestroyView();
-        fragmentActive = false;
-        if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
-        if (matchmakingTimer != null) matchmakingTimer.cancel();
     }
 
     private void declareForfeitLoss(String matchId, String uid, String opponentUid) {
         if (!matchStarted || !fragmentActive) return;
-        int nbQuestions = 5;
+        int nbQuestions = 10;
         String player = uid.compareTo(opponentUid) < 0 ? "P1" : "P2";
         Log.w(TAG, "Player quit the match → declaring forfeit loss.");
 
@@ -224,6 +232,23 @@ public class WaitingRoomFragment extends Fragment {
         matchRef.child(opponentScoreField).setValue(nbQuestions);
         matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
+    }
+
+    private void cleanupAndExitToHome() {
+        fragmentActive = false;
+
+        if (matchStarted && currentMatchId != null && opponentUid != null) {
+            declareForfeitLoss(currentMatchId, uid, opponentUid);
+            matchStarted = false;
+        }
+
+        if (matchmakingHelper != null) matchmakingHelper.cancelMatchmaking();
+        if (matchmakingTimer != null) matchmakingTimer.cancel();
+
+        if (isAdded() && getView() != null) {
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.navigation_home);
+        }
     }
 
     private void handleBackOrUpNavigation(String matchId, String uid, String opponentUid) {
