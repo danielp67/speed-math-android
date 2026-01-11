@@ -430,7 +430,6 @@ public class PlayerManager {
 
         if (!today.equals(lastDate)) {
 
-            // Vérifier si streak continue (jour consécutif)
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DAY_OF_YEAR, -1);
             String yesterday = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -452,7 +451,7 @@ public class PlayerManager {
     }
 
     public int getRewardForStreak(int streak) {
-        if (streak >= 30) return 10;
+        if (streak >= 30) return 30;
         if (streak >= 14) return 14;
         if (streak >= 7) return 7;
         if (streak >= 5) return 5;

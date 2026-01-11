@@ -20,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.PlayerManager;
@@ -58,8 +60,9 @@ public class DailyChallengeFragment extends Fragment {
         cardTicket.setOnClickListener(v -> onTicketClicked());
 
         btnPlayOnline.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Go to Online Mode 🚀", Toast.LENGTH_SHORT).show();
-            // TODO : navigation vers mode online
+            Toast.makeText(getContext(), "Use reward on Online Mode 🚀", Toast.LENGTH_SHORT).show();
+            NavController nav = Navigation.findNavController(requireView());
+            nav.navigate(R.id.navigation_home);
         });
 
         return view;
@@ -68,7 +71,7 @@ public class DailyChallengeFragment extends Fragment {
     private void onTicketClicked() {
 
         if (playerManager.isDailyChallengeDoneToday()) {
-            Toast.makeText(getContext(), "Ticket déjà utilisé aujourd’hui 🔒", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Ticket already used today 🔒", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -79,7 +82,7 @@ public class DailyChallengeFragment extends Fragment {
 
         Toast.makeText(
                 getContext(),
-                "+" + reward + " match(s) online 🎟",
+                "+" + reward + " matches online 🎟",
                 Toast.LENGTH_LONG
         ).show();
 
@@ -98,7 +101,6 @@ public class DailyChallengeFragment extends Fragment {
         txtStreakSteps.setText(buildColoredSteps(streak));
     }
 
-    // ---- Paliers colorés + prochain palier en gras ----
     private SpannableString buildColoredSteps(int streak) {
         StringBuilder raw = new StringBuilder();
         for (int step : STEPS) {
@@ -148,7 +150,6 @@ public class DailyChallengeFragment extends Fragment {
         return false;
     }
 
-    // ---- Animation ticket ----
     private void animateTicket(View v) {
         v.setScaleX(0.95f);
         v.setScaleY(0.95f);
