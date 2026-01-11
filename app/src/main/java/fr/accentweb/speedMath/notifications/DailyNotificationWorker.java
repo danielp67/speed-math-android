@@ -1,0 +1,29 @@
+package fr.accentweb.speedMath.notifications;
+
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
+public class DailyNotificationWorker extends Worker {
+
+    public DailyNotificationWorker(
+            @NonNull Context context,
+            @NonNull WorkerParameters params
+    ) {
+        super(context, params);
+    }
+
+    @NonNull
+    @Override
+    public Result doWork() {
+        NotificationHelper.showDailyNotification(getApplicationContext());
+
+        // Reprogrammer pour le lendemain
+        NotificationScheduler.scheduleDailyReminder(getApplicationContext());
+
+        return Result.success();
+    }
+}
+

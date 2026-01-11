@@ -1,5 +1,8 @@
 package fr.accentweb.speedMath.ui.settings;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import fr.accentweb.speedMath.R;
@@ -24,6 +29,9 @@ import fr.accentweb.speedMath.core.GameDifficulty;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.databinding.FragmentSettingsBinding;
+import fr.accentweb.speedMath.notifications.NotificationHelper;
+import fr.accentweb.speedMath.notifications.NotificationScheduler;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,6 +66,7 @@ public class SettingsFragment extends Fragment {
 
         // Switch
         SwitchCompat switchDark = root.findViewById(R.id.switchDark);
+        SwitchCompat switchNotification = root.findViewById(R.id.switchNotification);
         SwitchCompat switchSound = root.findViewById(R.id.switchSound);
         SwitchCompat switchMusic = root.findViewById(R.id.switchMusic);
         SwitchCompat switchVibration = root.findViewById(R.id.switchVibration);
@@ -69,6 +78,7 @@ public class SettingsFragment extends Fragment {
 
         // --- Initialiser Switch avec l'état actuel ---
         switchDark.setChecked(playerManager.isDarkModeEnabled());
+        switchNotification.setChecked(playerManager.isNotificationEnabled());
         switchSound.setChecked(playerManager.isSoundEnabled());
         switchMusic.setChecked(playerManager.isMusicEnabled());
         switchVibration.setChecked(playerManager.isVibrationEnabled());
@@ -85,6 +95,43 @@ public class SettingsFragment extends Fragment {
             playerManager.setDarkMode(isChecked);
             applyTheme(isChecked);
         });
+
+        switchNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+            if (playerManager.isHapticEnabled()) {
+                switchNotification.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
+
+            playerManager.setNotification(isChecked);
+
+            if (isChecked) {
+                // ANDROID 13+ → demander permission
+                if (Build.VERSION.SDK_INT >= 33) {
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED) {
+
+                        ActivityCompat.requestPermissions(
+                                requireActivity(),
+                                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                2000
+                        );
+                        return; // on attend la réponse
+                    }
+                }
+
+                // Programmer la notification
+                NotificationScheduler.scheduleDailyReminder(requireContext());
+                Toast.makeText(getContext(), "Notifications enabled 🔔", Toast.LENGTH_SHORT).show();
+
+            } else {
+                // Désactiver
+                NotificationScheduler.cancelDailyReminder(requireContext());
+                Toast.makeText(getContext(), "Notifications disabled 🔕", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         switchSound.setOnCheckedChangeListener((b, on) -> {
             if(playerManager.isHapticEnabled()){
@@ -171,7 +218,8 @@ public class SettingsFragment extends Fragment {
     private void resetAllSettings() {
         // Réinitialiser PlayerManager
         playerManager.resetUserStats();
-        playerManager.setDarkMode(false);
+        playerManager.setDarkMode(true);
+        playerManager.setNotification(true);
         playerManager.setSoundEnabled(true);
         playerManager.setMusicEnabled(true);
         playerManager.setVibrationEnabled(true);

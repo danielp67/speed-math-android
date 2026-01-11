@@ -22,10 +22,10 @@ public class PlayerManager {
     private static final String KEY_ANSWERS_STREAK_PREFIX = "answers_streak_";
 
     private static final String KEY_DARK_MODE = "dark_mode";
+    private static final String KEY_NOTIFICATION = "notification";
     private static final String KEY_SOUND = "sound";
     private static final String KEY_MUSIC = "music";
     private static final String KEY_VIBRATION = "vibration";
-
     private static final String KEY_ANIMATION = "animation";
     private static final String KEY_HAPTIC = "haptic";
     private static final String KEY_ARCADE_DIFFICULTY = "arcade_difficulty";
@@ -133,6 +133,14 @@ public class PlayerManager {
         return prefs.getBoolean(KEY_DARK_MODE, true);
     }
 
+
+    public void setNotification(boolean enabled) {
+        prefs.edit().putBoolean(KEY_NOTIFICATION, enabled).apply();
+    }
+
+    public boolean isNotificationEnabled() {
+        return prefs.getBoolean(KEY_NOTIFICATION, true);
+    }
     // ---- Effect ----
     public void setSoundEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_SOUND, enabled).apply();
