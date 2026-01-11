@@ -20,7 +20,6 @@ public class DailyNotificationWorker extends Worker {
     public Result doWork() {
         NotificationHelper.showDailyNotification(getApplicationContext());
 
-        // Reprogrammer pour le lendemain
         NotificationScheduler.scheduleDailyReminder(getApplicationContext());
 
         return Result.success();

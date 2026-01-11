@@ -24,7 +24,7 @@ public class QuestionGenerator {
             {1, 2, 3, 4, 5, 10},           // Niveau 20-39: +3,4,10
             {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, // Niveau 40-59: +6-9
             {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // Niveau 60-79: +11-15
-            {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20} // Niveau 80+: +16-20
+            {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 50, 100} // Niveau 80+: +16-20
     };
 
     // Plages de valeurs pour ADD/SUB par palier
@@ -63,7 +63,7 @@ public class QuestionGenerator {
         if (ops.isEmpty()) ops.add('+');
 
         // Calcul des paramètres de difficulté
-        int difficultyCorrector = allowMultiply || allowDivide ? 20 : 100;
+        int difficultyCorrector = allowMultiply || allowDivide ? 20 : 20;
         this.operandCount = Math.max(2, ((this.level-1)/50) + 2);
         this.difficulty = Math.max(1, (this.level * this.operandCount)/2);
 

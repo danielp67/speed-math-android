@@ -50,6 +50,9 @@ public class PlayerManager {
     private static final String KEY_LAST_CONNECTION = "last_connection";
     private static final String KEY_DAILY_MATCH_PLAYED = "daily_match_played";
     private static final String KEY_DAILY_MATCH_LIMIT = "daily_match_limit";
+    private static final String KEY_DAILY_STREAK = "daily_streak";
+    private static final String KEY_LAST_DAILY_DATE = "last_daily_date";
+
 
     private MediaPlayer backgroundMusic = null;
     private SharedPreferences prefs;
@@ -409,5 +412,57 @@ public class PlayerManager {
     public int getRank() {
         return prefs.getInt("rank", 999999);
     }
+
+    public int getDailyStreak() {
+        return prefs.getInt(KEY_DAILY_STREAK, 0);
+    }
+    private String getLastDailyDate() {
+        return prefs.getString(KEY_LAST_DAILY_DATE, "");
+    }
+    public boolean isDailyChallengeDoneToday() {
+        return getTodayDate().equals(getLastDailyDate());
+    }
+    public int completeDailyChallengeAndGetReward() {
+        String today = getTodayDate();
+        String lastDate = getLastDailyDate();
+
+        int streak = getDailyStreak();
+
+        if (!today.equals(lastDate)) {
+
+            // Vérifier si streak continue (jour consécutif)
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            String yesterday = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    .format(cal.getTime());
+
+            if (yesterday.equals(lastDate)) {
+                streak++; // streak continue
+            } else {
+                streak = 1; // reset
+            }
+
+            prefs.edit()
+                    .putInt(KEY_DAILY_STREAK, streak)
+                    .putString(KEY_LAST_DAILY_DATE, today)
+                    .apply();
+        }
+
+        return getRewardForStreak(streak);
+    }
+
+    public int getRewardForStreak(int streak) {
+        if (streak >= 30) return 10;
+        if (streak >= 14) return 14;
+        if (streak >= 7) return 7;
+        if (streak >= 5) return 5;
+        if (streak >= 3) return 3;
+        return 1;
+    }
+
+    public void addDailyRewardMatches(int count) {
+        setDailyMatchLimit(getDailyMatchLimit() + count);
+    }
+
 
 }
