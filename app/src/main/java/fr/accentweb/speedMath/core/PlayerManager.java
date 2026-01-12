@@ -451,11 +451,11 @@ public class PlayerManager {
     }
 
     public int getRewardForStreak(int streak) {
-        if (streak >= 30) return 30;
-        if (streak >= 14) return 14;
-        if (streak >= 7) return 7;
-        if (streak >= 5) return 5;
-        if (streak >= 3) return 3;
+        if (streak >= 30) return 10;
+        if (streak >= 14) return 6;
+        if (streak >= 7) return 4;
+        if (streak >= 5) return 3;
+        if (streak >= 3) return 2;
         return 1;
     }
 

@@ -16,7 +16,6 @@
         android:textStyle="bold"
         android:layout_marginBottom="12dp"/>
 
-    <!-- Paliers -->
     <TextView
         android:id="@+id/txtStreakSteps"
         android:layout_width="wrap_content"
@@ -25,52 +24,73 @@
         android:textSize="14sp"
         android:layout_marginBottom="24dp"/>
 
-    <!-- Ticket -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardTicket"
+    <!-- TICKET -->
+    <com.google.android.material.card.MaterialCardView
+    android:id="@+id/cardTicket"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         card_view:cardCornerRadius="16dp"
         card_view:cardElevation="6dp">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:text="🎫 DAILY TICKET"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp" />
+            <!-- FRONT : couleur background -->
+            <LinearLayout
+                android:id="@+id/ticketFront"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/colorSurface"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/txtReward"
-                android:text="🎟 +1 Online Match"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
+                <TextView
+                    android:text="🎫 DAILY TICKET"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
 
-            <TextView
-                android:text="Tap to claim"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:layout_marginTop="8dp"/>
-        </LinearLayout>
+                <TextView
+                    android:text="Tap to claim"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+            <!-- BACK : GOLDEN -->
+            <LinearLayout
+                android:id="@+id/ticketBack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_ticket_gold"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
 
+                <TextView
+                    android:id="@+id/txtReward"
+                    android:text="🎟 +1 Online Match"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/sp_24" />
+
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </com.google.android.material.card.MaterialCardView>
     <Button
         android:id="@+id/btnPlayOnline"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Play Online"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:visibility="gone"/>
-
 </LinearLayout>

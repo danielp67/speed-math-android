@@ -82,8 +82,9 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
                 onlineMode(v, args);
                 break;
             case "FRIEND":
-                new PlayWithFriendDialogFragment()
-                        .show(getParentFragmentManager(), "play_with_friend");
+                //new PlayWithFriendDialogFragment()
+                //        .show(getParentFragmentManager(), "play_with_friend");
+                Toast.makeText(requireContext(), "Mode coming soon, stay tuned!", Toast.LENGTH_SHORT).show();
                 break;
             case "DAILY":
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dailyChallengeFragment, args);

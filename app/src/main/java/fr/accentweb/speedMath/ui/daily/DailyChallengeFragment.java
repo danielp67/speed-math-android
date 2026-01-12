@@ -1,6 +1,5 @@
 package fr.accentweb.speedMath.ui.daily;
 
-import android.animation.ObjectAnimator;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -10,57 +9,56 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
+import com.google.android.material.card.MaterialCardView;
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.PlayerManager;
+import fr.accentweb.speedMath.utils.AnimUtils;
 
 public class DailyChallengeFragment extends Fragment {
-
-    private TextView txtStreak;
-    private TextView txtStreakSteps;
-    private TextView txtReward;
-    private CardView cardTicket;
+    private PlayerManager playerManager;
+    private TextView txtStreak, txtReward, txtStreakSteps;
+    private View ticketFront, ticketBack;
+    private MaterialCardView cardTicket;
     private Button btnPlayOnline;
 
-    private PlayerManager playerManager;
-
-    private final int[] STEPS = {1, 3, 5, 7, 14, 30};
-
-    @Nullable
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater,
-            @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState
-    ) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_daily_challenge, container, false);
-
         playerManager = PlayerManager.getInstance(requireContext());
 
         txtStreak = view.findViewById(R.id.txtStreak);
-        txtStreakSteps = view.findViewById(R.id.txtStreakSteps);
         txtReward = view.findViewById(R.id.txtReward);
+        txtStreakSteps = view.findViewById(R.id.txtStreakSteps);
         cardTicket = view.findViewById(R.id.cardTicket);
+        ticketFront = view.findViewById(R.id.ticketFront);
+        ticketBack = view.findViewById(R.id.ticketBack);
         btnPlayOnline = view.findViewById(R.id.btnPlayOnline);
 
         refreshUI();
 
-        cardTicket.setOnClickListener(v -> onTicketClicked());
+        cardTicket.setOnClickListener(v -> {
+            if (playerManager.isDailyChallengeDoneToday()) {
+                Toast.makeText(getContext(), "Already claimed today 🔒", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int reward = playerManager.completeDailyChallengeAndGetReward();
+            txtReward.setText("🎟 +" + reward + " Online Match(es)");
+
+            AnimUtils.flipTicketWithTurns(cardTicket, ticketFront, ticketBack, 2, 1000);
+            btnPlayOnline.setVisibility(View.VISIBLE);
+        });
 
         btnPlayOnline.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Use reward on Online Mode 🚀", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Go Online 🚀", Toast.LENGTH_SHORT).show();
             NavController nav = Navigation.findNavController(requireView());
             nav.navigate(R.id.navigation_home);
         });
@@ -68,97 +66,20 @@ public class DailyChallengeFragment extends Fragment {
         return view;
     }
 
-    private void onTicketClicked() {
-
-        if (playerManager.isDailyChallengeDoneToday()) {
-            Toast.makeText(getContext(), "Ticket already used today 🔒", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        int reward = playerManager.completeDailyChallengeAndGetReward();
-        playerManager.addDailyRewardMatches(reward);
-
-        animateTicket(cardTicket);
-
-        Toast.makeText(
-                getContext(),
-                "+" + reward + " matches online 🎟",
-                Toast.LENGTH_LONG
-        ).show();
-
-        btnPlayOnline.setVisibility(View.VISIBLE);
-
-        refreshUI();
-    }
-
     private void refreshUI() {
         int streak = playerManager.getDailyStreak();
-        int reward = playerManager.getRewardForStreak(streak);
 
         txtStreak.setText("🔥 Streak: " + streak + " days");
-        txtReward.setText("🎟 +" + reward + " Online Match");
 
-        txtStreakSteps.setText(buildColoredSteps(streak));
-    }
-
-    private SpannableString buildColoredSteps(int streak) {
-        StringBuilder raw = new StringBuilder();
-        for (int step : STEPS) {
-            raw.append(step).append("   ");
-        }
-
-        SpannableString span = new SpannableString(raw.toString());
-        int index = 0;
-
-        for (int step : STEPS) {
-            int start = index;
-            int end = start + String.valueOf(step).length();
-
-            if (streak >= step) {
-                span.setSpan(
-                        new ForegroundColorSpan(
-                                ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark)
-                        ),
-                        start,
-                        end,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
-            } else if (isNextStep(streak, step)) {
-                span.setSpan(
-                        new ForegroundColorSpan(
-                                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark)
-                        ),
-                        start,
-                        end,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
-                span.setSpan(new StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            index = end + 3;
-        }
-
-        return span;
-    }
-
-    private boolean isNextStep(int streak, int step) {
-        for (int s : STEPS) {
-            if (streak < s) {
-                return s == step;
+        SpannableString streakSteps = new SpannableString("✔ 1   ✔ 3   ✔ 5   ✔ 7   ✔ 14   ✔ 30");
+        for (int day : new int[]{1, 3, 5, 7, 14, 30}) {
+            if (streak >= day) {
+                int start = streakSteps.toString().indexOf("✔ " + day);
+                streakSteps.setSpan(new ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.correct)),
+                        start, start + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                streakSteps.setSpan(new StyleSpan(Typeface.BOLD), start, start + 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
-        return false;
-    }
-
-    private void animateTicket(View v) {
-        v.setScaleX(0.95f);
-        v.setScaleY(0.95f);
-
-        v.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(500)
-                .setInterpolator(new OvershootInterpolator())
-                .start();
+        txtStreakSteps.setText(streakSteps);
     }
 }

@@ -1,6 +1,8 @@
 package fr.accentweb.speedMath.utils;
 
 import android.animation.ObjectAnimator;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
@@ -213,6 +215,47 @@ public class AnimUtils {
                             .start();
                 })
                 .start();
+    }
+
+    public static void flipTicketWithTurns(final View card, final View front, final View back, int turns, long totalDurationMs) {
+        // Effet 3D
+        float scale = card.getResources().getDisplayMetrics().density;
+        card.setCameraDistance(8000 * scale);
+
+        // Rotation totale : 360° * turns + 180°
+        final float totalRotation = 360f * turns + 180f;
+        final long startTime = System.currentTimeMillis();
+        final long stepDelay = 30; // ~60 FPS
+
+        final Handler handler = new Handler(Looper.getMainLooper());
+        final boolean[] swapped = {false};
+
+        Runnable stepRunnable = new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = System.currentTimeMillis() - startTime;
+                float progress = Math.min(1.0f, (float) elapsed / totalDurationMs);
+                float currentRotation = totalRotation * progress;
+
+                // Swap front/back à mi-rotation
+                if (!swapped[0] && currentRotation >= 360f * turns + 90f) {
+                    front.setVisibility(View.INVISIBLE);
+                    back.setVisibility(View.VISIBLE);
+                    card.setScaleX(-1f);
+                    swapped[0] = true;
+                }
+
+                card.setRotationY(currentRotation);
+
+                if (progress < 1.0f) {
+                    handler.postDelayed(this, stepDelay);
+                } else {
+                    card.setRotationY(totalRotation % 360);
+                }
+            }
+        };
+
+        handler.post(stepRunnable);
     }
 
 }

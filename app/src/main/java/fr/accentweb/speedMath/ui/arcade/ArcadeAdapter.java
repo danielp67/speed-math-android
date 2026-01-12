@@ -96,10 +96,12 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         }
 
         boolean isOnline = "ONLINE".equals(item.mode);
+        boolean isDaily = "DAILY".equals(item.mode);
 
         // SETTINGS / ONLINE INFO
-        h.btnSettings.setVisibility(isOnline ? View.GONE : View.VISIBLE);
-        h.btnSettings.setClickable(!isOnline);
+        h.btnSettings.setVisibility(isOnline || isDaily ? View.GONE : View.VISIBLE);
+        h.btnSettings.setClickable(!isOnline || !isDaily);
+        h.btnSettings.setClickable(!isDaily);
 
         if (isOnline) {
             h.layoutOnlineInfo.setVisibility(View.VISIBLE);
