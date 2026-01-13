@@ -23,6 +23,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import fr.accentweb.speedMath.R;
+import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.MatchmakingHelper;
 import fr.accentweb.speedMath.core.PlayerManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Random;
 
-public class WaitingRoomFragment extends Fragment {
+public class WaitingRoomFragment extends BaseGameFragment {
 
     private String uid;
     private String pseudo;
