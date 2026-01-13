@@ -18,7 +18,6 @@ import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameDifficulty;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
-import fr.accentweb.speedMath.ui.friend.PlayWithFriendDialogFragment;
 import fr.accentweb.speedMath.utils.NetworkUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +47,11 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("🎁", 16, "Daily Challenge", "Play and win gifts", "DAILY"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
-        items.add(new ArcadeItem("+ - × ÷", 10, "All Suite", "Mixed", "ALL"));
-        items.add(new ArcadeItem("+", 16, "Addition Suite", "a + b", "ADD"));
-        items.add(new ArcadeItem("-", 16, "Subtraction Suite", "a - b", "SUB"));
-        items.add(new ArcadeItem("×", 16, "Multiplication Suite", "a × b", "MUL"));
-        items.add(new ArcadeItem("÷", 16, "Division Suite", "a ÷ b", "DIV"));
+        items.add(new ArcadeItem("+ - × ÷", 10, "All Streak", "Mixed", "ALL"));
+        items.add(new ArcadeItem("+", 16, "Addition Streak", "a + b", "ADD"));
+        items.add(new ArcadeItem("-", 16, "Subtraction Streak", "a - b", "SUB"));
+        items.add(new ArcadeItem("×", 16, "Multiplication Streak", "a × b", "MUL"));
+        items.add(new ArcadeItem("÷", 16, "Division Streak", "a ÷ b", "DIV"));
 
         if (getActivity() instanceof MainActivity) {
             this.onlineStats = ((MainActivity) getActivity()).getOnlineStats();
@@ -84,7 +83,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
             case "FRIEND":
                 //new PlayWithFriendDialogFragment()
                 //        .show(getParentFragmentManager(), "play_with_friend");
-                Toast.makeText(requireContext(), "Mode coming soon, stay tuned!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Coming soon, stay tuned!", Toast.LENGTH_SHORT).show();
                 break;
             case "DAILY":
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dailyChallengeFragment, args);
@@ -172,7 +171,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
             Toast.makeText(requireContext(), "Please set a pseudo before playing online.", Toast.LENGTH_SHORT).show();
             NavController navController = Navigation.findNavController(v);
             NavOptions navOptions = new NavOptions.Builder()
-                    .setPopUpTo(R.id.navigation_home, true) // ou true si tu veux supprimer le menu aussi
+                    .setPopUpTo(R.id.navigation_home, true)
                     .build();
 
             navController.navigate(R.id.navigation_notifications, args, navOptions);
