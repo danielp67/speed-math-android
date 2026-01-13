@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 
@@ -219,7 +220,7 @@ public class PlayerManager {
     }
 
     public int getSoloDifficulty() {
-        return prefs.getInt(KEY_SOLO_DIFFICULTY, 0); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_SOLO_DIFFICULTY, 0);
     }
 
     // Battle (DUAL)
@@ -228,7 +229,7 @@ public class PlayerManager {
     }
 
     public int getBattleDifficulty() {
-        return prefs.getInt(KEY_BATTLE_DIFFICULTY, 0); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_BATTLE_DIFFICULTY, 0);
     }
 
     // All Suite
@@ -237,7 +238,7 @@ public class PlayerManager {
     }
 
     public int getAllSuiteDifficulty() {
-        return prefs.getInt(KEY_ALL_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_ALL_SUITE_DIFFICULTY, 0);
     }
 
     // Addition Suite
@@ -246,7 +247,7 @@ public class PlayerManager {
     }
 
     public int getAddSuiteDifficulty() {
-        return prefs.getInt(KEY_ADD_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_ADD_SUITE_DIFFICULTY, 0);
     }
 
     // Subtraction Suite
@@ -255,7 +256,7 @@ public class PlayerManager {
     }
 
     public int getSubSuiteDifficulty() {
-        return prefs.getInt(KEY_SUB_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_SUB_SUITE_DIFFICULTY, 0);
     }
 
     // Multiplication Suite
@@ -264,7 +265,7 @@ public class PlayerManager {
     }
 
     public int getMulSuiteDifficulty() {
-        return prefs.getInt(KEY_MUL_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_MUL_SUITE_DIFFICULTY, 0);
     }
 
     // Division Suite
@@ -273,7 +274,7 @@ public class PlayerManager {
     }
 
     public int getDivSuiteDifficulty() {
-        return prefs.getInt(KEY_DIV_SUITE_DIFFICULTY, 0); // PROGRESSIVE par défaut
+        return prefs.getInt(KEY_DIV_SUITE_DIFFICULTY, 0);
     }
 
 
@@ -282,7 +283,7 @@ public class PlayerManager {
     }
 
     public int getMemoryDifficulty() {
-        return prefs.getInt(KEY_MEMORY_DIFFICULTY, 0); // 1 = MEDIUM par défaut
+        return prefs.getInt(KEY_MEMORY_DIFFICULTY, 0);
     }
 
     public void setMemoryDuoDifficulty(int difficulty) {
@@ -290,7 +291,7 @@ public class PlayerManager {
     }
 
     public int getMemoryDuoDifficulty() {
-        return prefs.getInt(KEY_MEMORY_DUO_DIFFICULTY, 0); // 1 = MEDIUM par défaut
+        return prefs.getInt(KEY_MEMORY_DUO_DIFFICULTY, 0);
     }
 
 

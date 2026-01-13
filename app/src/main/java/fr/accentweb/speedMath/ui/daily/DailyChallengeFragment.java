@@ -14,26 +14,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import com.google.android.material.card.MaterialCardView;
 import fr.accentweb.speedMath.R;
+import fr.accentweb.speedMath.core.BaseGameFragment;
+import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.utils.AnimUtils;
 
-public class DailyChallengeFragment extends Fragment {
+public class DailyChallengeFragment extends BaseGameFragment {
     private PlayerManager playerManager;
     private TextView txtStreak, txtReward, txtStreakSteps;
     private View ticketFront, ticketBack;
     private MaterialCardView cardTicket;
     private Button btnPlayOnline;
+    private FeedbackManager feedbackManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_daily_challenge, container, false);
         playerManager = PlayerManager.getInstance(requireContext());
-
+        feedbackManager = new FeedbackManager(requireContext());
+        feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
         txtStreak = view.findViewById(R.id.txtStreak);
         txtReward = view.findViewById(R.id.txtReward);
         txtStreakSteps = view.findViewById(R.id.txtStreakSteps);
@@ -46,7 +49,7 @@ public class DailyChallengeFragment extends Fragment {
 
         cardTicket.setOnClickListener(v -> {
             if (playerManager.isDailyChallengeDoneToday()) {
-                Toast.makeText(getContext(), "Already claimed today 🔒", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Already claimed, wait for tomorrow", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -55,6 +58,10 @@ public class DailyChallengeFragment extends Fragment {
 
             AnimUtils.flipTicketWithTurns(cardTicket, ticketFront, ticketBack, 2, 1000);
             btnPlayOnline.setVisibility(View.VISIBLE);
+            feedbackManager.playLevelUpSound();
+            feedbackManager.correctFeedback(btnPlayOnline);
+            refreshUI();
+            playerManager.addDailyRewardMatches(reward);
         });
 
         btnPlayOnline.setOnClickListener(v -> {
