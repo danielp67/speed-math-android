@@ -1,13 +1,21 @@
 package fr.accentweb.speedMath;
 
-import android.graphics.Color;
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -26,8 +34,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.lang.reflect.Method;
+import fr.accentweb.speedMath.BuildConfig;
 
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.ui.arcade.ArcadeFragment;
@@ -38,18 +45,38 @@ public class MainActivity extends AppCompatActivity {
     private PlayerManager playerManager;
     private DatabaseReference statusRef;
     private OnlineStats onlineStats;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Appliquer le thème avant setContentView
+        // Apply theme before setContentView
         playerManager = PlayerManager.getInstance(this);
         boolean isDark = playerManager.isDarkModeEnabled();
         applyTheme(isDark);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkForUpdates();
+        requestPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        Log.d("MainActivity", "Allowed notification");
+                    } else {
+                        Log.d("MainActivity", "Not allowed notification");
+                    }
+                }
+        );
 
-        // Configuration de la barre de statut pour les versions récentes
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (playerManager.isNotificationEnabled() &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                            != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+        // Configure system bars
         configureSystemBars(isDark);
 
 
@@ -66,14 +93,14 @@ public class MainActivity extends AppCompatActivity {
             playerManager.setMusicEnabled(true);
         }
 
-        // Lien toolbar avec NavController pour gérer flèche Up
+        // Setup action bar
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // Gestion des insets pour le fragment host
+        // Setup nav host fragment
         View navHostFragment = findViewById(R.id.nav_host_fragment);
         ViewCompat.setOnApplyWindowInsetsListener(navHostFragment, (v, insets) -> {
-            // On ajuste uniquement le padding inférieur pour la barre de navigation
+            // Set padding bottom for navigation bar height
             int navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
             v.setPadding(
                     v.getPaddingLeft(),
@@ -127,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         nav.setEnabled(enabled);
         nav.setClickable(enabled);
 
-        // Optionnel : désactiver l'animation visuelle
+        // Option : Disable navigation items
         for (int i = 0; i < nav.getMenu().size(); i++) {
             nav.getMenu().getItem(i).setEnabled(enabled);
         }
@@ -161,17 +188,17 @@ public class MainActivity extends AppCompatActivity {
     private void setPlayerOnline() {
         String uid = playerManager.getOnlineUid();
         if (uid == null || uid.isEmpty()) {
-            uid = "anonymous_" + System.currentTimeMillis(); // ID temporaire si pas connecté
+            uid = "anonymous_" + System.currentTimeMillis(); // ID temporary if not connected
             playerManager.setOnlineUid(uid);
         }
 
         DatabaseReference myStatus = statusRef.child(uid);
         myStatus.setValue(true);
-        myStatus.onDisconnect().removeValue(); // Supprime complètement à la déconnexion
+        myStatus.onDisconnect().removeValue(); // Remove value when disconnected
     }
 
     private void startListeningOnline() {
-        // Écouteur pour les joueurs en ligne
+        // Listen for online players
         statusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -187,23 +214,23 @@ public class MainActivity extends AppCompatActivity {
                     onlineStats = new OnlineStats(0, 0, 10);
                 }
 
-                // Mise à jour du nombre de joueurs
+                // Update online player
                 onlineStats.playersOnline = onlineCount;
 
-                // Mettre à jour le fragment
-                updateOnlineStatsInFragments();  // <-- ajoute ça
+                // Update Fragment
+                updateOnlineStatsInFragments();
 
-                Log.d("OnlineStats", "Joueurs en ligne: " + onlineCount);
+                Log.d("OnlineStats", "Online players: " + onlineCount);
             }
 
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Erreur de lecture des stats: " + error.getMessage());
+                Log.e("Firebase", "Error listening online players : " + error.getMessage());
             }
         });
 
-        // Écouteur pour la limite quotidienne
+        // Listen for daily match limit
         FirebaseDatabase.getInstance().getReference("system/daily_match_limit")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -216,20 +243,20 @@ public class MainActivity extends AppCompatActivity {
                                     updateOnlineStatsInFragments();
                                 }
                             } catch (Exception e) {
-                                Log.e("Firebase", "Erreur de parsing de la limite", e);
+                                Log.e("Firebase", "Error parsing daily match limit", e);
                             }
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("Firebase", "Erreur de lecture de la limite", error.toException());
+                        Log.e("Firebase", "Error listening daily match limit", error.toException());
                     }
                 });
     }
 
     private void updateOnlineStatsInFragments() {
-        // Récupération fiable du fragment ArcadeFragment
+        // Update ArcadeFragment
         androidx.fragment.app.Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         if (navHost != null) {
             for (androidx.fragment.app.Fragment fragment : navHost.getChildFragmentManager().getFragments()) {
@@ -271,4 +298,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void checkForUpdates() {
+        FirebaseDatabase.getInstance().getReference("system")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        try {
+                            int latestVersion = snapshot.child("latest_version").getValue(Integer.class);
+                            if (latestVersion > BuildConfig.VERSION_CODE) {
+                                String title = snapshot.child("update_message/title").getValue(String.class);
+                                String message = snapshot.child("update_message/message").getValue(String.class);
+                                boolean isMandatory = snapshot.child("update_message/is_mandatory").getValue(Boolean.class);
+                                String storeUrl = snapshot.child("update_message/store_url").getValue(String.class);
+
+                                showUpdateDialog(title, message, isMandatory, storeUrl);
+                            }
+                        } catch (Exception e) {
+                            Log.e("UpdateCheck", "Error", e);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("UpdateCheck", "Failed", error.toException());
+                    }
+                });
+    }
+
+    private void showUpdateDialog(String title, String message, boolean isMandatory, String storeUrl) {
+        new AlertDialog.Builder(this, R.style.SpeedMath_Dialog)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(!isMandatory)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(storeUrl)));
+                    } catch (Exception e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
+                    }
+                    if (isMandatory) finish();
+                })
+                .setNegativeButton(isMandatory ? null : "Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
 }
