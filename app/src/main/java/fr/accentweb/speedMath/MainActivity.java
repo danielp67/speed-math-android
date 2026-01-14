@@ -299,47 +299,76 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkForUpdates() {
-        FirebaseDatabase.getInstance().getReference("system")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        try {
-                            int latestVersion = snapshot.child("latest_version").getValue(Integer.class);
-                            if (latestVersion > BuildConfig.VERSION_CODE) {
-                                String title = snapshot.child("update_message/title").getValue(String.class);
-                                String message = snapshot.child("update_message/message").getValue(String.class);
-                                boolean isMandatory = snapshot.child("update_message/is_mandatory").getValue(Boolean.class);
-                                String storeUrl = snapshot.child("update_message/store_url").getValue(String.class);
 
-                                showUpdateDialog(title, message, isMandatory, storeUrl);
+        FirebaseDatabase.getInstance()
+                .getReference("system/update_message")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snap) {
+
+                        Boolean enabled = snap.child("enabled").getValue(Boolean.class);
+                        if (enabled == null || !enabled) return;
+
+                        String title = snap.child("title").getValue(String.class);
+                        String message = snap.child("message").getValue(String.class);
+                        String buttonLabel = snap.child("button_label").getValue(String.class);
+                        String actionUrl = snap.child("action_url").getValue(String.class);
+                        Integer latestVersion = snap.child("latest_version").getValue(Integer.class);
+                        Boolean mandatory = snap.child("mandatory").getValue(Boolean.class);
+
+                            if (latestVersion != null &&
+                                    latestVersion > BuildConfig.VERSION_CODE &&
+                                    (!playerManager.hasPopupBeenSeen(latestVersion) ||  (mandatory!=null && mandatory ))) {
+
+                                showUnifiedPopup(
+                                        title,
+                                        message,
+                                        buttonLabel != null ? buttonLabel : "Update",
+                                        actionUrl,
+                                        mandatory != null && mandatory
+                                );
+                                playerManager.markPopupAsSeen(latestVersion);
+
                             }
-                        } catch (Exception e) {
-                            Log.e("UpdateCheck", "Error", e);
-                        }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("UpdateCheck", "Failed", error.toException());
+                        Log.e("Firebase", "Message fetch failed", error.toException());
                     }
                 });
     }
 
-    private void showUpdateDialog(String title, String message, boolean isMandatory, String storeUrl) {
-        new AlertDialog.Builder(this, R.style.SpeedMath_Dialog)
-                .setTitle(title)
-                .setMessage(message)
-                .setCancelable(!isMandatory)
-                .setPositiveButton("OK", (dialog, which) -> {
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(storeUrl)));
-                    } catch (Exception e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
+
+    private void showUnifiedPopup(
+            String title,
+            String message,
+            String buttonLabel,
+            String actionUrl,
+            boolean mandatory
+    ) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.SpeedMath_Dialog)
+                .setTitle(title != null ? title : "Information")
+                .setMessage(message != null ? message : "")
+                .setCancelable(!mandatory)
+                .setPositiveButton(buttonLabel, (dialog, which) -> {
+
+                    if (actionUrl != null && !actionUrl.isEmpty()) {
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(actionUrl)));
+                        } catch (Exception ignored) {}
                     }
-                    if (isMandatory) finish();
-                })
-                .setNegativeButton(isMandatory ? null : "Cancel", (dialog, which) -> dialog.dismiss())
-                .show();
+
+                    if (mandatory) finish();
+                });
+
+        if (!mandatory) {
+            builder.setNegativeButton("Close", (d, w) -> d.dismiss());
+        }
+
+        builder.show();
     }
+
 }

@@ -171,7 +171,7 @@ public class SettingsFragment extends Fragment {
                 btnResetScore.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             }
 
-            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.SpeedMath_Dialog)
                     .setTitle("Delete all datas and account ?")
                     .setMessage("Are you sure ?")
                     .setPositiveButton("Yes", (dialog, which) -> {

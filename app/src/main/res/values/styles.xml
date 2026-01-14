@@ -78,7 +78,16 @@
     <style name="SpeedMath.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="android:windowBackground">@drawable/bg_dialog_rounded</item>
         <item name="backgroundTint">@null</item> <!-- Important pour MaterialDialogs -->
+        <item name="buttonBarPositiveButtonStyle">@style/SpeedMath.Dialog.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/SpeedMath.Dialog.Button</item>
+    </style>
 
+    <style name="SpeedMath.Dialog.Button"
+        parent="Widget.MaterialComponents.Button.TextButton">
+
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/textPrimary</item>
     </style>
 
 </resources>
