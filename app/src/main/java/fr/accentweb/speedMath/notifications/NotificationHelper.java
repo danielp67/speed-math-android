@@ -45,7 +45,7 @@ public class NotificationHelper {
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_notifications_black_24dp) // OBLIGATOIRE
+                        .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                         .setContentTitle("Daily Challenge 🧠")
                         .setContentText("Play and win gifts 🎁")
                         .setContentIntent(pendingIntent)

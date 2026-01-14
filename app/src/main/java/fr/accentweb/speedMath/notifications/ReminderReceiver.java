@@ -10,7 +10,7 @@ public class ReminderReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationHelper.showDailyNotification(context);
 
-        // Reprogrammer pour le lendemain
+        // Tomorrow
         NotificationScheduler.scheduleDailyReminder(context);
     }
 }

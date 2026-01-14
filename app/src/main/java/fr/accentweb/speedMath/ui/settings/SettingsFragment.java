@@ -10,11 +10,9 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,7 +27,6 @@ import fr.accentweb.speedMath.core.GameDifficulty;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.databinding.FragmentSettingsBinding;
-import fr.accentweb.speedMath.notifications.NotificationHelper;
 import fr.accentweb.speedMath.notifications.NotificationScheduler;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -76,7 +73,6 @@ public class SettingsFragment extends Fragment {
         // Bouton reset score
         Button btnResetScore = root.findViewById(R.id.btnResetScore);
 
-        // --- Initialiser Switch avec l'état actuel ---
         switchDark.setChecked(playerManager.isDarkModeEnabled());
         switchNotification.setChecked(playerManager.isNotificationEnabled());
         switchSound.setChecked(playerManager.isSoundEnabled());
