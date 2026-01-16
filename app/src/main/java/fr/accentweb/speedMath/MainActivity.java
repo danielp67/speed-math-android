@@ -1,10 +1,9 @@
 package fr.accentweb.speedMath;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -34,7 +33,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import fr.accentweb.speedMath.BuildConfig;
 
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.ui.arcade.ArcadeFragment;
@@ -75,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
+        }
+
+
+        if (getIntent().getBooleanExtra("open_daily", false)) {
+            NavController navController =
+                    Navigation.findNavController(this, R.id.nav_host_fragment);
+            navController.navigate(R.id.action_navigation_home_to_dailyChallengeFragment);
         }
         // Configure system bars
         configureSystemBars(isDark);
@@ -117,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         setPlayerOnline();
         startListeningOnline();
+        createNotificationChannel();
     }
 
     @Override
@@ -370,5 +376,20 @@ public class MainActivity extends AppCompatActivity {
 
         builder.show();
     }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "daily_channel",
+                    "Daily Challenge",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Daily reminders & rewards");
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
 
 }
