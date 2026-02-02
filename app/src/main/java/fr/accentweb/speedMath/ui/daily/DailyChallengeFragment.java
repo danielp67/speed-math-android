@@ -18,6 +18,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -53,9 +54,14 @@ public class DailyChallengeFragment extends BaseGameFragment {
 
         if(!playerManager.getTodayDate().equals(playerManager.getLastConnection()))
         {
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference playerRef = FirebaseDatabase.getInstance().getReference("players").child(uid);
-            playerManager.syncOnlineData(playerRef);
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                String uid = currentUser.getUid();
+                DatabaseReference playerRef = FirebaseDatabase.getInstance()
+                        .getReference("players")
+                        .child(uid);
+                playerManager.syncOnlineData(playerRef);
+            }
         }
 
         cardTicket.setOnClickListener(v -> {
