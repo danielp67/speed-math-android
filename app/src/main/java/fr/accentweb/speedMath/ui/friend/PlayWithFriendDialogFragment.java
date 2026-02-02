@@ -1,12 +1,10 @@
 package fr.accentweb.speedMath.ui.friend;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -14,27 +12,26 @@ import fr.accentweb.speedMath.R;
 
 public class PlayWithFriendDialogFragment extends DialogFragment {
 
-    @Nullable
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater,
-            @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState
-    ) {
-        View v = inflater.inflate(R.layout.dialog_play_with_friend, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View v = requireActivity().getLayoutInflater().inflate(R.layout.dialog_play_with_friend, null);
+
+        AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.SpeedMath_Dialog)
+                .setView(v)
+                .create();
 
         v.findViewById(R.id.btnCreateRoom).setOnClickListener(view -> {
-            dismiss();
+            dialog.dismiss();
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_navigation_home_to_waitingFriendFragment);
         });
 
         v.findViewById(R.id.btnJoinRoom).setOnClickListener(view -> {
-            dismiss();
+            dialog.dismiss();
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_navigation_home_to_joinFriendFragment);
         });
 
-        return v;
+        return dialog;
     }
 }
