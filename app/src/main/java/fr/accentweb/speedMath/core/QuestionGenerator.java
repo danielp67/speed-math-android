@@ -97,7 +97,8 @@ public class QuestionGenerator {
                 currentResult *= nextVal;
             } else if (op == '-') {
                 if (avoidNegative && nextVal > currentResult) {
-                    nextVal = random.nextInt(currentResult) + 1;
+                    int bound = Math.max(1, currentResult);
+                    nextVal = random.nextInt(bound) + 1;
                 }
                 if (this.operandCount > 2) expr = new StringBuilder("(" + expr + " - " + nextVal + ")");
                 else expr.append(" - ").append(nextVal);
