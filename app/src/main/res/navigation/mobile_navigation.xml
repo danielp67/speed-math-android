@@ -24,12 +24,6 @@
             android:id="@+id/action_navigation_home_to_waitingRoomFragment"
             app:destination="@id/waitingRoomFragment" />
         <action
-            android:id="@+id/action_navigation_home_to_waitingFriendFragment"
-            app:destination="@id/waitingFriendFragment" />
-        <action
-            android:id="@+id/action_navigation_home_to_joinFriendFragment"
-            app:destination="@id/joinFriendFragment" />
-        <action
             android:id="@+id/action_navigation_home_to_dailyChallengeFragment"
             app:destination="@id/dailyChallengeFragment" />
         <action

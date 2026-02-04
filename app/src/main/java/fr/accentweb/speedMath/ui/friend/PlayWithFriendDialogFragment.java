@@ -6,7 +6,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import fr.accentweb.speedMath.R;
 
@@ -20,16 +21,19 @@ public class PlayWithFriendDialogFragment extends DialogFragment {
                 .setView(v)
                 .create();
 
+        NavController navController = Navigation.findNavController(
+                requireActivity(),
+                R.id.nav_host_fragment
+        );
+
         v.findViewById(R.id.btnCreateRoom).setOnClickListener(view -> {
             dialog.dismiss();
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_navigation_home_to_waitingFriendFragment);
+            navController.navigate(R.id.waitingFriendFragment);
         });
 
         v.findViewById(R.id.btnJoinRoom).setOnClickListener(view -> {
             dialog.dismiss();
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_navigation_home_to_joinFriendFragment);
+            navController.navigate(R.id.joinFriendFragment);
         });
 
         return dialog;

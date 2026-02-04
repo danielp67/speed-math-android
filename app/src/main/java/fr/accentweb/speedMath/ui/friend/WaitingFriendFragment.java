@@ -1,5 +1,6 @@
 package fr.accentweb.speedMath.ui.friend;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Intent;
 
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -48,6 +52,8 @@ public class WaitingFriendFragment extends Fragment {
         TextView txtRoomCode = view.findViewById(R.id.txtRoomCode);
         TextView txtStatus = view.findViewById(R.id.txtStatus);
         Button btnCancel = view.findViewById(R.id.btnCancel);
+        Button btnCopy = view.findViewById(R.id.btnCopy);
+        Button btnShare = view.findViewById(R.id.btnShare);
 
         roomCode = friendManager.createRoom(
                 playerManager.getOnlineUid(),
@@ -115,6 +121,27 @@ public class WaitingFriendFragment extends Fragment {
 
         friendManager.listenRoom(roomCode, roomListener);
 
+        btnCopy.setOnClickListener(v -> {
+            ClipboardManager clipboard =
+                    (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+
+            ClipData clip = ClipData.newPlainText("Room Code", roomCode);
+            clipboard.setPrimaryClip(clip);
+
+            Toast.makeText(getContext(), "Code copied 📋", Toast.LENGTH_SHORT).show();
+        });
+
+        btnShare.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    "Join me on Speed Math!\nRoom code: " + roomCode
+            );
+
+            startActivity(Intent.createChooser(shareIntent, "Share room code"));
+        });
+
         btnCancel.setOnClickListener(v -> {
             friendManager.cleanupRoom(roomCode);
             Navigation.findNavController(v).popBackStack();
@@ -124,6 +151,10 @@ public class WaitingFriendFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (roomCode != null) {
+            friendManager.cleanupRoom(roomCode);
+        }
+
         if (roomListener != null) {
             friendManager.listenRoom(roomCode, null);
         }
