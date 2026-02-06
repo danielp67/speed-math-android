@@ -23,6 +23,7 @@ import androidx.core.view.MenuProvider;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.BaseGameFragment;
@@ -416,7 +417,7 @@ public class OnlineQCMFragment extends BaseGameFragment {
         matchRef.child("winner").setValue(winnerField);
         matchRef.child("state").setValue("finished");
 
-        Navigation.findNavController(requireView())
+        NavHostFragment.findNavController(this)
                 .navigate(R.id.navigation_home);
         isGameFinished = true;
     }
@@ -426,8 +427,8 @@ public class OnlineQCMFragment extends BaseGameFragment {
         declareForfeitLoss();
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             try {
-                NavController nav = Navigation.findNavController(requireView());
-                nav.navigate(R.id.navigation_home);
+                NavHostFragment.findNavController(this)
+                        .navigate(R.id.navigation_home);
             } catch (Exception e) {
                 Log.e(TAG, "Error navigating", e);
                 requireActivity().finish();
