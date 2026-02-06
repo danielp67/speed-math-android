@@ -31,6 +31,7 @@ public class WaitingFriendFragment extends Fragment {
     private PlayerManager playerManager;
     private String roomCode;
     private FriendManager.RoomListener roomListener;
+    private boolean matchStarted = false;
 
     @Nullable
     @Override
@@ -81,6 +82,7 @@ public class WaitingFriendFragment extends Fragment {
                 if (!isAdded() || getView() == null) return;
 
                 if ("ready".equals(status)) {
+                    matchStarted = true;
                     FirebaseDatabase.getInstance().getReference("friend_rooms")
                             .child(roomCode)
                             .get()
@@ -155,11 +157,11 @@ public class WaitingFriendFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (roomCode != null) {
+        if (roomCode != null && !matchStarted) {
             friendManager.cleanupRoom(roomCode);
         }
 
-        if (roomListener != null) {
+        if (roomListener != null && !matchStarted) {
             friendManager.listenRoom(roomCode, null);
         }
     }

@@ -46,7 +46,7 @@ public class FriendManager {
         return roomCode;
     }
 
-    public void joinRoom(String roomCode, String uid, String pseudo, RoomCallback callback) {
+    public void joinRoom(String roomCode, String uid, String pseudo, int rank, RoomCallback callback) {
         roomsRef.child(roomCode).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || !task.getResult().exists()) {
                 callback.onError("Room not found");
@@ -70,6 +70,7 @@ public class FriendManager {
             Map<String, Object> updates = new HashMap<>();
             updates.put("guest_uid", uid);
             updates.put("guest_pseudo", pseudo);
+            updates.put("guest_rank", rank);
             updates.put("state", "ready");
             updates.put("p1_score", 0);  // Initialisation des scores
             updates.put("p2_score", 0);
