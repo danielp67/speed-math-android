@@ -14,7 +14,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -38,12 +40,15 @@ public class FriendFragment extends Fragment {
     private String myPseudo;
     private String opponentPseudo;
 
+    private long myRank;
+    private long opponentRank;
+
     private DatabaseReference roomRef;
     private ValueEventListener roomListener;
 
     private TextView textQuestion, textTimer;
-    private TextView textMyScore, textOpponentScore;
-    private TextView textMyPseudo, textOpponentPseudo;
+    private TextView textMyScore, textMyPseudo, textMyStats;
+    private TextView textOpponentScore, textOpponentPseudo, textOpponentStats;
     private TextView textCombo;
 
     private CardView card1, card2, card3, card4;
@@ -56,7 +61,7 @@ public class FriendFragment extends Fragment {
     private int correctAnswer;
     private int score = 0;
     private int combo = 0;
-    private final int nbQuestions = 10;
+    private final int nbQuestions = 3;
 
     private QuestionGenerator questionGenerator;
     private GameTimer gameTimer;
@@ -66,12 +71,35 @@ public class FriendFragment extends Fragment {
 
     private boolean isGameFinished = false;
 
+//    @Override
+//    public View onCreateView(
+//            @NonNull LayoutInflater inflater,
+//            ViewGroup container,
+//            Bundle savedInstanceState
+//    ) {
+//        return inflater.inflate(R.layout.fragment_friend, container, false);
+//    }
+
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState
     ) {
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {}
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == android.R.id.home) {
+                    handleBackOrUpNavigation();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_friend, container, false);
     }
 
@@ -90,7 +118,10 @@ public class FriendFragment extends Fragment {
         roomId = args.getString("roomId", "");
         player = args.getString("player", "");
         myPseudo = args.getString("myPseudo", playerManager.getOnlinePseudo());
+        myRank = args.getLong("myRank", playerManager.getRank());
         opponentPseudo = args.getString("opponentPseudo", "opponent");
+        opponentRank = args.getLong("opponentRank", 999999);
+
 
         if (roomId == null || player == null || myPseudo == null || opponentPseudo == null) {
             Navigation.findNavController(view).navigateUp();
@@ -113,9 +144,10 @@ public class FriendFragment extends Fragment {
         textTimer = view.findViewById(R.id.textTimer);
 
         textMyPseudo = view.findViewById(R.id.textMyPseudo);
-        textOpponentPseudo = view.findViewById(R.id.textOpponentName);
-
+        textMyStats = view.findViewById(R.id.textMyStats);
         textMyScore = view.findViewById(R.id.textMyScore);
+        textOpponentPseudo = view.findViewById(R.id.textOpponentName);
+        textOpponentStats = view.findViewById(R.id.textOpponentStats);
         textOpponentScore = view.findViewById(R.id.textOpponentScore);
 
         textCombo = view.findViewById(R.id.textCombo);
@@ -135,8 +167,10 @@ public class FriendFragment extends Fragment {
         t4 = card4.findViewById(R.id.textOption);
 
         textMyPseudo.setText(myPseudo);
-        textOpponentPseudo.setText(opponentPseudo);
+        textMyStats.setText("#" + myRank);
         textMyScore.setText("0");
+        textOpponentPseudo.setText(opponentPseudo);
+        textOpponentStats.setText("#" + opponentRank);
         textOpponentScore.setText("0");
 
         card1.setOnClickListener(v -> checkAnswer(t1));
@@ -384,11 +418,28 @@ public class FriendFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (!isGameFinished) {
+            declareForfeitLoss();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if (!isGameFinished) {
+            declareForfeitLoss();
+        }
+
         if (roomListener != null) {
             roomRef.removeEventListener(roomListener);
         }
-        if (gameTimer != null) gameTimer.stop();
+
+        if (gameTimer != null) {
+            gameTimer.stop();
+        }
     }
+
 }

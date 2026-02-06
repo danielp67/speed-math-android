@@ -30,12 +30,13 @@ public class FriendManager {
         return instance;
     }
 
-    public String createRoom(String uid, String pseudo) {
+    public String createRoom(String uid, String pseudo, int rank) {
         String roomCode = generateRoomCode();
 
         Map<String, Object> room = new HashMap<>();
         room.put("host_uid", uid);
         room.put("host_pseudo", pseudo);
+        room.put("host_rank", rank);
         room.put("guest_uid", null);
         room.put("guest_pseudo", null);
         room.put("state", "waiting");

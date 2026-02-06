@@ -66,18 +66,21 @@ public class JoinFriendFragment extends Fragment {
 
                             Bundle args = new Bundle();
                             args.putString("roomId", code);
-                            args.putString("player", "P2");  // Le joueur qui rejoint est toujours P2
+                            args.putString("player", "P2");  // player always P2
                             args.putString("myPseudo", playerManager.getOnlinePseudo());
+                            args.putLong("myRank", playerManager.getRank());
 
-                            // Récupérer le pseudo de l'hôte depuis Firebase
+                            // Fetch data from Firebase
                             FirebaseDatabase.getInstance().getReference("friend_rooms")
                                     .child(code)
-                                    .child("host_pseudo")
                                     .get()
                                     .addOnSuccessListener(snapshot -> {
                                         if (!isAdded() || getView() == null) return;
-                                        String hostPseudo = snapshot.getValue(String.class);
+                                        String hostPseudo = snapshot.child("host_pseudo").getValue(String.class);
+                                        Long hostRank = snapshot.child("host_rank").getValue(Long.class);
+
                                         args.putString("opponentPseudo", hostPseudo != null ? hostPseudo : "opponent");
+                                        args.putLong("opponentRank", hostRank != null ? hostRank : 999999);
 
                                         Navigation.findNavController(requireView())
                                                 .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
@@ -85,6 +88,8 @@ public class JoinFriendFragment extends Fragment {
                                     .addOnFailureListener(e -> {
                                         if (!isAdded() || getView() == null) return;
                                         args.putString("opponentPseudo", "opponent");
+                                        args.putLong("opponentRank", 999999);
+
                                         Navigation.findNavController(requireView())
                                                 .navigate(R.id.action_joinFriendFragment_to_friendFragment, args);
                                     });

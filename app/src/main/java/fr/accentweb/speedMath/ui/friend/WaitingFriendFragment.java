@@ -57,7 +57,8 @@ public class WaitingFriendFragment extends Fragment {
 
         roomCode = friendManager.createRoom(
                 playerManager.getOnlineUid(),
-                playerManager.getOnlinePseudo()
+                playerManager.getOnlinePseudo(),
+                playerManager.getRank()
         );
         txtRoomCode.setText(roomCode);
         txtStatus.setText("Waiting for your friend...");
@@ -82,18 +83,19 @@ public class WaitingFriendFragment extends Fragment {
                 if ("ready".equals(status)) {
                     FirebaseDatabase.getInstance().getReference("friend_rooms")
                             .child(roomCode)
-                            .child("guest_pseudo")
                             .get()
                             .addOnSuccessListener(snapshot -> {
                                 if (!isAdded() || getView() == null) return;
-                                String opponentPseudo = snapshot.getValue(String.class);
+                                String opponentPseudo = snapshot.child("guest_pseudo").getValue(String.class);
+                                Long opponentRank = snapshot.child("guest_rank").getValue(Long.class);
 
                                 Bundle args = new Bundle();
                                 args.putString("roomId", roomCode);
                                 args.putString("player", "P1");
                                 args.putString("myPseudo", playerManager.getOnlinePseudo());
+                                args.putLong("myRank", playerManager.getRank());
                                 args.putString("opponentPseudo", opponentPseudo != null ? opponentPseudo : "opponent");
-
+                                args.putLong("opponentRank", opponentRank != null ? opponentRank : 999999);
                                 Navigation.findNavController(requireView())
                                         .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
                             })
@@ -103,7 +105,9 @@ public class WaitingFriendFragment extends Fragment {
                                 args.putString("roomId", roomCode);
                                 args.putString("player", "P1");
                                 args.putString("myPseudo", playerManager.getOnlinePseudo());
+                                args.putLong("myRank", playerManager.getRank());
                                 args.putString("opponentPseudo", "opponent");
+                                args.putLong("opponentRank", 999999);
 
                                 Navigation.findNavController(requireView())
                                         .navigate(R.id.action_waitingFriendFragment_to_friendFragment, args);
