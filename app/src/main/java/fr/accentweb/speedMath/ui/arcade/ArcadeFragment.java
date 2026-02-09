@@ -18,6 +18,7 @@ import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameDifficulty;
 import fr.accentweb.speedMath.core.MemoryDifficulty;
 import fr.accentweb.speedMath.core.PlayerManager;
+import fr.accentweb.speedMath.ui.friend.PlayWithFriendDialogFragment;
 import fr.accentweb.speedMath.utils.NetworkUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("👤", 16, "Solo", "QCM Mode", "QCM"));
         items.add(new ArcadeItem("👥", 16, "Battle", "Dual Mode", "DUAL"));
         items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Online Mode", "ONLINE"));
-        items.add(new ArcadeItem("🤝", 16, "Play with a Friend", "Invite or join a friend", "FRIEND"));
+        items.add(new ArcadeItem("🤝", 16, "Friends", "Invite or join a friend", "FRIEND"));
         items.add(new ArcadeItem("🎁", 16, "Daily Challenge", "Play and win gifts", "DAILY"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
@@ -81,9 +82,8 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
                 onlineMode(v, args);
                 break;
             case "FRIEND":
-                //new PlayWithFriendDialogFragment()
-                //        .show(getParentFragmentManager(), "play_with_friend");
-                Toast.makeText(requireContext(), "Coming soon, stay tuned!", Toast.LENGTH_SHORT).show();
+                new PlayWithFriendDialogFragment()
+                        .show(getParentFragmentManager(), "play_with_friend");
                 break;
             case "DAILY":
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dailyChallengeFragment, args);
@@ -105,7 +105,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
     @Override
     public void onSettingsClick(View v, String mode) {
 
-        if ("ONLINE".equals(mode) || "DAILY".equals(mode)) return;
+        if ("ONLINE".equals(mode) || "DAILY".equals(mode) || "FRIEND".equals(mode)) return;
 
         Object currentDifficulty;
 

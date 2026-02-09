@@ -90,6 +90,10 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
                 h.descriptionCard.setText(item.description + " - " + memDuoDifficulty.label);
                 break;
 
+            case "DAILY":
+                h.descriptionCard.setText(item.description);
+                break;
+
             default:
                 GameDifficulty gameDiff = getCurrentGameDifficulty(item.mode);
                 h.descriptionCard.setText(item.description + " - " + gameDiff.getDisplayName());
@@ -97,11 +101,13 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
 
         boolean isOnline = "ONLINE".equals(item.mode);
         boolean isDaily = "DAILY".equals(item.mode);
+        boolean isFriend = "FRIEND".equals(item.mode);
+
 
         // SETTINGS / ONLINE INFO
-        h.btnSettings.setVisibility(isOnline || isDaily ? View.GONE : View.VISIBLE);
-        h.btnSettings.setClickable(!isOnline || !isDaily);
-        h.btnSettings.setClickable(!isDaily);
+        h.btnSettings.setVisibility(isOnline || isDaily || isFriend ? View.GONE : View.VISIBLE);
+        h.btnSettings.setClickable(!isOnline || !isDaily || !isFriend);
+
 
         if (isOnline) {
             h.layoutOnlineInfo.setVisibility(View.VISIBLE);
@@ -114,7 +120,17 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
                 h.txtPlayersOnline.setText("\uD83D\uDFE2 0");
                 h.txtGamesLeft.setText("0 / 0");
             }
-        } else {
+        } else if (isFriend){
+            h.layoutOnlineInfo.setVisibility(View.VISIBLE);
+            h.descriptionCard.setText(item.description);
+            h.txtPlayersOnline.setVisibility(View.GONE);
+            if (onlineStats != null) {
+                h.txtGamesLeft.setText(playerManager.getDailyMatchPlayed() + " / " + playerManager.getDailyMatchLimit());
+            } else {
+            h.txtGamesLeft.setText("0 / 0");
+            }
+        }
+        else {
             h.layoutOnlineInfo.setVisibility(View.GONE);
         }
 
