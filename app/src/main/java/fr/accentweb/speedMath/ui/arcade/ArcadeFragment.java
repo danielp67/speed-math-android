@@ -82,8 +82,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
                 onlineMode(v, args);
                 break;
             case "FRIEND":
-                new PlayWithFriendDialogFragment()
-                        .show(getParentFragmentManager(), "play_with_friend");
+                friendMode(v, args);
                 break;
             case "DAILY":
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_dailyChallengeFragment, args);
@@ -178,6 +177,29 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         } else {
             Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_waitingRoomFragment, args);
         }
+    }
+
+    private void friendMode(View v, Bundle args) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            Toast.makeText(requireContext(), "No internet connection. Online mode unavailable.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (playerManager.getTodayDate().equals(playerManager.getLastConnection()) &&
+                playerManager.getDailyMatchPlayed() >= playerManager.getDailyMatchLimit()) {
+            Toast.makeText(requireContext(), "Daily Limit Reached: " + playerManager.getDailyMatchLimit() + " matches played.", Toast.LENGTH_SHORT).show();
+        } else if (playerManager.getOnlinePseudo().isEmpty()) {
+            Toast.makeText(requireContext(), "Please set a pseudo before playing online.", Toast.LENGTH_SHORT).show();
+            NavController navController = Navigation.findNavController(v);
+            NavOptions navOptions = new NavOptions.Builder()
+                    .setPopUpTo(R.id.navigation_home, true)
+                    .build();
+
+            navController.navigate(R.id.navigation_notifications, args, navOptions);
+        } else {
+            new PlayWithFriendDialogFragment()
+                    .show(getParentFragmentManager(), "play_with_friend");
+        }
+
     }
 
     public void refreshOnlineStats(OnlineStats stats) {
