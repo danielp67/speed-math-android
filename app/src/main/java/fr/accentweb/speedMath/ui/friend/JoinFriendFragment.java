@@ -12,16 +12,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.google.firebase.database.FirebaseDatabase;
 
 import fr.accentweb.speedMath.R;
+import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FriendManager;
 import fr.accentweb.speedMath.core.PlayerManager;
 
-public class JoinFriendFragment extends Fragment {
+public class JoinFriendFragment extends BaseGameFragment {
 
     private FriendManager friendManager;
     private PlayerManager playerManager;

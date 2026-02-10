@@ -2,7 +2,6 @@ package fr.accentweb.speedMath.ui.friend;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -22,10 +20,11 @@ import android.content.Intent;
 import com.google.firebase.database.FirebaseDatabase;
 
 import fr.accentweb.speedMath.R;
+import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FriendManager;
 import fr.accentweb.speedMath.core.PlayerManager;
 
-public class WaitingFriendFragment extends Fragment {
+public class WaitingFriendFragment extends BaseGameFragment {
 
     private FriendManager friendManager;
     private PlayerManager playerManager;
