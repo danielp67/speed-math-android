@@ -2,46 +2,48 @@ package fr.accentweb.speedMath.ui.friend;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.*;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.database.*;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.accentweb.speedMath.R;
+import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.GameTimer;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.core.QuestionGenerator;
 import fr.accentweb.speedMath.utils.AnimUtils;
 
-public class FriendFragment extends Fragment {
+public class FriendFragment extends BaseGameFragment {
 
     private static final String TAG = "FriendFragment";
 
-    private String roomId;
-    private String player; // "P1" or "P2"
-    private String myPseudo;
-    private String opponentPseudo;
-
-    private long myRank;
-    private long opponentRank;
+    private String roomId, player; // "P1" or "P2"
+    private String myPseudo, opponentPseudo;
+    private long myRank, opponentRank;
 
     private DatabaseReference roomRef;
     private ValueEventListener roomListener;
@@ -55,13 +57,16 @@ public class FriendFragment extends Fragment {
     private TextView t1, t2, t3, t4;
 
     private LinearLayout overlay;
-    private TextView textWinner;
-    private Button btnReplay;
+    private TextView textWinner, textCountdown;
+    private Button btnReplay, btnQuit;
+    private CountDownTimer countDownTimer;
+
+    private FrameLayout countdownOverlay;
 
     private int correctAnswer;
     private int score = 0;
     private int combo = 0;
-    private final int nbQuestions = 3;
+    private final int nbQuestions = 1;
 
     private QuestionGenerator questionGenerator;
     private GameTimer gameTimer;
@@ -70,15 +75,8 @@ public class FriendFragment extends Fragment {
     private OnBackPressedCallback backPressedCallback;
 
     private boolean isGameFinished = false;
-
-//    @Override
-//    public View onCreateView(
-//            @NonNull LayoutInflater inflater,
-//            ViewGroup container,
-//            Bundle savedInstanceState
-//    ) {
-//        return inflater.inflate(R.layout.fragment_friend, container, false);
-//    }
+    private boolean isReplayRequested = false;
+    private boolean isQuitRequested = false;
 
     @Override
     public View onCreateView(
@@ -155,6 +153,13 @@ public class FriendFragment extends Fragment {
         overlay = view.findViewById(R.id.localOverlay);
         textWinner = view.findViewById(R.id.textWinner);
         btnReplay = view.findViewById(R.id.btnReplay);
+        btnQuit = view.findViewById(R.id.btnQuit);
+
+        countdownOverlay = requireView().findViewById(R.id.countdownOverlay);
+        textCountdown = requireView().findViewById(R.id.textCountdown);
+
+        overlay.setVisibility(View.GONE);
+        countdownOverlay.setVisibility(View.GONE);
 
         card1 = view.findViewById(R.id.cardOption1);
         card2 = view.findViewById(R.id.cardOption2);
@@ -181,6 +186,32 @@ public class FriendFragment extends Fragment {
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
+      //  btnReplay.setOnClickListener(v -> startCountdown());
+      //  btnQuit.setOnClickListener(v -> quitGame());
+
+        btnReplay.setOnClickListener(v -> {
+            if (!isReplayRequested && !isQuitRequested) {
+                isReplayRequested = true;
+             //   btnReplay.setEnabled(false);
+                btnQuit.setEnabled(false);
+                btnQuit.setVisibility(View.GONE);
+                roomRef.child("replay_requested").setValue(true);
+                restartGameForBothPlayers();
+            }
+        });
+
+        btnQuit.setOnClickListener(v -> {
+            if (!isReplayRequested) {
+                isQuitRequested = true;
+                btnReplay.setEnabled(false);
+                btnReplay.setVisibility(View.GONE);
+               // btnQuit.setEnabled(false);
+                roomRef.child("quit_requested").setValue(true);
+                quitGame();
+            }
+
+        });
+
         // Callback pour le bouton back
         backPressedCallback = new OnBackPressedCallback(true) {
             @Override
@@ -195,7 +226,8 @@ public class FriendFragment extends Fragment {
         // ----- Timer -----
         gameTimer = new GameTimer();
         gameTimer.setListener((elapsed, formatted) -> textTimer.setText(formatted));
-        gameTimer.start();
+ //       gameTimer.start();
+        startCountdown();
 
         // ----- Questions -----
         questionGenerator = new QuestionGenerator(
@@ -210,7 +242,7 @@ public class FriendFragment extends Fragment {
         );
 
         listenRoom();
-        generateQuestion();
+     //   generateQuestion();
     }
 
     // ---------------------------------------------------
@@ -219,11 +251,29 @@ public class FriendFragment extends Fragment {
         roomListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists() || isGameFinished) return;
+                if (!snapshot.exists()) return;
 
                 if (player == null) {
                     Log.e(TAG, "Player is null");
                     return;
+                }
+
+                Boolean replayRequested = snapshot.child("replay_requested").getValue(Boolean.class);
+                if (replayRequested != null && replayRequested ) {
+               //     isReplayRequested = true;
+                //    btnReplay.setEnabled(false);
+                    btnQuit.setEnabled(false);
+                    startCountdown();
+                }
+
+                // Gestion du "Quitter" synchronisé
+                Boolean quitRequested = snapshot.child("quit_requested").getValue(Boolean.class);
+                if (quitRequested != null && quitRequested ) {
+                    isQuitRequested = true;
+                    btnReplay.setEnabled(false);
+                    btnReplay.setVisibility(View.GONE);
+                   // btnQuit.setEnabled(false);
+                  //  quitGame();
                 }
 
                 String opponentScoreKey = player.equals("P1") ? "p2_score" : "p1_score";
@@ -233,7 +283,7 @@ public class FriendFragment extends Fragment {
                 }
 
                 String state = snapshot.child("state").getValue(String.class);
-                if (state != null && "finished".equals(state)) {
+                if (state != null && "resumed".equals(state)) {
                     isGameFinished = true;
                     determineWinner(snapshot);
                 }
@@ -270,15 +320,17 @@ public class FriendFragment extends Fragment {
             result = R.string.draw_message;
         }
 
+        if (playerManager.getDailyMatchPlayed() >= playerManager.getDailyMatchLimit()) {
+            roomRef.child("quit_requested").setValue(true);
+            btnReplay.setVisibility(View.GONE);
+            btnReplay.setEnabled(false);
+        }
+
         feedbackManager.playLevelUpSound();
         overlay.setAlpha(0f);
         overlay.setVisibility(View.VISIBLE);
         overlay.animate().alpha(1f).setDuration(500).start();
         textWinner.setText(result);
-        btnReplay.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_home);
-        });
     }
 
     private void generateQuestion() {
@@ -340,7 +392,7 @@ public class FriendFragment extends Fragment {
         setCardsClickable(false);
         String winnerField = player.equals("P1") ? "p1" : "p2";
         roomRef.child("winner").setValue(winnerField);
-        roomRef.child("state").setValue("finished");
+        roomRef.child("state").setValue("resumed");
         feedbackManager.playLevelUpSound();
     }
 
@@ -385,21 +437,114 @@ public class FriendFragment extends Fragment {
         card3.setClickable(clickable);
         card4.setClickable(clickable);
     }
+    private void startCountdown() {
+        isGameFinished = false;
+        overlay.setVisibility(View.GONE);
+        countdownOverlay.setVisibility(View.VISIBLE);
+        playerManager.incrementDailyMatchPlayed();
+
+        // Réinitialise les scores et l'état pour les deux joueurs
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("state", "playing");
+        updates.put("winner", null);
+        updates.put("p1_score", 0);
+        updates.put("p2_score", 0);
+        updates.put("replay_requested", false);
+        updates.put("quit_requested", false);
+
+        roomRef.updateChildren(updates);
+
+        if (playerManager.getTodayDate().equals(playerManager.getLastConnection()) &&
+                playerManager.getDailyMatchPlayed() > playerManager.getDailyMatchLimit()) {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.navigation_home);
+            roomRef.child("quit_requested").setValue(true);
+            roomRef.child("state").setValue("resumed");
+            Toast.makeText(requireContext(), "Daily Limit Reached: " + playerManager.getDailyMatchLimit() + " matches played.", Toast.LENGTH_SHORT).show();
+        }else {
+
+            countDownTimer =  new CountDownTimer(3000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    textCountdown.setText(String.valueOf(millisUntilFinished / 1000));
+                    overlay.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onFinish() {
+                    countdownOverlay.setVisibility(View.GONE);
+                    if (isQuitRequested){
+                        quitGame();
+                    Toast.makeText(requireContext(), "Game quit by your friend", Toast.LENGTH_SHORT).show();
+                    }else{
+                        restartGameForBothPlayers();
+                        }
+                }
+            }.start();
+        }
+    }
+
+
+    private void restartGameForBothPlayers() {
+        // Réinitialise localement
+        score = 0;
+        combo = 0;
+        isReplayRequested = false;
+        isQuitRequested = false;
+        btnReplay.setEnabled(true);
+        btnReplay.setVisibility(View.VISIBLE);
+        btnQuit.setEnabled(true);
+        btnQuit.setVisibility(View.VISIBLE);
+        textMyScore.setText("0");
+        textOpponentScore.setText("0");
+        textCombo.setAlpha(0f);
+
+        // Relance le timer et génère une nouvelle question
+        gameTimer.reset();
+        gameTimer.start();
+        generateQuestion();
+        setCardsClickable(true);
+
+        overlay.setVisibility(View.GONE);
+        countdownOverlay.setVisibility(View.GONE);
+    }
+
+
+    private void quitGame() {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("state", "finished");
+        updates.put("quit_requested", true);
+
+        roomRef.updateChildren(updates)
+                .addOnCompleteListener(task -> {
+
+                    NavHostFragment.findNavController(this)
+                            .navigate(R.id.navigation_home);
+                });
+    }
+
+
 
     private void declareForfeitLoss() {
         if (isGameFinished) return; // if already finished, do nothing
 
         Log.w(TAG, "Player quit the match → declaring forfeit loss.");
 
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         String winnerField = player.equals("P1") ? "p2" : "p1";
         String opponentScoreField = player.equals("P1") ? "p2_score" : "p1_score";
+        btnReplay.setEnabled(false);
+        btnReplay.setVisibility(View.GONE);
 
         // give the opponent a point
         roomRef.child(opponentScoreField).setValue(nbQuestions);
 
         roomRef.child("winner").setValue(winnerField);
+        roomRef.child("quit_requested").setValue(true);
+        roomRef.child("state").setValue("resumed");
         roomRef.child("state").setValue("finished");
-
         isGameFinished = true;
     }
 
