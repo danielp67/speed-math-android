@@ -102,8 +102,36 @@
                 android:textStyle="bold"
                 android:textColor="@color/blue_primary"
                 android:backgroundTint="@color/gold_accent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnQuit"
+                style="@style/SpeedMath.Button.Selectable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:padding="@dimen/dp_16"
+                android:text="Quit"
+                android:textSize="@dimen/sp_16"
+                android:textStyle="bold"
+                android:textColor="@color/grey_light"
+                android:backgroundTint="@color/background_dark" />
         </LinearLayout>
+        <FrameLayout
+            android:id="@+id/countdownOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="#7F000000">
 
+            <TextView
+                android:id="@+id/textCountdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="3"
+                android:textSize="@dimen/sp_32"
+                android:textStyle="bold"
+                android:textColor="@color/gold_accent" />
+        </FrameLayout>
     </FrameLayout>
 
 
