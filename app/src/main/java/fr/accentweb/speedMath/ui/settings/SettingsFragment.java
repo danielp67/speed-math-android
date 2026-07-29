@@ -154,6 +154,12 @@ public class SettingsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         playersRef = FirebaseDatabase.getInstance().getReference("players");
 
+        // Initialisation immédiate de l'UID si déjà connecté
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            currentUid = currentUser.getUid();
+        }
+
         signInAnonymously();
 
         // Vérification instantanée du pseudo
@@ -224,9 +230,9 @@ public class SettingsFragment extends Fragment {
         applyTheme(playerManager.isDarkModeEnabled());
 
         // Firebase delete from players list
-        playersRef = FirebaseDatabase.getInstance().getReference("players");
-        playersRef.child(currentUid).removeValue();
-
+        if (currentUid != null) {
+            playersRef.child(currentUid).removeValue();
+        }
     }
 
 
@@ -254,6 +260,8 @@ public class SettingsFragment extends Fragment {
             return;
         }
 
+        if (currentUid == null) return;
+
         playersRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 boolean exists = false;
@@ -274,6 +282,11 @@ public class SettingsFragment extends Fragment {
     }
 
     private void savePseudo() {
+        if (currentUid == null) {
+            Toast.makeText(getContext(), "Connexion Firebase en cours...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String pseudo = editPseudo.getText().toString().trim();
         if (pseudo.isEmpty()) {
             Toast.makeText(getContext(), "You must enter an available pseudo", Toast.LENGTH_SHORT).show();
