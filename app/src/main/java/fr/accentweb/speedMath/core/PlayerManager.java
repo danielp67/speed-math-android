@@ -7,7 +7,9 @@ import android.icu.util.Calendar;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Locale;
 
@@ -95,8 +97,6 @@ public class PlayerManager {
     public long getLevelHighScore(int level) {
         return prefs.getLong(KEY_TIME_LEVEL_PREFIX + level, 0);
     }
-
-    // ========================= History Level =========================
 
     public void setLastPlayedLevel(int level) {
         prefs.edit().putInt(KEY_CURRENT_LEVEL, level).apply();
@@ -366,19 +366,24 @@ public class PlayerManager {
 
         playerRef.get().addOnSuccessListener(snapshot -> {
 
-            int dailyPlayed = snapshot.child(KEY_DAILY_MATCH_PLAYED)
-                    .getValue(Integer.class) != null
-                    ? snapshot.child(KEY_DAILY_MATCH_PLAYED).getValue(Integer.class)
-                    : 0;
-
-            int dailyLimit = snapshot.child(KEY_DAILY_MATCH_LIMIT)
-                    .getValue(Integer.class) != null
-                    ? snapshot.child(KEY_DAILY_MATCH_LIMIT).getValue(Integer.class)
-                    : 0;
+            int dailyPlayed = snapshot.child("daily_match_played").getValue(Integer.class) != null ? snapshot.child("daily_match_played").getValue(Integer.class) : 0;
+            int dailyLimit = snapshot.child("daily_match_limit").getValue(Integer.class) != null ? snapshot.child("daily_match_limit").getValue(Integer.class) : 0;
+            int points = snapshot.child("points").getValue(Integer.class) != null ? snapshot.child("points").getValue(Integer.class) : 0;
+            int matches = snapshot.child("matches_played").getValue(Integer.class) != null ? snapshot.child("matches_played").getValue(Integer.class) : 0;
+            int wins = snapshot.child("matches_won").getValue(Integer.class) != null ? snapshot.child("matches_won").getValue(Integer.class) : 0;
+            int losses = snapshot.child("matches_lost").getValue(Integer.class) != null ? snapshot.child("matches_lost").getValue(Integer.class) : 0;
+            int draws = snapshot.child("matches_drawn").getValue(Integer.class) != null ? snapshot.child("matches_drawn").getValue(Integer.class) : 0;
+            int rank = snapshot.child("rank").getValue(Integer.class) != null ? snapshot.child("rank").getValue(Integer.class) : 999999;
 
             prefs.edit()
                     .putInt(KEY_DAILY_MATCH_PLAYED, dailyPlayed)
                     .putInt(KEY_DAILY_MATCH_LIMIT, dailyLimit)
+                    .putInt(KEY_ONLINE_SCORE, points)
+                    .putInt(KEY_ONLINE_PLAYED_MATCHES, matches)
+                    .putInt(KEY_ONLINE_WINS, wins)
+                    .putInt(KEY_ONLINE_LOSSES, losses)
+                    .putInt(KEY_ONLINE_DRAWS, draws)
+                    .putInt("rank", rank)
                     .apply();
         });
     }

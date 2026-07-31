@@ -129,6 +129,13 @@
         android:name="fr.accentweb.speedMath.ui.level.LevelFragment"
         android:label="@string/action_game"
         tools:layout="@layout/fragment_level"/>
+
+    <fragment
+        android:id="@+id/navigation_stats"
+        android:name="fr.accentweb.speedMath.ui.stats.StatsFragment"
+        android:label="@string/title_stats"
+        tools:layout="@layout/fragment_stats" />
+
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="fr.accentweb.speedMath.ui.settings.SettingsFragment"

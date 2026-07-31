@@ -12,6 +12,11 @@
         android:title="@string/title_level" />
 
     <item
+        android:id="@+id/navigation_stats"
+        android:icon="@drawable/star_solid_full"
+        android:title="@string/title_stats" />
+
+    <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/gear_solid_full"
         android:title="@string/title_settings" />

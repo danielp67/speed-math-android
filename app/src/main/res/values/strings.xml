@@ -3,6 +3,7 @@
     <string name="title_mode">Arcade</string>
     <string name="title_level">League</string>
     <string name="title_settings">Settings</string>
+    <string name="title_stats">Stats</string>
 
     <string name="action_game">Challenge</string>
     <string name="action_dual">Battle</string>
@@ -73,5 +74,13 @@
     <string name="next_level">Next level →</string>
     <string name="notifications">Notifications</string>
 
+    <string name="stats_win_rate_format">%1$d%%</string>
+    <string name="stats_level_progress_format">Arcade Progress : Level %1$d </string>
+    <string name="my_performance">My Performance</string>
+    <string name="win_rate">Win Rate</string>
+    <string name="matches">Matches</string>
+    <string name="online_scoring">Online Scoring</string>
+    <string name="total_points">Total Points</string>
+    <string name="avg_match">Average/Match</string>
 
 </resources>
