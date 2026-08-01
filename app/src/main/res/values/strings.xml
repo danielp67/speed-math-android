@@ -85,6 +85,30 @@
     <string name="total_points">Total Points</string>
     <string name="avg_match">Average/Match</string>
 
+    <string name="stats_online_rank">Online Rank</string>
+    <string name="stats_wins">Wins</string>
+    <string name="stats_losses">Losses</string>
+    <string name="stats_played">Played</string>
+    <string name="stats_points">Points</string>
+    <string name="stats_win_percent">Win %</string>
+    <string name="stats_draws">Draws</string>
+    <string name="stats_best_streaks">Best Streaks</string>
+    <string name="stats_league_level">League Level %1$d</string>
+    <string name="stats_milestone_progress">%1$d%% to next milestone</string>
+    <string name="stats_rank_format">#%1$d</string>
+    <string name="stats_rank_none">#---</string>
+
+    <string name="streak_add">➕ Add</string>
+    <string name="streak_sub">➖ Sub</string>
+    <string name="streak_mul">✖️ Mul</string>
+    <string name="streak_div">➗ Div</string>
+    <string name="streak_all">🔀 All</string>
+    <string name="streak_invaders">🛸 Space</string>
+    <string name="streak_tetris">🧱 Tetris</string>
+
+    <string name="game_score_format">Score: %1$d</string>
+    <string name="tetris_sum_format">Sum: %1$d / Target: %2$d</string>
+
     <!-- Daily Challenge -->
     <string name="daily_streak_format">🔥 Streak: %1$d days</string>
     <string name="daily_ticket_title">🎫 DAILY CHALLENGE</string>

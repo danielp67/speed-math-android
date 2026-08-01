@@ -105,10 +105,13 @@ public class MathInvadersFragment extends BaseGameFragment {
     }
 
     private void updateUI() {
-        txtScore.setText("Score: " + score);
+        txtScore.setText(getString(R.string.game_score_format, score));
         StringBuilder l = new StringBuilder();
         for (int i = 0; i < lives; i++) l.append("❤️");
         txtLife.setText(l.toString());
+        
+        // Save score as streak
+        playerManager.setCorrectAnswersStreak("INVADERS", 0, score);
     }
 
     private void startSpawning() {

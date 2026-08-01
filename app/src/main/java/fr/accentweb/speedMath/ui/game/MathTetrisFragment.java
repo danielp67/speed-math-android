@@ -113,8 +113,11 @@ public class MathTetrisFragment extends BaseGameFragment {
     }
 
     private void updateUI() {
-        txtScore.setText("Sum: " + currentSum);
-        txtLife.setText("Score: " + score);
+        txtScore.setText(getString(R.string.tetris_sum_format, currentSum, targetNumber));
+        txtLife.setText(getString(R.string.game_score_format, score));
+        
+        // Save score as streak
+        playerManager.setCorrectAnswersStreak("TETRIS", 0, score);
     }
 
     private void startSpawning() {

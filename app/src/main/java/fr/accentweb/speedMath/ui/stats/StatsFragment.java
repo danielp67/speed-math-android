@@ -17,9 +17,10 @@ import fr.accentweb.speedMath.core.PlayerManager;
 public class StatsFragment extends Fragment {
 
     private PlayerManager playerManager;
-    private TextView tvRank, tvWinRate, tvTotalMatches, tvWins, tvLosses, tvDraws, tvLevelTitle, tvTotalPoints, tvAvgScore;
+    private TextView tvRank, tvWinRate, tvTotalMatches, tvWins, tvLosses, tvDraws, tvTotalPoints;
+    private TextView tvStreakAdd, tvStreakSub, tvStreakMul, tvStreakDiv, tvStreakAll, tvStreakInvaders, tvStreakTetris;
+    private TextView tvLevelTitle, tvLevelProgressText;
     private ProgressBar pbLevel;
-
 
     @Nullable
     @Override
@@ -28,52 +29,77 @@ public class StatsFragment extends Fragment {
 
         playerManager = PlayerManager.getInstance(requireContext());
 
+        // Online Stats
         tvRank = root.findViewById(R.id.tvRank);
-        tvWinRate = root.findViewById(R.id.tvWinRate);
-        tvTotalMatches = root.findViewById(R.id.tvTotalMatches);
         tvWins = root.findViewById(R.id.tvWins);
         tvLosses = root.findViewById(R.id.tvLosses);
         tvDraws = root.findViewById(R.id.tvDraws);
+        tvTotalMatches = root.findViewById(R.id.tvTotalMatches);
+        tvTotalPoints = root.findViewById(R.id.tvTotalPoints);
+        tvWinRate = root.findViewById(R.id.tvWinRate);
+
+        // Best Streaks
+        tvStreakAdd = root.findViewById(R.id.tvStreakAdd);
+        tvStreakSub = root.findViewById(R.id.tvStreakSub);
+        tvStreakMul = root.findViewById(R.id.tvStreakMul);
+        tvStreakDiv = root.findViewById(R.id.tvStreakDiv);
+        tvStreakAll = root.findViewById(R.id.tvStreakAll);
+        tvStreakInvaders = root.findViewById(R.id.tvStreakInvaders);
+        tvStreakTetris = root.findViewById(R.id.tvStreakTetris);
+
+        // League
         tvLevelTitle = root.findViewById(R.id.tvLevelTitle);
         pbLevel = root.findViewById(R.id.pbLevel);
-        tvTotalPoints = root.findViewById(R.id.tvTotalPoints);
-        tvAvgScore = root.findViewById(R.id.tvAvgScore);
+        tvLevelProgressText = root.findViewById(R.id.tvLevelProgressText);
 
-        // Data retrieval
+        displayStats();
+
+        return root;
+    }
+
+    private void displayStats() {
+        // Online Data
         int wins = playerManager.getOnlineWins();
         int losses = playerManager.getOnlineLosses();
         int draws = playerManager.getOnlineDraws();
         int matches = playerManager.getOnlinePlayedMatches();
-        int currentLevel = playerManager.getCurrentLevel();
-        int totalScore = playerManager.getOnlineScore();
+        int totalPoints = playerManager.getOnlineScore();
         int rank = playerManager.getRank();
 
-        // Win Rate Calculation
-        int winRate = 0;
-        if (matches > 0) {
-            winRate = (wins * 100) / matches;
+        int winRate = (matches > 0) ? (wins * 100) / matches : 0;
+
+        if (rank == 999999) {
+            tvRank.setText(R.string.stats_rank_none);
+        } else {
+            tvRank.setText(getString(R.string.stats_rank_format, rank));
         }
-
-        // Avg Score Calculation
-        int avgScore = 0;
-        if (matches > 0) {
-            avgScore = totalScore / matches;
-        }
-
-        // Level Progress (Assuming 100 levels for example, or relative to a goal)
-        int progress = (currentLevel % 10) * 10;
-
-        tvRank.setText(rank == 999999 ? "#---" : "#" + rank);
-        tvWinRate.setText(getString(R.string.stats_win_rate_format, winRate));
+        
+        tvWins.setText(String.valueOf(wins));
+        tvLosses.setText(String.valueOf(losses));
+        tvDraws.setText(String.valueOf(draws));
         tvTotalMatches.setText(String.valueOf(matches));
-        tvWins.setText("W: " + wins);
-        tvLosses.setText("L: " + losses);
-        tvDraws.setText("D: " + draws);
-        tvLevelTitle.setText(getString(R.string.stats_level_progress_format, currentLevel));
-        pbLevel.setProgress(progress);
-        tvTotalPoints.setText(String.valueOf(totalScore));
-        tvAvgScore.setText(String.valueOf(avgScore));
+        tvTotalPoints.setText(String.valueOf(totalPoints));
+        tvWinRate.setText(getString(R.string.stats_win_rate_format, winRate));
 
-        return root;
+        // Streaks Data
+        tvStreakAdd.setText(String.valueOf(playerManager.getCorrectAnswersStreak("ADD", playerManager.getAddSuiteDifficulty())));
+        tvStreakSub.setText(String.valueOf(playerManager.getCorrectAnswersStreak("SUB", playerManager.getSubSuiteDifficulty())));
+        tvStreakMul.setText(String.valueOf(playerManager.getCorrectAnswersStreak("MUL", playerManager.getMulSuiteDifficulty())));
+        tvStreakDiv.setText(String.valueOf(playerManager.getCorrectAnswersStreak("DIV", playerManager.getDivSuiteDifficulty())));
+        tvStreakAll.setText(String.valueOf(playerManager.getCorrectAnswersStreak("ALL", playerManager.getAllSuiteDifficulty())));
+        
+        tvStreakInvaders.setText(String.valueOf(playerManager.getCorrectAnswersStreak("INVADERS", 0)));
+        tvStreakTetris.setText(String.valueOf(playerManager.getCorrectAnswersStreak("TETRIS", 0)));
+
+        // League Data
+        int currentLevel = playerManager.getCurrentLevel();
+        tvLevelTitle.setText(getString(R.string.stats_league_level, currentLevel));
+        
+        // Progress bar (Milestone every 10 levels)
+        int progress = (currentLevel % 10) * 10;
+        if (progress == 0 && currentLevel > 0) progress = 100;
+        
+        pbLevel.setProgress(progress);
+        tvLevelProgressText.setText(getString(R.string.stats_milestone_progress, progress));
     }
 }
