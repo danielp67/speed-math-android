@@ -70,7 +70,7 @@ public class DailyChallengeFragment extends BaseGameFragment {
 
         cardTicket.setOnClickListener(v -> {
             if (playerManager.isDailyChallengeDoneToday()) {
-                Toast.makeText(getContext(), "Challenge déjà fait, reviens demain !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Challenge already done, come back tomorrow !", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -84,7 +84,7 @@ public class DailyChallengeFragment extends BaseGameFragment {
         });
 
         if (pendingReward) {
-            txtTicketAction.setText("DÉFI RÉUSSI ! CLIQUE POUR RÉVÉLER");
+            txtTicketAction.setText("You win ! Clic to reveal your gift");
             txtTicketAction.setTextColor(ContextCompat.getColor(requireContext(), R.color.correct));
         }
 

@@ -110,4 +110,10 @@
     <string name="sunday_mega_challenge">SUNDAY MEGA</string>
     <string name="sunday_mega_challenge_desc">20 questions to finish the week!</string>
 
+    <!-- Arcade Daily Game -->
+    <string name="arcade_energy">ENERGY: %1$d/%2$d</string>
+    <string name="arcade_target_label">SYNC TARGET</string>
+    <string name="arcade_mission_failed">MISSION FAILED</string>
+    <string name="arcade_reboot">REBOOT SYSTEM</string>
+    <string name="arcade_ship">Interceptor Ship</string>
 </resources>

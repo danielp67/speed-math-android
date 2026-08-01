@@ -1,57 +1,60 @@
 package fr.accentweb.speedMath.ui.daily;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.icu.util.Calendar;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.view.animation.LinearInterpolator;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.navigation.Navigation;
+import androidx.work.Operation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import fr.accentweb.speedMath.R;
 import fr.accentweb.speedMath.core.BaseGameFragment;
 import fr.accentweb.speedMath.core.FeedbackManager;
 import fr.accentweb.speedMath.core.PlayerManager;
 import fr.accentweb.speedMath.core.QuestionGenerator;
-import fr.accentweb.speedMath.utils.AnimUtils;
 
 public class DailyGameFragment extends BaseGameFragment {
 
-    private TextView txtChallengeTitle, txtChallengeDesc, textQuestion, textResult;
-    private ProgressBar progressTimer;
-    private CardView[] cards = new CardView[10];
-    private CardView cardCancel, cardClear, cardValidate;
-    private TextView[] texts = new TextView[10];
-    
+    private FrameLayout gameContainer;
+    private TextView txtTargetNumber, txtScore, txtLife;
+    private LinearLayout gameOverOverlay;
+    private Button btnRetry;
+    private View dangerLine;
+    private ImageView imgShip;
+
     private PlayerManager playerManager;
-    private QuestionGenerator questionGenerator;
     private FeedbackManager feedbackManager;
-    private CountDownTimer flashTimer;
-
+    private QuestionGenerator questionGenerator;
+    private final Random random = new Random();
+    private final Handler spawnHandler = new Handler(Looper.getMainLooper());
+    
     private int score = 0;
-    private int targetScore = 10;
-    private int correctAnswer;
-    private ChallengeMode currentMode;
+    private int lives = 3;
+    private int targetNumber;
+    private final int winGoal = 10;
     private boolean isGameOver = false;
-
-    enum ChallengeMode {
-        FLASH,          // 1.5s per question
-        SUDDEN_DEATH,   // 1 error = game over
-        MYSTERY_OP,     // Guess the operator
-        COMPLEX_MUL,    // Hard multiplications
-        NORMAL          // Default
-    }
+    private int screenWidth;
+    private final List<View> activeInvaders = new ArrayList<>();
 
     @Nullable
     @Override
@@ -62,212 +65,151 @@ public class DailyGameFragment extends BaseGameFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         playerManager = PlayerManager.getInstance(requireContext());
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
-        initUI(view);
-        determineChallengeMode();
-        setupGame();
-        generateQuestion();
+        gameContainer = view.findViewById(R.id.gameContainer);
+        txtTargetNumber = view.findViewById(R.id.txtTargetNumber);
+        txtScore = view.findViewById(R.id.txtScore);
+        txtLife = view.findViewById(R.id.txtLife);
+        gameOverOverlay = view.findViewById(R.id.gameOverOverlay);
+        btnRetry = view.findViewById(R.id.btnRetry);
+        dangerLine = view.findViewById(R.id.dangerLine);
+        imgShip = view.findViewById(R.id.imgShip);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenWidth = metrics.widthPixels;
+
+        questionGenerator = new QuestionGenerator(playerManager.getCurrentLevel() + 5, 2, false, true, true, true, false, true);
+        btnRetry.setOnClickListener(v -> restartGame());
+        startGame();
     }
 
-    private void initUI(View view) {
-        txtChallengeTitle = view.findViewById(R.id.txtChallengeTitle);
-        txtChallengeDesc = view.findViewById(R.id.txtChallengeDesc);
-        textQuestion = view.findViewById(R.id.textQuestion);
-        textResult = view.findViewById(R.id.textResult);
-        progressTimer = view.findViewById(R.id.progressTimer);
-
-        // Clavier Numérique
-        for (int i = 0; i <= 9; i++) {
-            int resID = getResources().getIdentifier("card" + i, "id", requireActivity().getPackageName());
-            cards[i] = view.findViewById(resID);
-            texts[i] = cards[i].findViewById(R.id.textButton);
-            texts[i].setText(String.valueOf(i));
-            int finalI = i;
-            cards[i].setOnClickListener(v -> {
-                if (isGameOver) return;
-                textResult.append(String.valueOf(finalI));
-            });
-        }
-
-        cardClear = view.findViewById(R.id.cardC);
-        cardCancel = view.findViewById(R.id.cardX);
-        cardValidate = view.findViewById(R.id.cardOK);
-
-        ((TextView)cardClear.findViewById(R.id.textButton)).setText("C");
-        ((TextView)cardCancel.findViewById(R.id.textButton)).setText("X");
-        ((TextView)cardValidate.findViewById(R.id.textButton)).setText("OK");
-
-        cardClear.setOnClickListener(v -> textResult.setText(""));
-        cardCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
-        cardValidate.setOnClickListener(v -> checkAnswer());
+    private void startGame() {
+        score = 0; lives = 3; isGameOver = false;
+        gameOverOverlay.setVisibility(View.GONE);
+        updateUI();
+        setNextTarget();
+        startSpawning();
     }
 
-    private void determineChallengeMode() {
-        int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        switch (day) {
-            case Calendar.MONDAY:
-                currentMode = ChallengeMode.FLASH;
-                txtChallengeTitle.setText("MONDAY FLASH");
-                txtChallengeDesc.setText("1.5 seconds per question!");
-                break;
-            case Calendar.TUESDAY:
-                currentMode = ChallengeMode.SUDDEN_DEATH;
-                txtChallengeTitle.setText("SUDDEN DEATH");
-                txtChallengeDesc.setText("One mistake and it's over!");
-                break;
-            case Calendar.WEDNESDAY:
-                currentMode = ChallengeMode.MYSTERY_OP;
-                txtChallengeTitle.setText("MYSTERY OPERATOR");
-                txtChallengeDesc.setText("Find the hidden sign!");
-                break;
-            case Calendar.THURSDAY:
-                currentMode = ChallengeMode.COMPLEX_MUL;
-                txtChallengeTitle.setText("COMPLEX MUL");
-                txtChallengeDesc.setText("Two digits multiplication!");
-                break;
-            default:
-                currentMode = ChallengeMode.NORMAL;
-                txtChallengeTitle.setText("DAILY CHALLENGE");
-                txtChallengeDesc.setText("Complete 10 questions!");
-                break;
-        }
+    private void restartGame() {
+        for (View v : new ArrayList<>(activeInvaders)) gameContainer.removeView(v);
+        activeInvaders.clear();
+        startGame();
     }
 
-    private void setupGame() {
-        boolean allowPlus = true, allowMinus = true, allowMul = true, allowDiv = true;
-        int level = playerManager.getCurrentLevel();
-
-        if (currentMode == ChallengeMode.COMPLEX_MUL) {
-            allowPlus = allowMinus = allowDiv = false;
-            level = 80; // Force high level for difficult multiplications
-        }
-
-        questionGenerator = new QuestionGenerator(
-                level,
-                2,
-                false,
-                allowPlus, allowMinus, allowMul, allowDiv,
-                true
-        );
-    }
-
-    private void generateQuestion() {
-        if (isGameOver) return;
-        textResult.setText("");
-        AnimUtils.slideLeftRight(textQuestion);
-
+    private void setNextTarget() {
         QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
-        correctAnswer = q.answer;
-
-        if (currentMode == ChallengeMode.MYSTERY_OP) {
-            // Hide the operator
-            String expression = q.expression.replace("+", "?").replace("-", "?").replace("x", "?").replace("÷", "?");
-            textQuestion.setText(expression + " (" + q.answer + ")");
-            // In mystery mode, the user inputs the hidden answer? No, user inputs the answer, but wait...
-            // Concept change: if Mystery Op, show "A ? B = Result", user must find... the result? 
-            // Better: Show "A ? B = Result", user must find the result? No, that's normal.
-            // Let's do: "A ? B = Result", what is '?'? But our Numpad is for numbers.
-            // Revert: Mystery Op means the sign is hidden, but you still need to find the result based on the possible options?
-            // Actually, let's keep it simple: Hide operator, user must figure out the result by testing.
-            textQuestion.setText(expression);
-        } else {
-            textQuestion.setText(q.expression);
-        }
-
-        if (currentMode == ChallengeMode.FLASH) {
-            startFlashTimer();
-        }
+        targetNumber = q.answer;
+        txtTargetNumber.setText(String.valueOf(targetNumber));
     }
 
-    private void startFlashTimer() {
-        if (flashTimer != null) flashTimer.cancel();
-        progressTimer.setVisibility(View.VISIBLE);
-        progressTimer.setProgress(1000);
-
-        flashTimer = new CountDownTimer(1500, 15) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                progressTimer.setProgress((int) (millisUntilFinished * 1000 / 1500));
-            }
-
-            @Override
-            public void onFinish() {
-                onTimeUp();
-            }
-        }.start();
+    private void updateUI() {
+        txtScore.setText(getString(R.string.arcade_energy, score, winGoal));
+        StringBuilder l = new StringBuilder();
+        for (int i = 0; i < lives; i++) l.append("❤️");
+        txtLife.setText(l.toString());
     }
 
-    private void onTimeUp() {
+    private void startSpawning() {
         if (isGameOver) return;
-        feedbackManager.playWrongSound();
-        failChallenge("Time is up!");
+        spawnInvader();
+        long delay = Math.max(800, 2500 - (score * 150));
+        spawnHandler.postDelayed(this::startSpawning, delay);
     }
 
-    private void checkAnswer() {
+    private void spawnInvader() {
         if (isGameOver) return;
-        String input = textResult.getText().toString().trim();
-        if (input.isEmpty()) return;
-
-        if (flashTimer != null) flashTimer.cancel();
-
-        int userAnswer = Integer.parseInt(input);
-        boolean isCorrect = userAnswer == correctAnswer;
-
-        flashBorder(textResult, isCorrect);
-
+        boolean isCorrect = random.nextInt(3) == 0;
+        String expr; int res;
         if (isCorrect) {
-            score++;
-            feedbackManager.playCorrectSound();
-            if (score >= targetScore) {
-                winChallenge();
-            } else {
-                new Handler().postDelayed(this::generateQuestion, 500);
-            }
+            int a = random.nextInt(Math.max(1, targetNumber));
+            expr = a + " + " + (targetNumber - a);
+            res = targetNumber;
         } else {
-            feedbackManager.playWrongSound();
-            if (currentMode == ChallengeMode.SUDDEN_DEATH || currentMode == ChallengeMode.FLASH) {
-                failChallenge("Wrong answer! Challenge failed.");
-            } else {
-                new Handler().postDelayed(this::generateQuestion, 500);
-            }
+            QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
+            expr = q.expression.replace(" = ?", "");
+            res = q.answer;
+            if (res == targetNumber) res++;
         }
+
+        TextView invader = new TextView(requireContext());
+        invader.setText(expr);
+        invader.setTextColor(Color.WHITE);
+        invader.setTextSize(20);
+        invader.setPadding(35, 15, 35, 15);
+        invader.setGravity(android.view.Gravity.CENTER);
+        invader.setBackgroundResource(R.drawable.answer_card_bg);
+        invader.setTag(res);
+
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        invader.setLayoutParams(lp);
+        invader.setX(random.nextInt(Math.max(1, screenWidth - 250)));
+        invader.setY(-200);
+
+        gameContainer.addView(invader);
+        activeInvaders.add(invader);
+        invader.setOnClickListener(v -> handleShoot((TextView) v));
+
+        ObjectAnimator anim = ObjectAnimator.ofFloat(invader, "translationY", dangerLine.getY());
+        anim.setDuration(Math.max(1500, 6000 - (score * 350)));
+        anim.setInterpolator(new LinearInterpolator());
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator a) {
+                if (!isGameOver && gameContainer.indexOfChild(invader) != -1) {
+                    if ((int)invader.getTag() == targetNumber) loseLife();
+                    removeInvader(invader);
+                }
+            }
+        });
+        anim.start();
     }
 
-    private void winChallenge() {
+    private void handleShoot(TextView invader) {
+        if (isGameOver) return;
+        imgShip.animate().x(invader.getX() + invader.getWidth()/2f - imgShip.getWidth()/2f).setDuration(100).start();
+        if ((int) invader.getTag() == targetNumber) {
+            score++; feedbackManager.playCorrectSound();
+            invader.animate().scaleX(2.5f).scaleY(0.1f).alpha(0f).setDuration(150).withEndAction(() -> removeInvader(invader)).start();
+            setNextTarget();
+            if (score >= winGoal) winGame();
+        } else {
+            loseLife();
+            invader.setBackgroundColor(Color.RED);
+            invader.animate().translationYBy(-100).alpha(0).setDuration(200).withEndAction(() -> removeInvader(invader)).start();
+        }
+        updateUI();
+    }
+
+    private void loseLife() {
+        lives--; feedbackManager.playWrongSound();
+        ObjectAnimator shake = ObjectAnimator.ofFloat(gameContainer, "translationX", 0, 30);
+        shake.setDuration(40);
+        shake.setRepeatCount(5);
+        shake.setRepeatMode(ObjectAnimator.REVERSE);
+        shake.start();
+        if (lives <= 0) endGame();
+    }
+
+    private void removeInvader(View v) { gameContainer.removeView(v); activeInvaders.remove(v); }
+    private void endGame() { isGameOver = true; spawnHandler.removeCallbacksAndMessages(null); gameOverOverlay.setVisibility(View.VISIBLE); }
+
+    private void winGame() {
         isGameOver = true;
-        // Mark as done for today and show reward in previous fragment
-        // We'll use a result bundle or just shared prefs
-        // But for now, let's navigate back with success
-        Bundle result = new Bundle();
-        result.putBoolean("SUCCESS", true);
-        getParentFragmentManager().setFragmentResult("daily_result", result);
-        
-        Toast.makeText(getContext(), "🎉 Challenge Completed!", Toast.LENGTH_LONG).show();
-        Navigation.findNavController(requireView()).navigateUp();
-    }
-
-    private void failChallenge(String message) {
-        isGameOver = true;
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-        Navigation.findNavController(requireView()).navigateUp();
-    }
-
-    private void flashBorder(TextView view, boolean isCorrect) {
-        Drawable originalBackground = view.getBackground();
-        int borderColor = isCorrect ? Color.parseColor("#4CAF50") : Color.parseColor("#F44336");
-        GradientDrawable gd = new GradientDrawable();
-        gd.setStroke(8, borderColor);
-        view.setBackground(gd);
-        new Handler().postDelayed(() -> view.setBackground(originalBackground), 500);
+        spawnHandler.removeCallbacksAndMessages(null);
+        playerManager.setDailyChallengeWaitingClaim(true);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("SUCCESS", true);
+        getParentFragmentManager().setFragmentResult("daily_result",bundle);
+        feedbackManager.playLevelUpSound();
+        Toast.makeText(getContext(), "You win ! Claim your reward !", Toast.LENGTH_SHORT).show();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> { if(isAdded()) requireActivity().onBackPressed(); }, 1500);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (flashTimer != null) flashTimer.cancel();
-    }
+    public void onDestroyView() { super.onDestroyView(); spawnHandler.removeCallbacksAndMessages(null); }
 }

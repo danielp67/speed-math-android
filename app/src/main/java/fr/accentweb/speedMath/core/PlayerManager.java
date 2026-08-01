@@ -56,6 +56,7 @@ public class PlayerManager {
     private static final String KEY_DAILY_STREAK = "daily_streak";
     private static final String KEY_LAST_DAILY_DATE = "last_daily_date";
     private static final String KEY_POPUP_SEEN_PREFIX = "popup_seen_";
+    private static final String KEY_DAILY_WAITING_CLAIM = "daily_waiting_claim";
 
 
     private MediaPlayer backgroundMusic = null;
@@ -388,7 +389,6 @@ public class PlayerManager {
         });
     }
 
-
     public String getLastConnection() {
         return prefs.getString(KEY_LAST_CONNECTION, "");
     }
@@ -476,6 +476,14 @@ public class PlayerManager {
 
     public void markPopupAsSeen(int versionCode) {
         prefs.edit().putBoolean(KEY_POPUP_SEEN_PREFIX + versionCode, true).apply();
+    }
+
+    public void setDailyChallengeWaitingClaim(boolean waiting) {
+        prefs.edit().putBoolean(KEY_DAILY_WAITING_CLAIM, waiting).apply();
+    }
+
+    public boolean isDailyChallengeWaitingClaim() {
+        return prefs.getBoolean(KEY_DAILY_WAITING_CLAIM, false);
     }
 
 }
