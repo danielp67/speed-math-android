@@ -45,6 +45,8 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         items.add(new ArcadeItem("👥", 16, "Battle", "Dual Mode", "DUAL"));
         items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Online Mode", "ONLINE"));
         items.add(new ArcadeItem("🤝", 16, "Friends", "Invite or join a friend", "FRIEND"));
+      //  items.add(new ArcadeItem("🛸", 16, "Invaders", "Math Invaders", "INVADERS"));
+      //  items.add(new ArcadeItem("🧱", 16, "Tetris", "Math Tetris", "TETRIS"));
         items.add(new ArcadeItem("🎁", 16, "Daily Challenge", "Play and win gifts", "DAILY"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
@@ -95,6 +97,12 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
                 args.putInt("DIFFICULTY", playerManager.getMemoryDuoDifficulty());
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_memoryDualFragment, args);
                 break;
+            case "INVADERS":
+                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_mathInvadersFragment, args);
+                break;
+            case "TETRIS":
+                Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_mathTetrisFragment, args);
+                break;
             default:
                 args.putInt("DIFFICULTY", getCurrentGameDifficultyValue(mode));
                 Navigation.findNavController(v).navigate(R.id.action_navigation_home_to_gameFragment, args);
@@ -104,7 +112,7 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
     @Override
     public void onSettingsClick(View v, String mode) {
 
-        if ("ONLINE".equals(mode) || "DAILY".equals(mode) || "FRIEND".equals(mode)) return;
+        if ("ONLINE".equals(mode) || "DAILY".equals(mode) || "FRIEND".equals(mode) || "INVADERS".equals(mode) || "TETRIS".equals(mode)) return;
 
         Object currentDifficulty;
 

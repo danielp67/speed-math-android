@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://tools.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
@@ -35,6 +35,12 @@
         <action
             android:id="@+id/action_navigation_home_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_mathInvadersFragment"
+            app:destination="@id/mathInvadersFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_mathTetrisFragment"
+            app:destination="@id/mathTetrisFragment" />
     </fragment>
 
     <fragment
@@ -100,6 +106,18 @@
         android:id="@+id/dailyGameFragment"
         android:name="fr.accentweb.speedMath.ui.daily.DailyGameFragment"
         android:label="Daily Challenge"
+        tools:layout="@layout/fragment_daily_game"/>
+
+    <fragment
+        android:id="@+id/mathInvadersFragment"
+        android:name="fr.accentweb.speedMath.ui.game.MathInvadersFragment"
+        android:label="@string/action_math_invaders"
+        tools:layout="@layout/fragment_daily_game"/>
+
+    <fragment
+        android:id="@+id/mathTetrisFragment"
+        android:name="fr.accentweb.speedMath.ui.game.MathTetrisFragment"
+        android:label="@string/action_math_tetris"
         tools:layout="@layout/fragment_daily_game"/>
 
     <fragment
