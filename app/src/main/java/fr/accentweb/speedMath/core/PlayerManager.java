@@ -90,7 +90,7 @@ public class PlayerManager {
     public void setLevelHighScore(int level, long score) {
         if (score > getLevelHighScore(level))
         {
-        prefs.edit().putLong(KEY_TIME_LEVEL_PREFIX + level, score).apply();
+            prefs.edit().putLong(KEY_TIME_LEVEL_PREFIX + level, score).apply();
         }
     }
 

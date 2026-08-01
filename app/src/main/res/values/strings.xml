@@ -83,4 +83,31 @@
     <string name="total_points">Total Points</string>
     <string name="avg_match">Average/Match</string>
 
+    <!-- Daily Challenge -->
+    <string name="daily_streak_format">🔥 Streak: %1$d days</string>
+    <string name="daily_ticket_title">🎫 DAILY CHALLENGE</string>
+    <string name="daily_tap_to_start">Tap to start</string>
+    <string name="daily_reward_unlocked">REWARD UNLOCKED!</string>
+    <string name="daily_play_online_now">Play Online Now 🚀</string>
+    <string name="daily_footer_desc">Complete the daily task to claim your matches!</string>
+    <string name="daily_already_claimed">Challenge déjà fait, reviens demain !</string>
+    <string name="daily_success_reveal">DÉFI RÉUSSI ! CLIQUE POUR RÉVÉLER</string>
+    <string name="daily_reward_format">🎟 +%1$d Matchs Online !</string>
+    <string name="daily_challenge_completed">🎉 Challenge Completed!</string>
+
+    <string name="monday_flash">MONDAY FLASH</string>
+    <string name="monday_flash_desc">1.5 seconds per question!</string>
+    <string name="tuesday_sudden_death">SUDDEN DEATH</string>
+    <string name="tuesday_sudden_death_desc">One mistake and it\'s over!</string>
+    <string name="wednesday_mystery_op">MYSTERY OPERATOR</string>
+    <string name="wednesday_mystery_op_desc">Find the hidden sign!</string>
+    <string name="thursday_complex_mul">COMPLEX MUL</string>
+    <string name="thursday_complex_mul_desc">Two digits multiplication!</string>
+    <string name="friday_speed_run">SPEED RUN</string>
+    <string name="friday_speed_run_desc">10 questions as fast as possible!</string>
+    <string name="saturday_mixed">SATURDAY MIXED</string>
+    <string name="saturday_mixed_desc">A bit of everything!</string>
+    <string name="sunday_mega_challenge">SUNDAY MEGA</string>
+    <string name="sunday_mega_challenge_desc">20 questions to finish the week!</string>
+
 </resources>

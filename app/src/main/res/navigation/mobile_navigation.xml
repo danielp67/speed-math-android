@@ -90,7 +90,18 @@
         android:id="@+id/dailyChallengeFragment"
         android:name="fr.accentweb.speedMath.ui.daily.DailyChallengeFragment"
         android:label="@string/action_daily_challenge"
-        tools:layout="@layout/fragment_daily_challenge"/>
+        tools:layout="@layout/fragment_daily_challenge">
+        <action
+            android:id="@+id/action_dailyChallengeFragment_to_dailyGameFragment"
+            app:destination="@id/dailyGameFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dailyGameFragment"
+        android:name="fr.accentweb.speedMath.ui.daily.DailyGameFragment"
+        android:label="Daily Challenge"
+        tools:layout="@layout/fragment_daily_game"/>
+
     <fragment
         android:id="@+id/memoryFragment"
         android:name="fr.accentweb.speedMath.ui.memory.MemoryFragment"

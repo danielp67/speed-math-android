@@ -5,15 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:background="?android:attr/colorBackground">
 
     <TextView
         android:id="@+id/txtStreak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="🔥 Streak: 0 days"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
         android:layout_marginBottom="12dp"/>
 
     <TextView
@@ -22,21 +24,23 @@
         android:layout_height="wrap_content"
         android:text="✔ 1   ✔ 3   ✔ 5   ✔ 7   ✔ 14   ✔ 30"
         android:textSize="14sp"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="32dp"/>
 
     <!-- TICKET -->
     <com.google.android.material.card.MaterialCardView
-    android:id="@+id/cardTicket"
+        android:id="@+id/cardTicket"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        card_view:cardCornerRadius="16dp"
-        card_view:cardElevation="6dp">
+        android:layout_height="180dp"
+        card_view:cardCornerRadius="20dp"
+        card_view:cardElevation="8dp"
+        card_view:strokeWidth="2dp"
+        card_view:strokeColor="@color/accent_violet">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- FRONT : couleur background -->
+            <!-- FRONT -->
             <LinearLayout
                 android:id="@+id/ticketFront"
                 android:layout_width="match_parent"
@@ -47,18 +51,22 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:text="🎫 DAILY TICKET"
+                    android:id="@+id/txtTicketTitle"
+                    android:text="🎫 DAILY CHALLENGE"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textSize="18sp"/>
+                    android:textSize="22sp"/>
 
                 <TextView
-                    android:text="Tap to claim"
+                    android:id="@+id/txtTicketAction"
+                    android:text="Tap to start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:layout_marginTop="8dp"/>
+                    android:textSize="14sp"
+                    android:textStyle="italic"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/accent_violet"/>
             </LinearLayout>
 
             <!-- BACK : GOLDEN -->
@@ -78,19 +86,37 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textSize="@dimen/sp_24" />
+                    android:textColor="@color/white"
+                    android:textSize="24sp" />
 
-
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="REWARD UNLOCKED!"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
 
         </FrameLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
     <Button
         android:id="@+id/btnPlayOnline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Play Online Now 🚀"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/blue_primary"
+        android:textColor="@color/white"
+        android:visibility="gone"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play Online"
-        android:layout_marginTop="12dp"
-        android:visibility="gone"/>
+        android:text="Complete the daily task to claim your matches!"
+        android:textSize="12sp"
+        android:layout_marginTop="16dp"
+        android:alpha="0.7"/>
 </LinearLayout>
