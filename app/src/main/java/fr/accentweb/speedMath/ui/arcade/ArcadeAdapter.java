@@ -104,11 +104,12 @@ public class ArcadeAdapter extends RecyclerView.Adapter<ArcadeAdapter.ViewHolder
         boolean isFriend = "FRIEND".equals(item.mode);
         boolean isInvaders = "INVADERS".equals(item.mode);
         boolean isTetris = "TETRIS".equals(item.mode);
+        boolean isKart = "KART".equals(item.mode);
 
 
         // SETTINGS / ONLINE INFO
-        h.btnSettings.setVisibility(isOnline || isDaily || isFriend || isInvaders || isTetris ? View.GONE : View.VISIBLE);
-        h.btnSettings.setClickable(!isOnline || !isDaily || !isFriend || !isInvaders || !isTetris);
+        h.btnSettings.setVisibility(isOnline || isDaily || isFriend || isInvaders || isTetris || isKart ? View.GONE : View.VISIBLE);
+        h.btnSettings.setClickable(!isOnline || !isDaily || !isFriend || !isInvaders || !isTetris || !isKart);
 
 
         if (isOnline) {

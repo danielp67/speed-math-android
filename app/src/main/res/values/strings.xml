@@ -13,6 +13,7 @@
     <string name="action_daily_challenge">Daily Challenge</string>
     <string name="action_math_invaders">Math Invaders</string>
     <string name="action_math_tetris">Math Tetris</string>
+    <string name="action_math_kart">Math Kart</string>
 
     <string name="title_add">Addition Suite</string>
     <string name="title_sub">Subtraction Suite</string>
@@ -105,9 +106,10 @@
     <string name="streak_all">🔀 All</string>
     <string name="streak_invaders">🛸 Space</string>
     <string name="streak_tetris">🧱 Tetris</string>
+    <string name="streak_kart">🏎️ Kart</string>
 
     <string name="game_score_format">Score: %1$d</string>
-    <string name="tetris_sum_format">Sum: %1$d</string>
+    <string name="tetris_sum_format">Sum: %1$d / Target: %2$d</string>
 
     <!-- Daily Challenge -->
     <string name="daily_streak_format">🔥 Streak: %1$d days</string>

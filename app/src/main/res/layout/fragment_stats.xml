@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_dark">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,15 +11,26 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_performance"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-medium"/>
+
         <!-- BLOCK 1: ONLINE DASHBOARD -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/background_dark_soft"
             app:strokeWidth="1.5dp"
-            app:strokeColor="@color/accent_violet">
+            app:strokeColor="@color/divider">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,6 +46,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/stats_online_rank"
+                        android:textColor="@color/text_secondary"
                         android:textSize="13sp"
                         android:textStyle="bold"
                         android:textAllCaps="true"
@@ -62,35 +75,34 @@
                     android:columnCount="3">
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_points" android:textSize="11sp"/>
-                        <TextView android:id="@+id/tvTotalPoints" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/blue_primary_light" android:textSize="20sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_played" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                        <TextView android:id="@+id/tvTotalMatches" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="20sp" android:textStyle="bold"/>
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_win_percent" android:textSize="11sp"/>
-                        <TextView android:id="@+id/tvWinRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0%" android:textColor="@color/accent_violet" android:textSize="20sp" android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_played"  android:textSize="11sp"/>
-                        <TextView android:id="@+id/tvTotalMatches" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="20sp" android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:layout_marginTop="20dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_wins" android:textSize="11sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_wins" android:textColor="@color/text_secondary" android:textSize="11sp"/>
                         <TextView android:id="@+id/tvWins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/correct" android:textSize="20sp" android:textStyle="bold"/>
                     </LinearLayout>
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:layout_marginTop="20dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_draws" android:textSize="11sp"/>
-                        <TextView android:id="@+id/tvDraws" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/grey_medium" android:textSize="20sp" android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:layout_marginTop="20dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_losses" android:textSize="11sp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_losses" android:textColor="@color/text_secondary" android:textSize="11sp"/>
                         <TextView android:id="@+id/tvLosses" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/wrong" android:textSize="20sp" android:textStyle="bold"/>
                     </LinearLayout>
 
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:layout_marginTop="20dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_points" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                        <TextView android:id="@+id/tvTotalPoints" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/blue_primary_light" android:textSize="20sp" android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:layout_marginTop="20dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_win_percent" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                        <TextView android:id="@+id/tvWinRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0%" android:textColor="@color/accent_violet" android:textSize="20sp" android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:gravity="center" android:layout_marginTop="20dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stats_draws" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                        <TextView android:id="@+id/tvDraws" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/grey_medium" android:textSize="20sp" android:textStyle="bold"/>
+                    </LinearLayout>
                 </GridLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -101,9 +113,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@color/background_dark_soft"
             app:strokeWidth="1.5dp"
-            app:strokeColor="@color/accent_violet">
+            app:strokeColor="@color/divider">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -115,6 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/stats_best_streaks"
+                    android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textAllCaps="true"
@@ -127,38 +141,43 @@
                     android:columnCount="2">
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_add" android:textSize="14sp"/>
-                        <TextView android:id="@+id/tvStreakAdd" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_add" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakAdd" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_sub" android:textSize="14sp"/>
-                        <TextView android:id="@+id/tvStreakSub" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_sub" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakSub" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_mul" android:textSize="14sp"/>
-                        <TextView android:id="@+id/tvStreakMul" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_mul" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakMul" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_div" android:textSize="14sp"/>
-                        <TextView android:id="@+id/tvStreakDiv" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_div" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakDiv" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_all" android:textSize="14sp"/>
-                        <TextView android:id="@+id/tvStreakAll" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_all" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakAll" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_invaders" android:textSize="14sp"/>
-                        <TextView android:id="@+id/tvStreakInvaders" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_invaders" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakInvaders" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_tetris" android:textSize="14sp"/>
-                        <TextView android:id="@+id/tvStreakTetris" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_tetris" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakTetris" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:padding="10dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/streak_kart" android:textColor="@color/text_secondary" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvStreakKart" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" android:gravity="end"/>
                     </LinearLayout>
                 </GridLayout>
             </LinearLayout>
@@ -170,9 +189,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@color/background_dark_soft"
             app:strokeWidth="1.5dp"
-            app:strokeColor="@color/accent_violet">
+            app:strokeColor="@color/divider">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -185,6 +205,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/dummy_text"
+                    android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp"/>
@@ -197,7 +218,7 @@
                     android:progress="0"
                     android:max="100"
                     android:progressTint="@color/blue_primary_light"
-                    android:progressBackgroundTint="@color/accent_violet"
+                    android:progressBackgroundTint="@color/divider"
                     android:layout_marginBottom="10dp"/>
 
                 <TextView
@@ -205,6 +226,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/dummy_text"
+                    android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:layout_gravity="end"/>
             </LinearLayout>

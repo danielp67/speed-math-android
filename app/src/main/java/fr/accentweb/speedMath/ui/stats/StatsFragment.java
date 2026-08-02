@@ -18,7 +18,7 @@ public class StatsFragment extends Fragment {
 
     private PlayerManager playerManager;
     private TextView tvRank, tvWinRate, tvTotalMatches, tvWins, tvLosses, tvDraws, tvTotalPoints;
-    private TextView tvStreakAdd, tvStreakSub, tvStreakMul, tvStreakDiv, tvStreakAll, tvStreakInvaders, tvStreakTetris;
+    private TextView tvStreakAdd, tvStreakSub, tvStreakMul, tvStreakDiv, tvStreakAll, tvStreakInvaders, tvStreakTetris, tvStreakKart;
     private TextView tvLevelTitle, tvLevelProgressText;
     private ProgressBar pbLevel;
 
@@ -46,6 +46,7 @@ public class StatsFragment extends Fragment {
         tvStreakAll = root.findViewById(R.id.tvStreakAll);
         tvStreakInvaders = root.findViewById(R.id.tvStreakInvaders);
         tvStreakTetris = root.findViewById(R.id.tvStreakTetris);
+        tvStreakKart = root.findViewById(R.id.tvStreakKart);
 
         // League
         tvLevelTitle = root.findViewById(R.id.tvLevelTitle);
@@ -90,6 +91,7 @@ public class StatsFragment extends Fragment {
         
         tvStreakInvaders.setText(String.valueOf(playerManager.getCorrectAnswersStreak("INVADERS", 0)));
         tvStreakTetris.setText(String.valueOf(playerManager.getCorrectAnswersStreak("TETRIS", 0)));
+        tvStreakKart.setText(String.valueOf(playerManager.getCorrectAnswersStreak("KART", 0)));
 
         // League Data
         int currentLevel = playerManager.getCurrentLevel();

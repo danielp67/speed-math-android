@@ -41,6 +41,9 @@
         <action
             android:id="@+id/action_navigation_home_to_mathTetrisFragment"
             app:destination="@id/mathTetrisFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_mathKartFragment"
+            app:destination="@id/mathKartFragment" />
     </fragment>
 
     <fragment
@@ -118,6 +121,12 @@
         android:id="@+id/mathTetrisFragment"
         android:name="fr.accentweb.speedMath.ui.game.MathTetrisFragment"
         android:label="@string/action_math_tetris"
+        tools:layout="@layout/fragment_daily_game"/>
+
+    <fragment
+        android:id="@+id/mathKartFragment"
+        android:name="fr.accentweb.speedMath.ui.game.MathKartFragment"
+        android:label="@string/action_math_kart"
         tools:layout="@layout/fragment_daily_game"/>
 
     <fragment
