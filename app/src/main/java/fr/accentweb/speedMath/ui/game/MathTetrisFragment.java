@@ -115,9 +115,6 @@ public class MathTetrisFragment extends BaseGameFragment {
     private void updateUI() {
         txtScore.setText(getString(R.string.tetris_sum_format, currentSum));
         txtLife.setText(getString(R.string.game_score_format, score));
-        
-        // Save score as streak
-        playerManager.setCorrectAnswersStreak("TETRIS", 0, score);
     }
 
     private void startSpawning() {
@@ -175,6 +172,7 @@ public class MathTetrisFragment extends BaseGameFragment {
 
         if (currentSum == targetNumber) {
             score++;
+            playerManager.setCorrectAnswersStreak("TETRIS", 0, score);
             feedbackManager.playCorrectSound();
             clearSelectedBlocks();
             setNextTarget();

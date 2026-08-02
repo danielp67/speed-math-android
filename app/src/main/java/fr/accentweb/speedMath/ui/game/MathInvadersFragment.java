@@ -79,7 +79,7 @@ public class MathInvadersFragment extends BaseGameFragment {
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         screenWidth = metrics.widthPixels;
 
-        questionGenerator = new QuestionGenerator(playerManager.getCurrentLevel() + 5, 2, false, true, true, true, false, true);
+        questionGenerator = new QuestionGenerator(0, 2, false, true, true, true, false, true);
         btnRetry.setOnClickListener(v -> restartGame());
         startGame();
     }
@@ -109,9 +109,6 @@ public class MathInvadersFragment extends BaseGameFragment {
         StringBuilder l = new StringBuilder();
         for (int i = 0; i < lives; i++) l.append("❤️");
         txtLife.setText(l.toString());
-        
-        // Save score as streak
-        playerManager.setCorrectAnswersStreak("INVADERS", 0, score);
     }
 
     private void startSpawning() {
@@ -130,10 +127,13 @@ public class MathInvadersFragment extends BaseGameFragment {
             expr = a + " + " + (targetNumber - a);
             res = targetNumber;
         } else {
-            QuestionGenerator.MathQuestion q = questionGenerator.generateQuestion();
+            QuestionGenerator.MathQuestion q;
+            do {
+                q = questionGenerator.generateQuestion();
+            } while (q.answer == targetNumber); // On recommence tant que c'est égal à la cible
+
             expr = q.expression.replace(" = ?", "");
             res = q.answer;
-            if (res == targetNumber) res++;
         }
 
         TextView invader = new TextView(requireContext());
@@ -161,7 +161,10 @@ public class MathInvadersFragment extends BaseGameFragment {
             @Override
             public void onAnimationEnd(Animator a) {
                 if (!isGameOver && gameContainer.indexOfChild(invader) != -1) {
-                    if ((int)invader.getTag() == targetNumber) loseLife();
+                    if ((int)invader.getTag() == targetNumber){
+                        loseLife();
+                        updateUI();
+                    }
                     removeInvader(invader);
                 }
             }
@@ -173,8 +176,11 @@ public class MathInvadersFragment extends BaseGameFragment {
         if (isGameOver) return;
         imgShip.animate().x(invader.getX() + invader.getWidth()/2f - imgShip.getWidth()/2f).setDuration(100).start();
         if ((int) invader.getTag() == targetNumber) {
-            score++; feedbackManager.playCorrectSound();
+            score++;
+            playerManager.setCorrectAnswersStreak("INVADERS", 0, score);
+            feedbackManager.playCorrectSound();
             invader.animate().scaleX(2.5f).scaleY(0.1f).alpha(0f).setDuration(150).withEndAction(() -> removeInvader(invader)).start();
+            questionGenerator.setLevel(score);
             setNextTarget();
         } else {
             loseLife();
