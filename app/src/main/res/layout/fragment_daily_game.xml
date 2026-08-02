@@ -50,11 +50,13 @@
         android:layout_gravity="bottom"
         android:background="#0D0D15"
         android:elevation="5dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="25dp"
             android:text="@string/arcade_target_label"
             android:textColor="#555577"
             android:textSize="11sp"
@@ -66,17 +68,18 @@
             android:layout_centerInParent="true"
             android:text="0"
             android:textColor="#FFD700"
-            android:textSize="56sp"
+            android:textSize="36sp"
             android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/imgShip"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
-            android:src="@drawable/gamepad_solid_full"
+            android:layout_marginTop="5dp"
             android:contentDescription="@string/arcade_ship"
+            android:src="@drawable/gamepad_solid_full"
             app:tint="#00FFCC" />
     </RelativeLayout>
 
