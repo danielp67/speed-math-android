@@ -91,7 +91,7 @@
     <!-- =====================================================
      MATERIAL ALIASES (IMPORTANT)
     ====================================================== -->
-    <color name="colorSurfaceDark">@color/background_dark_soft</color>
+    <color name="colorSurface">@color/background_dark_soft</color>
     <color name="colorSurfaceLight">@color/white</color>
 
     <color name="colorOnBackground">@color/text_primary</color>

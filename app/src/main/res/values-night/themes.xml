@@ -7,6 +7,7 @@
             <item name="android:colorBackground">@color/background_dark</item>
             <item name="colorBackground">@color/background_dark</item>
             <item name="colorSurface">@color/background_dark_soft</item>
+            <item name="colorSurfaceVariant">@color/background_dark_soft</item>
 
             <!-- primary text -->
             <item name="android:textColor">@color/grey_light</item>
@@ -27,6 +28,7 @@
             <item name="colorPrimary">@color/black</item>
             <!-- FONT -->
             <item name="android:fontFamily">@font/inter_regular</item>
+            <item name="elevationOverlayEnabled">false</item> <!-- Désactive l'éclaircissement auto du Dark Mode -->
         </style>
 
         <style name="Theme.ActionBar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
