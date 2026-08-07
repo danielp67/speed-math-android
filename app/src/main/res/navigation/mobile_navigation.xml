@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://tools.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
@@ -101,8 +101,14 @@
         android:label="@string/action_daily_challenge"
         tools:layout="@layout/fragment_daily_challenge">
         <action
-            android:id="@+id/action_dailyChallengeFragment_to_dailyGameFragment"
-            app:destination="@id/dailyGameFragment" />
+            android:id="@+id/action_dailyChallengeFragment_to_mathInvadersFragment"
+            app:destination="@id/mathInvadersFragment" />
+        <action
+            android:id="@+id/action_dailyChallengeFragment_to_mathTetrisFragment"
+            app:destination="@id/mathTetrisFragment" />
+        <action
+            android:id="@+id/action_dailyChallengeFragment_to_mathKartFragment"
+            app:destination="@id/mathKartFragment" />
     </fragment>
 
     <fragment
