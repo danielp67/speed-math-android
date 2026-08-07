@@ -4,7 +4,6 @@
     android:id="@+id/gameContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#050510"
     android:clipChildren="false">
 
     <View
@@ -48,7 +47,6 @@
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:layout_gravity="bottom"
-        android:background="#0D0D15"
         android:elevation="5dp">
 
         <TextView

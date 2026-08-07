@@ -141,7 +141,7 @@ public class MathTetrisFragment extends BaseGameFragment {
         block.setTextColor(Color.WHITE);
         block.setTextSize(22);
         block.setGravity(android.view.Gravity.CENTER);
-        block.setBackgroundResource(R.drawable.answer_card_bg);
+        block.setBackgroundResource(R.drawable.memory_card_back);
         block.setTag(value);
 
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(blockWidth - 4, blockHeight - 4);
@@ -185,7 +185,7 @@ public class MathTetrisFragment extends BaseGameFragment {
 
     private void clearSelection() {
         for (TextView b : selectedBlocks) {
-            b.setBackgroundResource(R.drawable.answer_card_bg);
+            b.setBackgroundResource(R.drawable.memory_card_back);
             b.setTextColor(Color.WHITE);
         }
         selectedBlocks.clear();

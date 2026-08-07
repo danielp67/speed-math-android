@@ -109,7 +109,7 @@
     <string name="streak_kart">🏎️ Kart</string>
 
     <string name="game_score_format">Score: %1$d</string>
-    <string name="tetris_sum_format">Sum: %1$d / Target: %2$d</string>
+    <string name="tetris_sum_format">Sum: %1$d</string>
 
     <!-- Daily Challenge -->
     <string name="daily_streak_format">🔥 Streak: %1$d days</string>

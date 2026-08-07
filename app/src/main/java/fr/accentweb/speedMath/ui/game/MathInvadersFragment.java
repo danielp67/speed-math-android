@@ -142,7 +142,7 @@ public class MathInvadersFragment extends BaseGameFragment {
         invader.setTextSize(20);
         invader.setPadding(35, 15, 35, 15);
         invader.setGravity(android.view.Gravity.CENTER);
-        invader.setBackgroundResource(R.drawable.answer_card_bg);
+        invader.setBackgroundResource(R.drawable.memory_card_back);
         invader.setTag(res);
 
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
