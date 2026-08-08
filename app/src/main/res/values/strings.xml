@@ -87,6 +87,7 @@
     <string name="avg_match">Average/Match</string>
 
     <string name="stats_online_rank">Online Rank</string>
+    <string name="stats_refresh_date">Refresh once a day</string>
     <string name="stats_wins">Wins</string>
     <string name="stats_losses">Losses</string>
     <string name="stats_played">Played</string>

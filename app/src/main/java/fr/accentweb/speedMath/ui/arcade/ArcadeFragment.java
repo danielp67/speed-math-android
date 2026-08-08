@@ -41,14 +41,14 @@ public class ArcadeFragment extends Fragment implements ArcadeAdapter.OnItemClic
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         List<ArcadeItem> items = new ArrayList<>();
-        items.add(new ArcadeItem("👤", 16, "Solo", "QCM Mode", "QCM"));
-        items.add(new ArcadeItem("👥", 16, "Battle", "Dual Mode", "DUAL"));
         items.add(new ArcadeItem("\uD83C\uDF10", 16, "Online", "Online Mode", "ONLINE"));
         items.add(new ArcadeItem("🤝", 16, "Friends", "Invite or join a friend", "FRIEND"));
+        items.add(new ArcadeItem("🎁", 16, "Daily Challenge", "Play and win gifts", "DAILY"));
         items.add(new ArcadeItem("🛸", 16, "Invaders", "Math Invaders", "INVADERS"));
         items.add(new ArcadeItem("🧱", 16, "Tetris", "Math Tetris", "TETRIS"));
         items.add(new ArcadeItem("🏎️", 16, "Kart", "Math Kart", "KART"));
-        items.add(new ArcadeItem("🎁", 16, "Daily Challenge", "Play and win gifts", "DAILY"));
+        items.add(new ArcadeItem("👤", 16, "Solo", "QCM Mode", "QCM"));
+        items.add(new ArcadeItem("👥", 16, "Battle", "Dual Mode", "DUAL"));
         items.add(new ArcadeItem("🧠", 16, "Memory", "Find pairs", "MEMORY"));
         items.add(new ArcadeItem("🧠🧠", 10, "Memory Duo", "🧠 vs 🧠", "MEMORY_DUO"));
         items.add(new ArcadeItem("+ - × ÷", 10, "All Streak", "Mixed", "ALL"));
