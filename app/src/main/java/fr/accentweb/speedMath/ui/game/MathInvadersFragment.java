@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +51,8 @@ public class MathInvadersFragment extends BaseGameFragment {
     private int lives = 3;
     private int targetNumber;
     private boolean isGameOver = false;
+    private boolean isDaily = false;
+    private int winGoal = 10;
     private int screenWidth;
     private final List<View> activeInvaders = new ArrayList<>();
 
@@ -65,6 +68,11 @@ public class MathInvadersFragment extends BaseGameFragment {
         playerManager = PlayerManager.getInstance(requireContext());
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
+
+        if (getArguments() != null) {
+            isDaily = getArguments().getBoolean("IS_DAILY", false);
+            winGoal = getArguments().getInt("WIN_GOAL", 10);
+        }
 
         gameContainer = view.findViewById(R.id.gameContainer);
         txtTargetNumber = view.findViewById(R.id.txtTargetNumber);
@@ -105,7 +113,11 @@ public class MathInvadersFragment extends BaseGameFragment {
     }
 
     private void updateUI() {
-        txtScore.setText(getString(R.string.game_score_format, score));
+        if (isDaily) {
+            txtScore.setText(getString(R.string.arcade_energy, score, winGoal));
+        } else {
+            txtScore.setText(getString(R.string.game_score_format, score));
+        }
         StringBuilder l = new StringBuilder();
         for (int i = 0; i < lives; i++) l.append("❤️");
         txtLife.setText(l.toString());
@@ -130,7 +142,7 @@ public class MathInvadersFragment extends BaseGameFragment {
             QuestionGenerator.MathQuestion q;
             do {
                 q = questionGenerator.generateQuestion();
-            } while (q.answer == targetNumber); // On recommence tant que c'est égal à la cible
+            } while (q.answer == targetNumber);
 
             expr = q.expression.replace(" = ?", "");
             res = q.answer;
@@ -163,7 +175,6 @@ public class MathInvadersFragment extends BaseGameFragment {
                 if (!isGameOver && gameContainer.indexOfChild(invader) != -1) {
                     if ((int)invader.getTag() == targetNumber){
                         loseLife();
-                        updateUI();
                     }
                     removeInvader(invader);
                 }
@@ -182,12 +193,30 @@ public class MathInvadersFragment extends BaseGameFragment {
             invader.animate().scaleX(2.5f).scaleY(0.1f).alpha(0f).setDuration(150).withEndAction(() -> removeInvader(invader)).start();
             questionGenerator.setLevel(score);
             setNextTarget();
+            
+            if (isDaily && score >= winGoal) {
+                winDaily();
+            }
         } else {
             loseLife();
             invader.setBackgroundColor(Color.RED);
             invader.animate().translationYBy(-100).alpha(0).setDuration(200).withEndAction(() -> removeInvader(invader)).start();
         }
         updateUI();
+    }
+
+    private void winDaily() {
+        isGameOver = true;
+        spawnHandler.removeCallbacksAndMessages(null);
+        playerManager.setDailyChallengeWaitingClaim(true);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("SUCCESS", true);
+        getParentFragmentManager().setFragmentResult("daily_result", bundle);
+        feedbackManager.playLevelUpSound();
+        Toast.makeText(getContext(), "DAILY CHALLENGE SUCCESS!", Toast.LENGTH_SHORT).show();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isAdded()) requireActivity().onBackPressed();
+        }, 1500);
     }
 
     private void loseLife() {
@@ -197,6 +226,7 @@ public class MathInvadersFragment extends BaseGameFragment {
         shake.setRepeatCount(5);
         shake.setRepeatMode(ObjectAnimator.REVERSE);
         shake.start();
+        updateUI();
         if (lives <= 0) endGame();
     }
 

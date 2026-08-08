@@ -179,12 +179,14 @@ public class DailyChallengeFragment extends BaseGameFragment {
             wheelContainer.setVisibility(View.GONE);
             txtTicketAction.setText("You win! Tap to reveal your gift");
         } else if (playerManager.isDailyChallengeDoneToday()) {
-            cardTicket.setVisibility(View.GONE);
-            btnSpin.setVisibility(View.VISIBLE);
-            btnSpin.setText("ALREADY DONE TODAY");
-            btnSpin.setEnabled(false);
+            cardTicket.setVisibility(View.VISIBLE);
+            btnSpin.setVisibility(View.GONE);
+           // btnSpin.setText("ALREADY DONE TODAY");
+           // btnSpin.setEnabled(false);
+            txtTicketAction.setText("Already done today");
+
             btnPlayOnline.setVisibility(View.VISIBLE);
-            wheelContainer.setVisibility(View.VISIBLE);
+            wheelContainer.setVisibility(View.GONE);
         } else {
             cardTicket.setVisibility(View.GONE);
             btnSpin.setVisibility(View.VISIBLE);

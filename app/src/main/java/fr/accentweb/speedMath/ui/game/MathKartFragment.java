@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,7 +50,9 @@ public class MathKartFragment extends BaseGameFragment {
     private int score = 0;
     private int lives = 3;
     private int speedKmh = 40;
+    private final int winGoal = 10;
     private boolean isGameOver = false;
+    private boolean isDaily = false;
     private int screenWidth;
     private final List<View> activeObstacles = new ArrayList<>();
     
@@ -74,6 +75,8 @@ public class MathKartFragment extends BaseGameFragment {
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
 
+        isDaily = getArguments() != null && getArguments().getBoolean("IS_DAILY", false);
+
         gameContainer = view.findViewById(R.id.gameContainer);
         txtScore = view.findViewById(R.id.txtScore);
         txtLife = view.findViewById(R.id.txtLife);
@@ -93,7 +96,6 @@ public class MathKartFragment extends BaseGameFragment {
 
         addRoadMarkings();
 
-        // QCM Mode enabled for 4 options
         questionGenerator = new QuestionGenerator(0, 2, true, true, true, false, false, true);
         
         gameContainer.setOnTouchListener((v, event) -> {
@@ -115,7 +117,7 @@ public class MathKartFragment extends BaseGameFragment {
     private void addRoadMarkings() {
         for (int i = 1; i < LANE_COUNT; i++) {
             View line = new View(requireContext());
-            line.setBackgroundColor(Color.parseColor("#33FFFFFF"));
+            line.setBackgroundColor(Color.parseColor("#22FFFFFF"));
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(4, ViewGroup.LayoutParams.MATCH_PARENT);
             line.setLayoutParams(lp);
             line.setX(i * laneWidth);
@@ -124,15 +126,10 @@ public class MathKartFragment extends BaseGameFragment {
     }
 
     private void startGame() {
-        score = 0;
-        lives = 3;
-        speedKmh = 40;
-        isGameOver = false;
-        currentLane = 1;
+        score = 0; lives = 3; speedKmh = 40; isGameOver = false; currentLane = 1;
         gameOverOverlay.setVisibility(View.GONE);
         updateUI();
         imgKart.post(() -> moveKart(currentLane));
-        gameHandler.removeCallbacksAndMessages(null);
         startSpawning();
     }
 
@@ -148,13 +145,16 @@ public class MathKartFragment extends BaseGameFragment {
 
     private void moveKart(int lane) {
         currentLane = lane;
-        float targetX = lane * laneWidth + (laneWidth / 2f) - (imgKart.getWidth() / 2f);
-        imgKart.animate().cancel();
+        float targetX = lane * laneWidth + laneWidth / 2f - imgKart.getWidth() / 2f;
         imgKart.animate().x(targetX).setDuration(120).start();
     }
 
     private void updateUI() {
-        txtScore.setText(getString(R.string.game_score_format, score) + " | " + speedKmh + " km/h");
+        if (isDaily) {
+            txtScore.setText(getString(R.string.arcade_energy, score, winGoal));
+        } else {
+            txtScore.setText(getString(R.string.game_score_format, score) + " | " + speedKmh + " km/h");
+        }
         StringBuilder l = new StringBuilder();
         for (int i = 0; i < lives; i++) l.append("❤️");
         txtLife.setText(l.toString());
@@ -172,34 +172,32 @@ public class MathKartFragment extends BaseGameFragment {
     private void spawnGates() {
         if (isGameOver) return;
 
-        questionGenerator.setLevel(score);
+        questionGenerator.setLevel(score * 2);
         currentQuestion = questionGenerator.generateQuestion();
         txtExpression.setText(currentQuestion.expression.replace(" = ?", ""));
         
         List<View> wave = new ArrayList<>();
         List<Integer> choices = currentQuestion.answersChoice;
         
-        int correctIndex = -1;
+        int correctIdx = -1;
         for (int i = 0; i < choices.size(); i++) {
             if (choices.get(i) == currentQuestion.answer) {
-                correctIndex = i;
+                correctIdx = i;
                 break;
             }
         }
-        final int finalCorrectLane = correctIndex;
+        final int finalCorrectLane = correctIdx;
         final boolean[] waveProcessed = {false};
 
         for (int i = 0; i < LANE_COUNT; i++) {
             TextView gate = new TextView(requireContext());
-            int answerVal = choices.get(i);
-
-            gate.setText(String.valueOf(answerVal));
+            gate.setText(String.valueOf(choices.get(i)));
             gate.setTextColor(Color.WHITE);
             gate.setTextSize(22);
             gate.setGravity(android.view.Gravity.CENTER);
             gate.setBackgroundResource(R.drawable.memory_card_back);
 
-            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(laneWidth - 30, 150);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(laneWidth - 30, 140);
             gate.setLayoutParams(lp);
             gate.setX(i * laneWidth + 15);
             gate.setY(-250);
@@ -217,35 +215,45 @@ public class MathKartFragment extends BaseGameFragment {
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            if (isGameOver || waveProcessed[0]) return;
-                            
-                            // Ensure the wave actually reached the bottom (not cancelled)
-                            if (gameContainer.indexOfChild(gate) == -1) return;
-
+                            if (isGameOver || waveProcessed[0] || gameContainer.indexOfChild(gate) == -1) return;
                             waveProcessed[0] = true;
 
-                            // Evaluation: Is the kart in the correct lane now?
                             if (currentLane == finalCorrectLane) {
                                 score++;
                                 speedKmh += 5;
                                 feedbackManager.playCorrectSound();
                                 updateUI();
+                                if (isDaily && score >= winGoal) {
+                                    winDaily();
+                                }
                             } else {
                                 crash();
                             }
-                            removeWave(wave);
+                            gameContainer.post(() -> removeWave(wave));
                         }
                     });
         }
     }
 
+    private void winDaily() {
+        isGameOver = true;
+        gameHandler.removeCallbacksAndMessages(null);
+        playerManager.setDailyChallengeWaitingClaim(true);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("SUCCESS", true);
+        getParentFragmentManager().setFragmentResult("daily_result", bundle);
+        feedbackManager.playLevelUpSound();
+        Toast.makeText(getContext(), "DAILY CHALLENGE SUCCESS!", Toast.LENGTH_SHORT).show();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isAdded()) requireActivity().onBackPressed();
+        }, 1500);
+    }
+
     private void removeWave(List<View> wave) {
         for (View v : wave) {
-            v.animate().setListener(null); // Remove listener to avoid recursive calls
+            v.animate().setListener(null);
             v.animate().cancel();
-            if (v.getParent() != null) {
-                gameContainer.removeView(v);
-            }
+            if (v.getParent() != null) gameContainer.removeView(v);
             activeObstacles.remove(v);
         }
     }

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,6 +50,8 @@ public class MathTetrisFragment extends BaseGameFragment {
     private int currentSum = 0;
     private int targetNumber;
     private boolean isGameOver = false;
+    private boolean isDaily = false;
+    private final int winGoal = 10;
     private int blockWidth;
     private int blockHeight;
     
@@ -67,6 +70,8 @@ public class MathTetrisFragment extends BaseGameFragment {
         playerManager = PlayerManager.getInstance(requireContext());
         feedbackManager = new FeedbackManager(requireContext());
         feedbackManager.loadSounds(R.raw.correct, R.raw.wrong, R.raw.levelup);
+
+        isDaily = getArguments() != null && getArguments().getBoolean("IS_DAILY", false);
 
         gameContainer = view.findViewById(R.id.gameContainer);
         txtTargetNumber = view.findViewById(R.id.txtTargetNumber);
@@ -114,7 +119,11 @@ public class MathTetrisFragment extends BaseGameFragment {
 
     private void updateUI() {
         txtScore.setText(getString(R.string.tetris_sum_format, currentSum));
-        txtLife.setText(getString(R.string.game_score_format, score));
+        if (isDaily) {
+            txtLife.setText("Score: " + score + "/" + winGoal);
+        } else {
+            txtLife.setText(getString(R.string.game_score_format, score));
+        }
     }
 
     private void startSpawning() {
@@ -176,11 +185,29 @@ public class MathTetrisFragment extends BaseGameFragment {
             feedbackManager.playCorrectSound();
             clearSelectedBlocks();
             setNextTarget();
+            
+            if (isDaily && score >= winGoal) {
+                winDaily();
+            }
         } else if (currentSum > targetNumber) {
             feedbackManager.playWrongSound();
             clearSelection();
         }
         updateUI();
+    }
+
+    private void winDaily() {
+        isGameOver = true;
+        gameHandler.removeCallbacksAndMessages(null);
+        playerManager.setDailyChallengeWaitingClaim(true);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("SUCCESS", true);
+        getParentFragmentManager().setFragmentResult("daily_result", bundle);
+        feedbackManager.playLevelUpSound();
+        Toast.makeText(getContext(), "DAILY CHALLENGE SUCCESS!", Toast.LENGTH_SHORT).show();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isAdded()) requireActivity().onBackPressed();
+        }, 1500);
     }
 
     private void clearSelection() {

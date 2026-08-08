@@ -123,23 +123,8 @@
     <string name="daily_reward_format">🎟 +%1$d Matchs Online !</string>
     <string name="daily_challenge_completed">🎉 Challenge Completed!</string>
 
-    <string name="monday_flash">MONDAY FLASH</string>
-    <string name="monday_flash_desc">1.5 seconds per question!</string>
-    <string name="tuesday_sudden_death">SUDDEN DEATH</string>
-    <string name="tuesday_sudden_death_desc">One mistake and it\'s over!</string>
-    <string name="wednesday_mystery_op">MYSTERY OPERATOR</string>
-    <string name="wednesday_mystery_op_desc">Find the hidden sign!</string>
-    <string name="thursday_complex_mul">COMPLEX MUL</string>
-    <string name="thursday_complex_mul_desc">Two digits multiplication!</string>
-    <string name="friday_speed_run">SPEED RUN</string>
-    <string name="friday_speed_run_desc">10 questions as fast as possible!</string>
-    <string name="saturday_mixed">SATURDAY MIXED</string>
-    <string name="saturday_mixed_desc">A bit of everything!</string>
-    <string name="sunday_mega_challenge">SUNDAY MEGA</string>
-    <string name="sunday_mega_challenge_desc">20 questions to finish the week!</string>
-
     <!-- Arcade Daily Game -->
-    <string name="arcade_energy">ENERGY: %1$d/%2$d</string>
+    <string name="arcade_energy">Score: %1$d/%2$d</string>
     <string name="arcade_target_label">SYNC TARGET</string>
     <string name="arcade_mission_failed">MISSION FAILED</string>
     <string name="arcade_reboot">REBOOT SYSTEM</string>
