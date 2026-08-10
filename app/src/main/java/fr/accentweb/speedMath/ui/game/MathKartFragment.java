@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -112,7 +113,19 @@ public class MathKartFragment extends BaseGameFragment {
         });
 
         btnRetry.setOnClickListener(v -> restartGame());
-        startGame();
+        
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int h = gameContainer.getHeight();
+                if (h > 0 && dangerLine.getY() > h / 2f) {
+                    view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    if (isAdded() && !isGameOver) {
+                        startGame();
+                    }
+                }
+            }
+        });
     }
 
     private void addRoadMarkings() {
@@ -131,18 +144,24 @@ public class MathKartFragment extends BaseGameFragment {
         score = 0; lives = 3; speedKmh = 40; isGameOver = false; currentLane = 1;
         gameOverOverlay.setVisibility(View.GONE);
         updateUI();
-        imgKart.post(() -> moveKart(currentLane));
+        imgKart.post(() -> {
+            if (imgKart.getWidth() > 0) moveKart(currentLane);
+        });
         startSpawning();
     }
 
     private void restartGame() {
         gameHandler.removeCallbacksAndMessages(null);
+        clearActiveObstacles();
+        startGame();
+    }
+    
+    private void clearActiveObstacles() {
         for (View v : new ArrayList<>(activeObstacles)) {
             v.animate().cancel();
             if (v.getParent() != null) gameContainer.removeView(v);
         }
         activeObstacles.clear();
-        startGame();
     }
 
     private void moveKart(int lane) {
@@ -169,11 +188,14 @@ public class MathKartFragment extends BaseGameFragment {
         if (activeObstacles.isEmpty()) {
             spawnGates();
         }
-        gameHandler.postDelayed(this::startSpawning, 500);
+        gameHandler.postDelayed(this::startSpawning, 100);
     }
 
     private void spawnGates() {
         if (isGameOver || !isAdded()) return;
+
+        final float targetY = dangerLine.getY();
+        if (targetY <= 0) return;
 
         questionGenerator.setLevel(score * 2);
         currentQuestion = questionGenerator.generateQuestion();
@@ -208,24 +230,25 @@ public class MathKartFragment extends BaseGameFragment {
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(laneWidth - 30, 140);
             gate.setLayoutParams(lp);
             gate.setX(i * laneWidth + 15);
-            gate.setY(-250);
+            gate.setY(-400); // Start higher off-screen
 
             gameContainer.addView(gate);
             activeObstacles.add(gate);
             wave.add(gate);
 
+            // Faster initial speed: base 4200ms
             long duration = Math.max(1000, 7000 - (speedKmh * 30L));
 
             gate.animate()
-                    .translationY(dangerLine.getY())
+                    .y(targetY)
                     .setDuration(duration)
                     .setInterpolator(new LinearInterpolator())
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             if (isGameOver || !isAdded() || waveProcessed[0] || gameContainer.indexOfChild(gate) == -1) return;
+                            
                             waveProcessed[0] = true;
-
                             if (currentLane == finalCorrectLane) {
                                 score++;
                                 speedKmh += 5;
@@ -237,7 +260,7 @@ public class MathKartFragment extends BaseGameFragment {
                             } else {
                                 crash();
                             }
-                            gameContainer.post(() -> removeWave(wave));
+                            removeWave(wave);
                         }
                     });
         }
@@ -286,9 +309,6 @@ public class MathKartFragment extends BaseGameFragment {
     public void onDestroyView() {
         super.onDestroyView();
         gameHandler.removeCallbacksAndMessages(null);
-        for (View v : activeObstacles) {
-            v.animate().cancel();
-        }
-        activeObstacles.clear();
+        clearActiveObstacles();
     }
 }
