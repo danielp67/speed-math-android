@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,10 +149,14 @@ public class MathTetrisFragment extends BaseGameFragment {
         int value = 1 + random.nextInt(9);
         TextView block = new TextView(requireContext());
         block.setText(String.valueOf(value));
-        block.setTextColor(Color.WHITE);
+        
+        TypedValue typedValue = new TypedValue();
+        requireContext().getTheme().resolveAttribute(R.attr.textPrimary, typedValue, true);
+        block.setTextColor(typedValue.data);
+        
         block.setTextSize(22);
         block.setGravity(android.view.Gravity.CENTER);
-        block.setBackgroundResource(R.drawable.memory_card_back);
+        block.setBackgroundResource(R.drawable.arcade_card_bg);
         block.setTag(value);
 
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(blockWidth - 4, blockHeight - 4);
@@ -213,9 +218,14 @@ public class MathTetrisFragment extends BaseGameFragment {
     }
 
     private void clearSelection() {
+        if (!isAdded()) return;
+        TypedValue typedValue = new TypedValue();
+        requireContext().getTheme().resolveAttribute(R.attr.textPrimary, typedValue, true);
+        int textColor = typedValue.data;
+
         for (TextView b : selectedBlocks) {
             b.setBackgroundResource(R.drawable.memory_card_back);
-            b.setTextColor(Color.WHITE);
+            b.setTextColor(textColor);
         }
         selectedBlocks.clear();
         currentSum = 0;

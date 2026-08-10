@@ -7,6 +7,7 @@
         <item name="android:colorBackground">@color/grey_light</item>
         <item name="colorBackground">@color/grey_light</item>
         <item name="colorSurface">@color/white</item>
+        <item name="cardBackground">@color/white</item>
 
         <!-- primary text -->
         <item name="android:textColor">@color/grey_dark_2</item>

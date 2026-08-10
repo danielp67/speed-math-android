@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -191,14 +192,18 @@ public class MathKartFragment extends BaseGameFragment {
         final int finalCorrectLane = correctIdx;
         final boolean[] waveProcessed = {false};
 
+        TypedValue typedValue = new TypedValue();
+        requireContext().getTheme().resolveAttribute(R.attr.textPrimary, typedValue, true);
+        int textColor = typedValue.data;
+
         for (int i = 0; i < LANE_COUNT; i++) {
             if (!isAdded()) return;
             TextView gate = new TextView(requireContext());
             gate.setText(String.valueOf(choices.get(i)));
-            gate.setTextColor(Color.WHITE);
+            gate.setTextColor(textColor);
             gate.setTextSize(22);
             gate.setGravity(android.view.Gravity.CENTER);
-            gate.setBackgroundResource(R.drawable.memory_card_back);
+            gate.setBackgroundResource(R.drawable.arcade_card_bg);
 
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(laneWidth - 30, 140);
             gate.setLayoutParams(lp);

@@ -8,6 +8,7 @@
             <item name="colorBackground">@color/background_dark</item>
             <item name="colorSurface">@color/background_dark_soft</item>
             <item name="colorSurfaceVariant">@color/background_dark_soft</item>
+            <item name="cardBackground">@color/background_dark_soft</item>
 
             <!-- primary text -->
             <item name="android:textColor">@color/grey_light</item>

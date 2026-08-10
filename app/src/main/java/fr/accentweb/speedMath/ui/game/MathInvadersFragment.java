@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -151,11 +152,15 @@ public class MathInvadersFragment extends BaseGameFragment {
 
         TextView invader = new TextView(requireContext());
         invader.setText(expr);
-        invader.setTextColor(Color.WHITE);
+        
+        TypedValue typedValue = new TypedValue();
+        requireContext().getTheme().resolveAttribute(R.attr.textPrimary, typedValue, true);
+        invader.setTextColor(typedValue.data);
+
         invader.setTextSize(20);
         invader.setPadding(35, 15, 35, 15);
         invader.setGravity(android.view.Gravity.CENTER);
-        invader.setBackgroundResource(R.drawable.memory_card_back);
+        invader.setBackgroundResource(R.drawable.arcade_card_bg);
         invader.setTag(res);
 
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
