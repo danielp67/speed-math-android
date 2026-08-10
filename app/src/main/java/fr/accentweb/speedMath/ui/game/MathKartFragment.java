@@ -115,6 +115,7 @@ public class MathKartFragment extends BaseGameFragment {
     }
 
     private void addRoadMarkings() {
+        if (!isAdded()) return;
         for (int i = 1; i < LANE_COUNT; i++) {
             View line = new View(requireContext());
             line.setBackgroundColor(Color.parseColor("#22FFFFFF"));
@@ -150,6 +151,7 @@ public class MathKartFragment extends BaseGameFragment {
     }
 
     private void updateUI() {
+        if (!isAdded()) return;
         if (isDaily) {
             txtScore.setText(getString(R.string.arcade_energy, score, winGoal));
         } else {
@@ -162,7 +164,7 @@ public class MathKartFragment extends BaseGameFragment {
     }
 
     private void startSpawning() {
-        if (isGameOver) return;
+        if (isGameOver || !isAdded()) return;
         if (activeObstacles.isEmpty()) {
             spawnGates();
         }
@@ -170,7 +172,7 @@ public class MathKartFragment extends BaseGameFragment {
     }
 
     private void spawnGates() {
-        if (isGameOver) return;
+        if (isGameOver || !isAdded()) return;
 
         questionGenerator.setLevel(score * 2);
         currentQuestion = questionGenerator.generateQuestion();
@@ -190,6 +192,7 @@ public class MathKartFragment extends BaseGameFragment {
         final boolean[] waveProcessed = {false};
 
         for (int i = 0; i < LANE_COUNT; i++) {
+            if (!isAdded()) return;
             TextView gate = new TextView(requireContext());
             gate.setText(String.valueOf(choices.get(i)));
             gate.setTextColor(Color.WHITE);
@@ -215,7 +218,7 @@ public class MathKartFragment extends BaseGameFragment {
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            if (isGameOver || waveProcessed[0] || gameContainer.indexOfChild(gate) == -1) return;
+                            if (isGameOver || !isAdded() || waveProcessed[0] || gameContainer.indexOfChild(gate) == -1) return;
                             waveProcessed[0] = true;
 
                             if (currentLane == finalCorrectLane) {
@@ -239,6 +242,7 @@ public class MathKartFragment extends BaseGameFragment {
         isGameOver = true;
         gameHandler.removeCallbacksAndMessages(null);
         playerManager.setDailyChallengeWaitingClaim(true);
+        if (!isAdded()) return;
         Bundle bundle = new Bundle();
         bundle.putBoolean("SUCCESS", true);
         getParentFragmentManager().setFragmentResult("daily_result", bundle);
@@ -277,5 +281,9 @@ public class MathKartFragment extends BaseGameFragment {
     public void onDestroyView() {
         super.onDestroyView();
         gameHandler.removeCallbacksAndMessages(null);
+        for (View v : activeObstacles) {
+            v.animate().cancel();
+        }
+        activeObstacles.clear();
     }
 }

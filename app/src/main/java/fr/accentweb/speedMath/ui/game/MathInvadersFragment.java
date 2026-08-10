@@ -113,6 +113,7 @@ public class MathInvadersFragment extends BaseGameFragment {
     }
 
     private void updateUI() {
+        if (!isAdded()) return;
         if (isDaily) {
             txtScore.setText(getString(R.string.arcade_energy, score, winGoal));
         } else {
@@ -124,14 +125,14 @@ public class MathInvadersFragment extends BaseGameFragment {
     }
 
     private void startSpawning() {
-        if (isGameOver) return;
+        if (isGameOver || !isAdded()) return;
         spawnInvader();
         long delay = Math.max(800, 3000 - (score * 100));
         spawnHandler.postDelayed(this::startSpawning, delay);
     }
 
     private void spawnInvader() {
-        if (isGameOver) return;
+        if (isGameOver || !isAdded()) return;
         boolean isCorrect = random.nextInt(3) == 0;
         String expr; int res;
         if (isCorrect) {
@@ -172,7 +173,7 @@ public class MathInvadersFragment extends BaseGameFragment {
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator a) {
-                if (!isGameOver && gameContainer.indexOfChild(invader) != -1) {
+                if (!isGameOver && isAdded() && gameContainer.indexOfChild(invader) != -1) {
                     if ((int)invader.getTag() == targetNumber){
                         loseLife();
                     }
@@ -209,6 +210,7 @@ public class MathInvadersFragment extends BaseGameFragment {
         isGameOver = true;
         spawnHandler.removeCallbacksAndMessages(null);
         playerManager.setDailyChallengeWaitingClaim(true);
+        if (!isAdded()) return;
         Bundle bundle = new Bundle();
         bundle.putBoolean("SUCCESS", true);
         getParentFragmentManager().setFragmentResult("daily_result", bundle);

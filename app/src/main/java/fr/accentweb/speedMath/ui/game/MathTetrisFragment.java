@@ -118,6 +118,7 @@ public class MathTetrisFragment extends BaseGameFragment {
     }
 
     private void updateUI() {
+        if (!isAdded()) return;
         txtScore.setText(getString(R.string.tetris_sum_format, currentSum));
         if (isDaily) {
             txtLife.setText("Score: " + score + "/" + winGoal);
@@ -127,14 +128,14 @@ public class MathTetrisFragment extends BaseGameFragment {
     }
 
     private void startSpawning() {
-        if (isGameOver) return;
+        if (isGameOver || !isAdded()) return;
         spawnBlock();
         long delay = Math.max(1200, 3500 - (score * 100L));
         gameHandler.postDelayed(this::startSpawning, delay);
     }
 
     private void spawnBlock() {
-        if (isGameOver) return;
+        if (isGameOver || !isAdded()) return;
         
         int colIndex = random.nextInt(COLS);
         List<TextView> col = columns.get(colIndex);
@@ -200,6 +201,7 @@ public class MathTetrisFragment extends BaseGameFragment {
         isGameOver = true;
         gameHandler.removeCallbacksAndMessages(null);
         playerManager.setDailyChallengeWaitingClaim(true);
+        if (!isAdded()) return;
         Bundle bundle = new Bundle();
         bundle.putBoolean("SUCCESS", true);
         getParentFragmentManager().setFragmentResult("daily_result", bundle);
