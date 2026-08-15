@@ -1,0 +1,242 @@
+# GOOGLE PLAY STORE METADATA — ALL LANGUAGES
+# RULES: Title is English for all. Short Description < 80 chars.
+
+<en-US>
+TITLE: Speed Math – Brain & Battle
+SHORT: Train your brain. Challenge your friends. Become faster every day. No Ads!
+DESCRIPTION:
+🧠⚡ THINK FAST. SOLVE FASTER. BECOME UNSTOPPABLE.
+
+Looking for a fun way to sharpen your mind? Speed Math isn’t just a calculator—it’s an intense mental training ground designed to push your cognitive limits.
+
+🔥 NEW: THE ARCADE REVOLUTION
+• 🏎️ MATH KART: Race through gates by solving equations at high speed!
+• 🛸 MATH INVADERS: Defend your base by shooting down falling math expressions.
+• 🧱 MATH TETRIS: A strategic puzzle to clear the board with your mind.
+
+🎮 CHOOSE YOUR CHALLENGE
+🧩 SOLO: Arcade, League, and Speed Solve.
+🧠 MEMORY: Classic Memory and Memory Duo (2-player).
+⚔️ BATTLES: Solo AI, Local Dual Battle, and Online Real-time Battles.
+
+🌍 FAIR & ETHICAL GAMING
+✅ NO ADS
+✅ NO PAY-TO-WIN
+✅ PRIVACY FIRST
+
+Download Speed Math now and play smarter, faster, better!
+</en-US>
+
+<en-AU>
+TITLE: Speed Math – Brain & Battle
+SHORT: Train your brain. Challenge your friends. Become faster every day. No Ads!
+DESCRIPTION: (Same as en-US)
+</en-AU>
+
+<en-GB>
+TITLE: Speed Math – Brain & Battle
+SHORT: Train your brain. Challenge your friends. Become faster every day. No Ads!
+DESCRIPTION: (Same as en-US)
+</en-GB>
+
+<fr-FR>
+TITLE: Speed Math – Brain & Battle
+SHORT: Entraînez votre cerveau. Défiez vos amis. Plus rapide chaque jour. Sans Pub !
+DESCRIPTION:
+🧠⚡ PENSEZ VITE. RÉSOLVEZ PLUS VITE. DEVENEZ INARRÊTABLE.
+
+Envie d'aiguiser votre esprit tout en vous amusant ? Speed Math n’est pas qu'une simple calculatrice — c’est un terrain d’entraînement mental intense conçu pour repousser vos limites cognitives.
+
+🔥 NOUVEAU : LA RÉVOLUTION ARCADE
+• 🏎️ MATH KART : Foncez à travers les portes en résolvant des équations à toute vitesse !
+• 🛸 MATH INVADERS : Défendez votre base en abattant les expressions mathématiques.
+• 🧱 MATH TETRIS : Un puzzle stratégique où seul votre esprit peut vider le plateau.
+
+🎮 CHOISISSEZ VOTRE DÉFI
+🧩 SOLO : Modes Arcade, Ligue et Speed Solve.
+🧠 MÉMOIRE : Memory Classique et Memory Duo (2 joueurs).
+⚔️ BATAILLES : Duel contre l'IA, Bataille Locale (écran scindé) et Batailles en ligne.
+
+🌍 UN JEU ÉTHIQUE
+✅ SANS PUBLICITÉ
+✅ AUCUN PAY-TO-WIN
+✅ RESPECT DE LA VIE PRIVÉE
+
+Téléchargez Speed Math maintenant et jouez plus intelligemment, plus vite, mieux !
+</fr-FR>
+
+<fr-CA>
+TITLE: Speed Math – Brain & Battle
+SHORT: Entraînez votre cerveau. Défiez vos amis. Plus rapide chaque jour. Sans Pub !
+DESCRIPTION: (Même que fr-FR)
+</fr-CA>
+
+<es-ES>
+TITLE: Speed Math – Brain & Battle
+SHORT: Entrena tu cerebro. Desafía a tus amigos. Más rápido cada día. ¡Sin Anuncios!
+DESCRIPTION:
+🧠⚡ PIENSA RÁPIDO. RESUELVE MÁS RÁPIDO. SÉ IMPARABLE.
+
+¿Buscas una forma divertida de agudizar tu mente? Speed Math no es solo una calculadora: es un campo de entrenamiento mental intenso diseñado para desafiar tus límites.
+
+🔥 NUEVO: LA REVOLUCIÓN ARCADE
+• 🏎️ MATH KART: ¡Atraviesa puertas resolviendo ecuaciones a toda velocidad!
+• 🛸 MATH INVADERS: Defiende tu base derribando expresiones matemáticas.
+• 🧱 MATH TETRIS: Un rompecabezas estratégico para despejar el tablero con tu mente.
+
+🎮 ELIGE TU DESAFÍO
+🧩 SOLO: Arcade, Liga y Speed Solve.
+🧠 MEMORIA: Memoria Clásica y Dúo (2 jugadores).
+⚔️ BATALLAS: Solo contra IA, Duelo Local y Batallas Online en tiempo real.
+
+🌍 JUEGO JUSTO Y ÉTICO
+✅ SIN ANUNCIOS
+✅ SIN PAY-TO-WIN
+✅ PRIVACIDAD PRIMERO
+
+¡Descarga Speed Math ahora y juega de forma más inteligente, rápida y mejor!
+</es-ES>
+
+<es-419>
+TITLE: Speed Math – Brain & Battle
+SHORT: Entrena tu cerebro. Desafía a tus amigos. Más rápido cada día. ¡Sin Anuncios!
+DESCRIPTION: (Igual que es-ES)
+</es-419>
+
+<es-US>
+TITLE: Speed Math – Brain & Battle
+SHORT: Entrena tu cerebro. Desafía a tus amigos. Más rápido cada día. ¡Sin Anuncios!
+DESCRIPTION: (Igual que es-ES)
+</es-US>
+
+<it-IT>
+TITLE: Speed Math – Brain & Battle
+SHORT: Allena il cervello. Sfida gli amici. Più veloce ogni giorno. No Pubblicità!
+DESCRIPTION:
+🧠⚡ PENSA VELOCE. RISOLVI PRIMA. DIVENTA INARRESTABILE.
+
+Cerchi un modo divertente per affinare la tua mente? Speed Math non è solo una calcolatrice: è un campo di addestramento mentale intenso.
+
+🔥 NOVITÀ: LA RIVOLUZIONE ARCADE
+• 🏎️ MATH KART: Corri attraverso i cancelli risolvendo equazioni ad alta velocità!
+• 🛸 MATH INVADERS: Difendi la tua base abbattendo le espressioni matematiche.
+• 🧱 MATH TETRIS: Un puzzle strategico per svuotare il tabellone.
+
+🎮 SCEGLI LA TUA SFIDA
+🧩 SOLO: Arcade, Lega e Speed Solve.
+🧠 MEMORIA: Memory Classico e Duo (2 giocatori).
+⚔️ BATTAGLIE: Solo contro AI, Sfida Locale e Battaglie Online.
+
+🌍 GIOCO ETICO
+✅ SENZA PUBBLICITÀ
+✅ NO PAY-TO-WIN
+
+Scarica Speed Math ora e diventa più intelligente e veloce!
+</it-IT>
+
+<pt-BR>
+TITLE: Speed Math – Brain & Battle
+SHORT: Treine seu cérebro. Desafie amigos. Seja mais rápido a cada dia. Sem Anúncios!
+DESCRIPTION:
+🧠⚡ PENSE RÁPIDO. RESOLVA MAIS RÁPIDO. SEJA IMBATÍVEL.
+
+Procurando uma maneira divertida de aguçar sua mente? O Speed Math não é apenas uma calculadora — é um treinamento mental intenso projetado para testar seus limites.
+
+🔥 NOVO: A REVOLUÇÃO ARCADE
+• 🏎️ MATH KART: Corra resolvendo equações em alta velocidade!
+• 🛸 MATH INVADERS: Defenda sua base derrubando expressões matemáticas.
+• 🧱 MATH TETRIS: Um quebra-cabeça estratégico para limpar o tabuleiro.
+
+🎮 ESCOLHA SEU DESAFIO
+🧩 SOLO: Arcade, Liga e Speed Solve.
+🧠 MEMÓRIA: Memória Clásica e Duo (2 jogadores).
+⚔️ BATALHAS: Solo contra IA, Duelo Local e Batalhas Online em tempo real.
+
+🌍 JOGO ÉTICO E JUSTO
+✅ SEM ANÚNCIOS
+✅ SEM PAY-TO-WIN
+
+Baixe o Speed Math agora e jogue de forma mais inteligente e rápida!
+</pt-BR>
+
+<pt-PT>
+TITLE: Speed Math – Brain & Battle
+SHORT: Treine o cérebro. Desafie os amigos. Mais rápido todos os dias. Sem Anúncios!
+DESCRIPTION: (Semelhante ao pt-BR)
+</pt-PT>
+
+<ru-RU>
+TITLE: Speed Math – Brain & Battle
+SHORT: Тренируйте мозг. Бросайте вызов друзьям. Быстрее каждый день. Без рекламы!
+DESCRIPTION:
+🧠⚡ ДУМАЙ БЫСТРО. РЕШАЙ ЕЩЕ БЫСТРЕЕ. СТАНЬ НЕПОБЕДИМЫМ.
+
+Ищете интересный способ отточить свой ум? Speed Math — это не просто калькулятор, это интенсивная площадка для ментальных тренировок.
+
+🔥 НОВОЕ: АРКАДНАЯ РЕВОЛЮЦИЯ
+• 🏎️ MATH KART: Мчитесь через ворота, решая уравнения на высокой скорости!
+• 🛸 MATH INVADERS: Защищайте базу, сбивая математические выражения.
+• 🧱 MATH TETRIS: Стратегическая головоломка для тренировки ума.
+
+🎮 ВЫБЕРИ СВОЙ ВЫЗОВ
+🧩 СОЛО: Аркада, Лига и Быстрое решение.
+🧠 ПАМЯТЬ: Классическая тренировка памяти и Дуэт (2 игрока).
+⚔️ БИТВЫ: Соло против ИИ, Локальная дуэль и Онлайн-битвы в реальном времени.
+
+🌍 ЧЕСТНАЯ ИГРА
+✅ БЕЗ РЕКЛАМЫ
+✅ БЕЗ PAY-TO-WIN
+
+Скачайте Speed Math прямо сейчас и станьте умнее и быстрее!
+</ru-RU>
+
+<zh-CN>
+TITLE: Speed Math – Brain & Battle
+SHORT: 训练你的大脑。挑战你的朋友。每天变得更快。无广告！
+DESCRIPTION:
+🧠⚡ 快速思考。快速解决。变得势不可挡。
+
+正在寻找一种有趣的方式来磨练你的思维吗？Speed Math 不仅仅是一个计算器，它还是一个旨在挑战你认知极限的激烈心理训练场。
+
+🔥 全新：街机革命
+• 🏎️ 数学卡丁车：通过高速解方程冲过大门！
+• 🛸 数学入侵者：通过击落数学表达式来保卫你的基地。
+• 🧱 数学俄罗斯方块：用你的大脑清除棋盘的战略拼图。
+
+🎮 选择你的挑战
+🧩 单人模式：街机、联赛和快速求解。
+🧠 记忆模式：经典记忆和双人记忆。
+⚔️ 对战模式：单人 AI、本地对战和实时在线对战。
+
+🌍 公平与道德游戏
+✅ 无广告
+✅ 无氪金获胜
+✅ 隐私至上
+
+立即下载 Speed Math，让大脑更聪明、更快速、更出色！
+</zh-CN>
+
+<pa>
+TITLE: Speed Math – Brain & Battle
+SHORT: ਆਪਣੇ ਦਿਮਾਗ ਨੂੰ ਸਿਖਲਾਈ ਦਿਓ। ਦੋਸਤਾਂ ਨੂੰ ਚੁਣੌਤੀ ਦਿਓ। ਕੋਈ ਇਸ਼ਤਿਹਾਰ ਨਹੀਂ!
+DESCRIPTION:
+🧠⚡ ਤੇਜ਼ ਸੋਚੋ। ਤੇਜ਼ੀ ਨਾਲ ਹੱਲ ਕਰੋ। ਅਜਿੱਤ ਬਣੋ।
+
+ਕੀ ਤੁਸੀਂ ਆਪਣੇ ਮਨ ਨੂੰ ਤੇਜ਼ ਕਰਨ ਦਾ ਇੱਕ ਮਜ਼ੇਦਾਰ ਤਰੀਕਾ ਲੱਭ ਰਹੇ ਹੋ? Speed Math ਸਿਰਫ਼ ਇੱਕ ਕੈਲਕੁਲੇਟਰ ਨਹੀਂ ਹੈ—ਇਹ ਤੁਹਾਡੀਆਂ ਦਿਮਾਗੀ ਸੀਮਾਵਾਂ ਨੂੰ ਵਧਾਉਣ ਲਈ ਤਿਆਰ ਕੀਤਾ ਗਿਆ ਇੱਕ ਤੀਬਰ ਸਿਖਲਾਈ ਮੈਦਾਨ ਹੈ।
+
+🔥 ਨਵਾਂ: ਆਰਕੇਡ ਕ੍ਰਾਂਤੀ
+• 🏎️ MATH KART: ਤੇਜ਼ ਰਫਤਾਰ ਨਾਲ ਸਮੀਕਰਨਾਂ ਨੂੰ ਹੱਲ ਕਰਕੇ ਗੇਟਾਂ ਰਾਹੀਂ ਦੌੜੋ!
+• 🛸 MATH INVADERS: ਗਣਿਤ ਦੇ ਸਮੀਕਰਨਾਂ ਨੂੰ ਸ਼ੂਟ ਕਰਕੇ ਆਪਣੇ ਅਧਾਰ ਦੀ ਰੱਖਿਆ ਕਰੋ।
+• 🧱 MATH TETRIS: ਬੋਰਡ ਨੂੰ ਸਾਫ਼ ਕਰਨ ਲਈ ਇੱਕ ਰਣਨੀਤਕ ਬੁਝਾਰਤ।
+
+🎮 ਆਪਣੀ ਚੁਣੌਤੀ ਚੁਣੋ
+🧩 ਸੋਲੋ: ਆਰਕੇਡ, ਲੀਗ, ਅਤੇ ਸਪੀਡ ਸੋਲਵ।
+🧠 ਮੈਮੋਰੀ: ਕਲਾਸਿਕ ਮੈਮੋਰੀ ਅਤੇ ਮੈਮੋਰੀ ਡੂਓ।
+⚔️ ਲੜਾਈਆਂ: ਸੋਲੋ ਏਆਈ, ਲੋਕਲ ਡੁਅਲ ਬੈਟਲ, ਅਤੇ ਔਨਲਾਈਨ ਬੈਟਲਸ।
+
+🌍 ਨਿਰਪੱਖ ਅਤੇ ਨੈਤਿਕ ਗੇਮਿੰਗ
+✅ ਕੋਈ ਵਿਗਿਆਪਨ ਨਹੀਂ
+✅ ਕੋਈ ਪੇ-ਟੂ-ਵਿਨ ਨਹੀਂ
+
+Speed Math ਨੂੰ ਹੁਣੇ ਡਾਊਨਲੋਡ ਕਰੋ ਅਤੇ ਤੇਜ਼ ਬਣੋ!
+</pa>
